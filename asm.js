@@ -1,3 +1,5 @@
+'use strict';
+
 function parse_int(s)
 {
 	bases = {'b': 2, 'o': 8, 'q': 8, 'h': 16, 'd': 10};
@@ -35,9 +37,9 @@ function hex(val, bytes = 1)
 	return val
 }
 
-registers = {'eax': 0, 'ecx': 1, 'edx': 2, 'ebx': 3, 'ebp': 5, 'esi': 6, 'edi': 7};
+var registers = {'eax': 0, 'ecx': 1, 'edx': 2, 'ebx': 3, 'ebp': 5, 'esi': 6, 'edi': 7};
 
-map = {
+var map = {
 	'nop': '90',
 	'inc al': 'fe c0',
 	'inc cl': 'fe c1',
@@ -115,7 +117,7 @@ function codes_TO_codes_str(codes)
 	return codes_str.join(' ');
 }
 
-map_1 = {};
+var map_1 = {};
 
 (function (){
 	for(var asm in map){
@@ -137,7 +139,7 @@ map_1 = {};
 	}
 })();
 
-map1 = [
+var map1 = [
 	{reg: /^dec \[(eax|ecx|edx|ebx|ebp|esi|edi)\+([0-9a-fhoq]+)\]$/, num_len: 1, codes: [0xfe, 0x48]}
 ];
 
@@ -189,10 +191,10 @@ function byte_cost(number)
 	return res;
 }
 
-registers2 = {'ax': 0, 'cx': 1, 'dx': 2, 'bx': 3, 'bp': 5, 'si': 6, 'di': 7,
+var registers2 = {'ax': 0, 'cx': 1, 'dx': 2, 'bx': 3, 'bp': 5, 'si': 6, 'di': 7,
 			  'al': 0, 'cl': 1, 'dl': 2, 'bl': 3, 'ah': 4, 'ch': 5, 'dh': 6, 'bh': 7};
 			  
-bitsize = {'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
+var bitsize = {'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			  'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
 
 
@@ -202,7 +204,7 @@ console.log(opd_text);
 	
 	if (/^byte/.test(opd_text) || /^dword/.test(opd_text)) { //opd_text.test(/^byte/) || opd_text.test(/^dword/)
 
-console.log("found byte or dword");
+//console.log("found byte or dword");
 
 		var space = opd_text.indexOf(' ');
 		var l_sq = opd_text.indexOf('[');
@@ -219,12 +221,14 @@ console.log("found byte or dword");
 		if (addr == '') 
 			return {type: 'err', value: 'Неопределенный адрес в памяти'};
 		
+console.log(addr);
 		
 		// works only with reg +- disp now (reg, reg + disp, reg - disp, +-disp)
-		var rg = opd_text.match(/^(eax|ecx|edx|ebx|ebp|esi|edi)/);
+		var rg = addr.match(/^(eax|ecx|edx|ebx|ebp|esi|edi)/);
 		
 		if (!rg) {
 			// displacement == addr
+//console.log("no register");
 			
 			var disp = parse_int(addr);
 			
@@ -234,24 +238,33 @@ console.log("found byte or dword");
 			return {type: 'mem', size: siz, adrr: 'disponly', value: disp};
 			
 		} else {
+//console.log("has register");
 			if (addr.length == 3)
 				return {type: 'mem', size: siz, adrr: 'reg', value: registers[rg]};
 			
 			if (/(\+|\-)/.test(addr)) { // if here's + or -
+//console.log("has displacement");
 				
 				var sgn = addr.match(/(\+|\-)/);
+//console.log(sgn);
+//console.log(addr.indexOf(sgn));
 				
-				if (addr.indexOf(sgn) != 3) 
+				if (sgn.index != 3) 
 					return {type: 'err', value: 'Неверный адрес'}
 				
-				var disp = addr.substring(sgn + 1);
+				var disp = addr.substring(sgn.index + 1);
+				
+console.log(disp);
 				
 				disp = parse_int(disp); // знак учтен при return
 				
 				if (typeof disp == "string") 
 					return {type: 'err', value: disp}
+				
+console.log("Disp:" + disp);
+console.log("Register:" + rg);
 					
-			return {type: 'mem', size: siz, adrr: 'reg+disp${byte_cost(disp)}', value1: registers[rg], value2: (sgn == '+' ? disp : -disp)};
+			return {type: 'mem', size: siz, adrr: 'reg+disp' + 8 * byte_cost(disp), value1: registers[rg[0]], value2: (sgn[0] == '+' ? disp : -disp)};
 				
 			} else {
 				return {type: 'err', value: 'Неверный адрес'};
@@ -264,7 +277,7 @@ console.log("found byte or dword");
 		if (!rg)
 			return {type: 'err', value: 'Неверный регистр'}; 
 		
-		
+		rg = rg[0];
 		
 		if (rg.length == 2) 
 			return {type: 'reg', size: bitsize[rg], value: registers2[rg]}
@@ -293,7 +306,7 @@ cmd_text - канонический вид команды, в крайнем с�
 */
 function asm(address, cmd_text) // 
 {
-	var test = get_operand('byte [eax+11h]');
+	var test = get_operand('byte [eax]');
 	
 	for (key in test) {
 		console.log( "Ключ: " + key + " значение: " + test[key] );

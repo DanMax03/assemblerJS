@@ -296,7 +296,7 @@ function asm(address, cmd_text) //
 	var test = get_operand('byte [eax+11h]');
 	
 	for (key in test) {
-		alert( "Ключ: " + key + " значение: " + test[key] );
+		console.log( "Ключ: " + key + " значение: " + test[key] );
 	}
 	
 	cmd_text = canonic(cmd_text); 

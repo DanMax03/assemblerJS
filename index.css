@@ -1,0 +1,7 @@
+table#main_table, td.asm input[type=text]{font-family: monospace;}
+td.asm input[type=text]{width: 300px; border: 0; outline:none;}
+table#main_table{border-collapse: collapse;}
+table#main_table td{padding: 0px 10px;}
+table#main_table td.err{color: red;}
+table#main_table td.codes{min-width: 100px;}
+table#main_table tr.edited td.asm input{color: blue;}

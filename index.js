@@ -1,4 +1,4 @@
-'use strict'; 
+'use strict';
 var lines = []; // {address, codes_str, codes_len, cmd_text}
 var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
 var NOP = 0x90; // команда для вставки

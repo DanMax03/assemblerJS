@@ -2,8 +2,10 @@
 
 function parse_int(s)
 {
-	bases = {'b': 2, 'o': 8, 'q': 8, 'h': 16, 'd': 10};
+	var bases = {'b': 2, 'o': 8, 'q': 8, 'h': 16, 'd': 10};
+	
 	var base = bases[s[s.length - 1]]; 
+	
 	if(base == undefined)
 		base = 10;
 	else
@@ -162,14 +164,14 @@ function canonic(s)
 
 function cmd_explode(cmd_text)
 {
-	space = cmd_text.indexOf(' ');
+	var space = cmd_text.indexOf(' ');
 	
 	if(space == -1) // checking non-operand command
 		return {err: '', cmd: [cmd_text]};
 	
-	cmd = [cmd_text.substring(0, space)]
+	var cmd = [cmd_text.substring(0, space)]
 	
-	ops = cmd_text.substring(space + 1).split(', ')
+	var ops = cmd_text.substring(space + 1).split(', ')
 	
 	if(ops.length > 2)
 		return {err: 'Параметров должно быть не больше двух.'};
@@ -194,8 +196,9 @@ function byte_cost(number)
 var registers2 = {'ax': 0, 'cx': 1, 'dx': 2, 'bx': 3, 'bp': 5, 'si': 6, 'di': 7,
 			  'al': 0, 'cl': 1, 'dl': 2, 'bl': 3, 'ah': 4, 'ch': 5, 'dh': 6, 'bh': 7};
 			  
-var bitsize = {'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
-			  'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
+var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32, 'edi': 32,
+			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
+			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
 
 
 function get_operand(opd_text)
@@ -238,6 +241,8 @@ console.log(addr);
 			return {type: 'mem', size: siz, adrr: 'disponly', value: disp};
 			
 		} else {
+			rg = rg[0]; // make rg just string
+			
 //console.log("has register");
 			if (addr.length == 3)
 				return {type: 'mem', size: siz, adrr: 'reg', value: registers[rg]};
@@ -247,24 +252,23 @@ console.log(addr);
 				
 				var sgn = addr.match(/(\+|\-)/);
 //console.log(sgn);
-//console.log(addr.indexOf(sgn));
 				
 				if (sgn.index != 3) 
 					return {type: 'err', value: 'Неверный адрес'}
 				
 				var disp = addr.substring(sgn.index + 1);
 				
-console.log(disp);
+//console.log(disp);
 				
 				disp = parse_int(disp); // знак учтен при return
 				
 				if (typeof disp == "string") 
 					return {type: 'err', value: disp}
 				
-console.log("Disp:" + disp);
-console.log("Register:" + rg);
+//console.log("Disp:" + disp);
+//console.log("Register:" + rg);
 					
-			return {type: 'mem', size: siz, adrr: 'reg+disp' + 8 * byte_cost(disp), value1: registers[rg[0]], value2: (sgn[0] == '+' ? disp : -disp)};
+			return {type: 'mem', size: siz, adrr: 'reg+disp' + 8 * byte_cost(disp), value1: registers[rg], value2: (sgn[0] == '+' ? disp : -disp)};
 				
 			} else {
 				return {type: 'err', value: 'Неверный адрес'};
@@ -277,11 +281,15 @@ console.log("Register:" + rg);
 		if (!rg)
 			return {type: 'err', value: 'Неверный регистр'}; 
 		
-		rg = rg[0];
-		
+		rg = rg[0]; // make rg just string
+console.log(rg);
+//console.log(rg.length);
+
 		if (rg.length == 2) 
 			return {type: 'reg', size: bitsize[rg], value: registers2[rg]}
-	
+
+//console.log("Register == 3");
+
 		return {type: 'reg', size: bitsize[rg], value: registers[rg]};
 	}
 }
@@ -306,9 +314,9 @@ cmd_text - канонический вид команды, в крайнем с�
 */
 function asm(address, cmd_text) // 
 {
-	var test = get_operand('byte [eax]');
+	var test = get_operand('dword [1feh]');
 	
-	for (key in test) {
+	for (var key in test) {
 		console.log( "Ключ: " + key + " значение: " + test[key] );
 	}
 	
@@ -318,12 +326,12 @@ function asm(address, cmd_text) //
 		return {address: address, err: '', codes: map[cmd_text].codes, cmd_text: cmd_text};
 	
 		
-	cmd_shapes = cmd_explode(cmd_text);
+	var cmd_shapes = cmd_explode(cmd_text);
 
 	if(cmd_shapes.err != '') // если в структуре есть ошибка, или  > 2 аргумента
 		return {err: cmd_shapes.err, codes_str: '', codes: [], cmd_text: ''};
 
-	cmd_shapes = cmd_shapes.cmd;
+	cmd_shapes = cmd_shapes.cmd; // убирает err, теперь cmd_shapes = ['<command>', <operands>]
 	
 	switch (cmd_shapes[0]) 
 	{

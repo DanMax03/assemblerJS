@@ -1,6 +1,7 @@
-lines = []; // {address, codes_str, codes_len, cmd_text}
-offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
-NOP = 0x90; // команда для вставки
+'use strict';
+var lines = []; // {address, codes_str, codes_len, cmd_text}
+var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
+var NOP = 0x90; // команда для вставки
 
 function max(a, b){ return a > b ? a : b; }
 function min(a, b){ return a < b ? a : b; }
@@ -17,8 +18,8 @@ function codes_TO_codes_str(codes)
 function fill_line(i)
 {
 	if(i > 0 && lines[i - 1] == undefined){ console.log('Почему-то предыдущей строки не существует'); return; }
-	address = i ? lines[i - 1].address + lines[i - 1].codes_len : address0;
-	res = disasm(address); // {address, codes_str, codes_len, cmd_text}
+	var address = i ? lines[i - 1].address + lines[i - 1].codes_len : address0;
+	var res = disasm(address); // {address, codes_str, codes_len, cmd_text}
 	if(i == lines.length)
 		lines.push(res);
 	else if(i < lines.length){
@@ -39,7 +40,7 @@ function fill_tr(line)
 	if(lines[i] == undefined)
 		fill_line(i)
 
-	tr = $('tr[line=' + line + ']');
+	var tr = $('tr[line=' + line + ']');
 	tr.removeClass('edited');
 	$('td.address', tr).text(hex(lines[i].address, 4));
 	$('td.codes', tr).text(lines[i].codes_str);

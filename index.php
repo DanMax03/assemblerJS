@@ -29,11 +29,12 @@ $exe[11] = 0xfe; $exe[12] = 0x48; $exe[13] = 0x34; // dec [eax+34h]
 
 ?>
 	<script>
-		n_lines = <?=$n_lines?>;
-		scroll_page = 5;
-		address0 = 0x40100;
-		PAGE = <?=PAGE?>;
-		exe = [<?=implode($exe, ', ')?>];
+		'use strict';
+		var n_lines = <?=$n_lines?>;
+		var scroll_page = 5;
+		var address0 = 0x40100;
+		var PAGE = <?=PAGE?>;
+		var exe = [<?=implode($exe, ', ')?>];
 	</script>
 	<script src="asm.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>

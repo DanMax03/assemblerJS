@@ -2,6 +2,7 @@
 <html>
 <head>
 	<title>Ассемблер</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>

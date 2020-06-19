@@ -5,3 +5,4 @@ table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
+form.get_exe input[type="text"]{display: none;}

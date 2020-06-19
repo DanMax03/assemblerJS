@@ -58,7 +58,7 @@ function fill_table()
 function exe_update(address, codes)
 {
 	address -= address0;
-	for(i in codes){
+	for(var i in codes){
 		exe[address] = codes[i];
 		address++;
 	}
@@ -181,7 +181,30 @@ function scrollPageDown()
 		fill_tr(line);
 }
 
+function asmLines(asm)
+{
+	lines = [];
+	for(i in asm){
+	}
+}
 
+$('form.get_exe').on('submit', function(key){
+	$('input#codes_str').val(exe.join(' '));
+});
+
+$('a#copy_asm2textarea').on('click', function(key){
+	var res = [];
+	for(var i in lines)
+		res.push(lines[i].cmd_text);
+	$('textarea#asm_text').text(res.join('\r\n'));
+	return false;
+});
+
+$('a#copy_textarea2asm').on('click', function(key){
+	var res = $('textarea#asm_text').val().split('\n');
+	asmLines(res);
+	return false;
+});
 
 fill_table();
 

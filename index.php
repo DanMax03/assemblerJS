@@ -8,7 +8,7 @@
 </head>
 <body>
 <?php
-define('PAGE', 0x100); // должно совпадать с размером сегмента кода
+include 'inc.php';
 $n_lines = min(20, PAGE);
 echo "<table id='main_table'>\n";
 for($i = 0; $i < $n_lines; ++$i)
@@ -24,11 +24,22 @@ $exe[4] = 0xfe; $exe[5] = 0xc8; // dec al
 $exe[6] = 0x49; // dec ecx
 $exe[7] = 0xfe; $exe[8] = 0x0e; // dec [esi]
 $exe[9] = 0xf6; $exe[10] = 0xdf; // neg bh
-$exe[9] = 0xf7; $exe[10] = 0xd8; // neg eax
-$exe[11] = 0xfe; $exe[12] = 0x48; $exe[13] = 0x34; // dec [eax+34h]
+$exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
+//$exe[13] = 0xfe; $exe[14] = 0x48; $exe[15] = 0x34; // dec [eax+34h]
 
 
 ?>
+	<textarea id='asm_text'></textarea>
+	<a href='#' id='copy_asm2textarea'>&#8595;</a>
+	<a href='#' id='copy_textarea2asm'>&#8593;</a>
+	
+	<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
+	
+	<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
+		<input type='text' name='codes_str' id='codes_str' value=''>
+		<input type='submit' value='Получить *.exe файл'>
+	</form>
+	
 	<script>
 		'use strict';
 		var n_lines = <?=$n_lines?>;
@@ -39,6 +50,5 @@ $exe[11] = 0xfe; $exe[12] = 0x48; $exe[13] = 0x34; // dec [eax+34h]
 	</script>
 	<script src="asm.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>
-	<p>Должны работать кнопки: Down, Up, PageDown, PageUp, Insert, Delete, Enter, Escape</p>
 </body>
 </html>

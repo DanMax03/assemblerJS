@@ -17,6 +17,7 @@ echo "</table>\n";
 $exe = array(); for($i = 0; $i < PAGE; ++$i) $exe[] = 0x90; 
 
 // пример
+/*
 $exe[0] = 0xfe; $exe[1] = 0xc7;	// inc bh
 $exe[2] = 0x90;	// nop
 $exe[3] = 0x40; // inc eax
@@ -26,7 +27,7 @@ $exe[7] = 0xfe; $exe[8] = 0x0e; // dec [esi]
 $exe[9] = 0xf6; $exe[10] = 0xdf; // neg bh
 $exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
 //$exe[13] = 0xfe; $exe[14] = 0x48; $exe[15] = 0x34; // dec [eax+34h]
-
+*/
 
 ?>
 	<textarea id='asm_text'></textarea>

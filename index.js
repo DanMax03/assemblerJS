@@ -1,5 +1,5 @@
 'use strict';
-var lines = []; // {address, codes_str, codes_len, cmd_text}
+var lines = []; // {address, codes_str, codes_len, cmd_text, edited}
 var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
 var NOP = 0x90; // команда для вставки
 
@@ -20,6 +20,7 @@ function fill_line(i)
 	if(i > 0 && lines[i - 1] == undefined){ console.log('Почему-то предыдущей строки не существует'); return; }
 	var address = i ? lines[i - 1].address + lines[i - 1].codes_len : address0;
 	var res = disasm(address); // {address, codes_str, codes_len, cmd_text}
+	res.edited = false;
 	if(i == lines.length)
 		lines.push(res);
 	else if(i < lines.length){
@@ -47,6 +48,8 @@ function fill_tr(line)
 	$('td.codes', tr).attr('len', lines[i].codes_len);
 	$('td.asm input', tr).val(lines[i].cmd_text);
 	$('td.err', tr).text('');
+	if(lines[i].edited)
+		tr.addClass('edited');
 }
 
 function fill_table()
@@ -84,6 +87,7 @@ function asmLine(arg) // {line, real because of Enter}
 		}else{
 			$('td.err', tr).text(res.err);
 			tr.addClass('edited');
+			lines[i].edited = true;
 		}
 	}else{
 		if(res.err != '' || $('td.codes', tr).text() != codes_str)
@@ -94,7 +98,7 @@ function asmLine(arg) // {line, real because of Enter}
 // {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text}
 function asm2line_format(a)
 {
-	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text};
+	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false};
 }
 
 function delete_tr(line)
@@ -181,11 +185,24 @@ function scrollPageDown()
 		fill_tr(line);
 }
 
-function asmLines(asm)
+function asmLines(asm_area)
 {
-	lines = [];
-	for(i in asm){
+	lines = []; // {address, codes_str, codes_len, cmd_text, edited}
+	var address = address0;
+	for(var i in asm_area){
+		var res = asm(address, asm_area[i]); // {address, err, codes, cmd_text}
+		if(res.err){
+			$('td.err', tr).text(res.err);
+			tr.addClass('edited');
+			lines.push({address: address, codes_str: '90', codes_len: 1, cmd_text: asm_area[i], edited: true});
+			exe_update(address, codes_str_TO_codes(lines[lines.length - 1].codes_str));
+		}else{
+			exe_update(address, res.codes);
+			lines.push(asm2line_format(res));
+		}
+		address += lines[lines.length - 1].codes_len;
 	}
+	fill_table();
 }
 
 $('form.get_exe').on('submit', function(key){
@@ -202,7 +219,11 @@ $('a#copy_asm2textarea').on('click', function(key){
 
 $('a#copy_textarea2asm').on('click', function(key){
 	var res = $('textarea#asm_text').val().split('\n');
-	asmLines(res);
+	var asm = [];
+	for(var i in res)
+		if(res[i].trim())
+			asm.push(res[i].trim())
+	asmLines(asm);
 	return false;
 });
 

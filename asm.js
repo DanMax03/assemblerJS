@@ -1,5 +1,6 @@
 'use strict';
 
+console.log(map);
 
 var registers = {'eax': 0, 'ecx': 1, 'edx': 2, 'ebx': 3, 'ebp': 5, 'esi': 6, 'edi': 7};
 
@@ -721,7 +722,7 @@ function disasm(address)
 		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1};
 }
 
-
+/*
 // ТЕСТИРОВАНИЕ 
 var tests = [
 	{asm: 'add al, 7', codes_str: '04 07'},
@@ -751,3 +752,4 @@ for (var i in tests){
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
 
+*/

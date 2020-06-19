@@ -14,10 +14,15 @@ echo "<table id='main_table'>\n";
 for($i = 0; $i < $n_lines; ++$i)
 	echo "\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
 echo "</table>\n";
-$exe = array(); for($i = 0; $i < PAGE; ++$i) $exe[] = 0x90; 
+
+$exe_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_CS_OFFSET, PAGE);
+$exe = array();
+for($i = 0; $i < strlen($exe_str); ++$i)
+	$exe[] = ord($exe_str[$i]);
 
 // пример
 /*
+$exe = array(); for($i = 0; $i < PAGE; ++$i) $exe[] = 0x90; 
 $exe[0] = 0xfe; $exe[1] = 0xc7;	// inc bh
 $exe[2] = 0x90;	// nop
 $exe[3] = 0x40; // inc eax

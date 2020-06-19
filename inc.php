@@ -1,6 +1,7 @@
 <?php
 define('PAGE', 0x100); // должно совпадать с размером сегмента кода
 define('EXE_CS_OFFSET', 0x400); // должно совпадать с размером сегмента кода
+define('TASK_EXE_FULL_PATH', '../../asm_data/task.exe');
 
 function string_force_download($s, $file_name) {
 	// заставляем браузер показать окно сохранения файла

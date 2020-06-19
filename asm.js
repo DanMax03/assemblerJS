@@ -558,7 +558,7 @@ console.log(op2);
 					switch (op2.type)
 					{
 						case 'reg':
-console.log(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)));
+console.log(to_hex(native_codeB + '11' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1)));
 
 							return {address: address, 
 									err: '', 

@@ -1,5 +1,5 @@
 'use strict';
-var lines = []; // {address, codes_str, codes_len, cmd_text, edited}
+var lines = []; // {address, codes_str, codes_len, cmd_text, edited, err}
 var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
 var NOP = 0x90; // команда для вставки
 
@@ -17,10 +17,12 @@ function codes_TO_codes_str(codes)
 
 function fill_line(i)
 {
+	i = 1*i;
 	if(i > 0 && lines[i - 1] == undefined){ console.log('Почему-то предыдущей строки не существует'); return; }
 	var address = i ? lines[i - 1].address + lines[i - 1].codes_len : address0;
 	var res = disasm(address); // {address, codes_str, codes_len, cmd_text}
 	res.edited = false;
+	res.err = '';
 	if(i == lines.length)
 		lines.push(res);
 	else if(i < lines.length){
@@ -47,7 +49,7 @@ function fill_tr(line)
 	$('td.codes', tr).text(lines[i].codes_str);
 	$('td.codes', tr).attr('len', lines[i].codes_len);
 	$('td.asm input', tr).val(lines[i].cmd_text);
-	$('td.err', tr).text('');
+	$('td.err', tr).text(lines[i].err);
 	if(lines[i].edited)
 		tr.addClass('edited');
 }
@@ -88,6 +90,7 @@ function asmLine(arg) // {line, real because of Enter}
 			$('td.err', tr).text(res.err);
 			tr.addClass('edited');
 			lines[i].edited = true;
+			lines[i].err = res.err;
 		}
 	}else{
 		if(res.err != '' || $('td.codes', tr).text() != codes_str)
@@ -98,7 +101,7 @@ function asmLine(arg) // {line, real because of Enter}
 // {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text}
 function asm2line_format(a)
 {
-	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false};
+	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false, err: ''};
 }
 
 function delete_tr(line)
@@ -192,10 +195,10 @@ function asmLines(asm_area)
 	for(var i in asm_area){
 		var res = asm(address, asm_area[i]); // {address, err, codes, cmd_text}
 		if(res.err){
-			$('td.err', tr).text(res.err);
-			tr.addClass('edited');
-			lines.push({address: address, codes_str: '90', codes_len: 1, cmd_text: asm_area[i], edited: true});
-			exe_update(address, codes_str_TO_codes(lines[lines.length - 1].codes_str));
+			fill_line(i);
+			lines[i].cmd_text = asm_area[i];
+			lines[i].edited = true;
+			lines[i].err = res.err;
 		}else{
 			exe_update(address, res.codes);
 			lines.push(asm2line_format(res));

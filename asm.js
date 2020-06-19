@@ -10,66 +10,6 @@ var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32,
 			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
 
-var map = {
-	'nop': '90',
-	'inc al': 'fe c0',
-	'inc cl': 'fe c1',
-	'inc dl': 'fe c2',
-	'inc bl': 'fe c3',
-	'inc ah': 'fe c4',
-	'inc ch': 'fe c5',
-	'inc dh': 'fe c6',
-	'inc bh': 'fe c7',
-	'inc eax': '40',
-	'inc ecx': '41',
-	'inc edx': '42',
-	'inc ebx': '43',
-//	'inc esp': '44',
-	'inc ebp': '45',
-	'inc esi': '46',
-	'inc edi': '47',
-	'dec al': 'fe c8',
-	'dec cl': 'fe c9',
-	'dec dl': 'fe ca',
-	'dec bl': 'fe cb',
-	'dec ah': 'fe cc',
-	'dec ch': 'fe cd',
-	'dec dh': 'fe ce',
-	'dec bh': 'fe cf',
-	'dec eax': '48',
-	'dec ecx': '49',
-	'dec edx': '4a',
-	'dec ebx': '4b',
-//	'dec esp': '4c',
-	'dec ebp': '4d',
-	'dec esi': '4e',
-	'dec edi': '4f',
-	'dec [eax]': 'fe 08',
-	'dec [ecx]': 'fe 09',
-	'dec [edx]': 'fe 0a',
-	'dec [ebx]': 'fe 0b',
-//	'dec [esp]': 'fe 0c',
-//	'dec [ebp]': 'fe 0d',
-	'dec [esi]': 'fe 0e',
-	'dec [edi]': 'fe 0f',
-	'neg al': 'f6 d8',
-	'neg cl': 'f6 d9',
-	'neg dl': 'f6 da',
-	'neg bl': 'f6 db',
-	'neg ah': 'f6 dc',
-	'neg ch': 'f6 dd',
-	'neg dh': 'f6 de',
-	'neg bh': 'f6 df',
-	'neg eax': 'f7 d8',
-	'neg ecx': 'f7 d9',
-	'neg edx': 'f7 da',
-	'neg ebx': 'f7 db',
-//	'neg esp': 'f7 dc',
-	'neg ebp': 'f7 dd',
-	'neg esi': 'f7 de',
-	'neg edi': 'f7 df',
-}
-
 var map1 = [
 	{reg: /^dec \[(eax|ecx|edx|ebx|ebp|esi|edi)\+([0-9a-fhoq]+)\]$/, num_len: 1, codes: [0xfe, 0x48]}
 ];
@@ -91,7 +31,7 @@ function neg_sB(s)
 	
 	s = s1;
 	s1 = '';
-	p = 1;
+	var p = 1;
 	
 	for(var i = s.length - 1; i >= 0; i--) {
 		var p1 = p * s.charAt(i);
@@ -313,7 +253,6 @@ function byte_cost(number)
 
 function get_operand(opd_text) // reg, mem or imm
 {
-//console.log(opd_text);
 	
 	if (/^byte/.test(opd_text) || /^dword/.test(opd_text) || /^\[/.test(opd_text)) { // just mem
 
@@ -340,7 +279,6 @@ function get_operand(opd_text) // reg, mem or imm
 			return {type: 'err', value: 'Неопределенный адрес в памяти'};
 		
 		addr = addr.replace(/\s/g, '');
-console.log(addr);
 
 		
 		// works only with reg +- disp now (reg, reg + disp, reg - disp, +-disp)
@@ -378,22 +316,18 @@ console.log(addr);
 			if (/(\+|\-)/.test(addr)) { // if here's + or -
 				
 				var sgn = addr.match(/(\+|\-)/);
-//console.log(sgn);
 				
 				if (sgn.length != 2 || sgn.index != 3) 
 					return {type: 'err', value: 'Неверный адрес'};
 				
 				var disp = addr.substring(4);
 				
-//console.log(disp);
 				
 				disp = parse_int(disp); // знак учтен при return
 				
 				if (typeof disp == "string") 
 					return {type: 'err', value: disp}
 				
-//console.log("Disp:" + disp);
-//console.log("Register:" + rg);
 					
 			return {type: 'mem', size: siz, adrr: 'reg+disp', disp_size: (disp < 128 ? 8 : 32), value1: registers[rg], value2: (sgn[0] == '+' ? disp : -disp)};
 				
@@ -410,12 +344,10 @@ console.log(addr);
 		var rg = opd_text.match(/^(eax|ecx|edx|ebx|ebp|esi|edi|ax|cx|dx|bx|bp|si|di|ah|al|ch|cl|dh|dl|bh|bl)$/);
 		
 		if (!rg) { // just imm
-			var sgn = opd_text.match(/( \+ | \- )/g);
+			var sgn = opd_text.match(/^(\+|\-)/);
+			
 			
 			if (sgn) {
-				if (sgn.length != 2 || sgn.index != 0)
-					return {type: 'err', value: 'Неверный операнд'};
-				
 				sgn = sgn[0];
 				
 				opd_text = opd_text.substring(1); // число без учета знака
@@ -434,13 +366,10 @@ console.log(addr);
 		} else { // just reg
 		
 			rg = rg[0]; // make rg just string
-//console.log(rg);
-//console.log(rg.length);
 
 			if (rg.length == 2) 
 				return {type: 'reg', size: bitsize[rg], value: registers2[rg]}
 
-//console.log("Register == 3");
 
 			return {type: 'reg', size: bitsize[rg], value: registers[rg]};
 		}
@@ -467,11 +396,6 @@ cmd_text - канонический вид команды, в крайнем с�
 */
 function asm(address, cmd_text) // 
 {
-	/*var test = get_operand('dword [1feh]');
-	
-	for (var key in test) {
-		console.log( "Ключ: " + key + " значение: " + test[key] );
-	} */
 	
 	cmd_text = canonic(cmd_text); 
 
@@ -795,5 +719,35 @@ function disasm(address)
 		return {address: address, cmd_text: el, codes_str: map[el].codes_str, codes_len: map[el].codes.length};
 	}else
 		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1};
+}
+
+
+// ТЕСТИРОВАНИЕ 
+var tests = [
+	{asm: 'add al, 7', codes_str: '04 07'},
+	{asm: 'add edi, 7', codes_str: '83 c7 07'},
+	{asm: 'add al, ch', codes_str: '00 e8'},
+	{asm: 'add edi, ecx', codes_str: '01 cf'},
+	{asm: 'add [ebp], ch', codes_str: '00 6d 00'},
+	{asm: 'add [ebp], ecx', codes_str: '01 4d 00'},
+	{asm: 'add [edi+8], ch', codes_str: '00 6f 08'},
+	{asm: 'add [edi+8], ecx', codes_str: '01 4f 08'},
+	{asm: 'add al, [ebp]', codes_str: '02 45 00'},
+	{asm: 'add edi, [ebp]', codes_str: '03 7d 00'},
+	{asm: 'add al, [ebp + 8]', codes_str: '02 45 08'},
+	{asm: 'add edi, [ebp + 8]', codes_str: '03 7d 08'},
+	{asm: 'add al, -3', codes_str: '04 fd'},
+	{asm: 'add edi, -3', codes_str: '83 c7 fd'},
+	{asm: 'add [edi-3], ch', codes_str: '00 6f fd'},
+	{asm: 'add [edi-3], ecx', codes_str: '01 4f fd'},
+	{asm: 'add al, [ebp-3]', codes_str: '02 45 fd'},
+	{asm: 'add edi, [ebp-3]', codes_str: '03 7d fd'},
+	{asm: 'add eax, [ebp+edx]', codes_str: '03 44 15 00'},
+	{asm: 'add [ebp+edx], eax', codes_str: '01 44 15 00'}
+];
+	
+for (var i in tests){
+	var a = asm(0, tests[i].asm);
+	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
 

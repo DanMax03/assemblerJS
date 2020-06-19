@@ -54,6 +54,7 @@ $exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
 		var PAGE = <?=PAGE?>;
 		var exe = [<?=implode($exe, ', ')?>];
 	</script>
+	<script src="asm_table.js" type="text/javascript"></script>
 	<script src="asm.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>
 </body>

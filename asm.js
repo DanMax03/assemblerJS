@@ -192,8 +192,36 @@ function to_hex(bin_str) // only multiples of 8
 			val += (slice % 2) * Math.pow(2, j);
 		}
 		
-		res = res + hex(val);
+		res = res + hex(val) + ' ';
 	}
+	
+	res = res.substring(0, res.length - 1); // cutting last space
+	
+	return res;
+}
+
+function to_reverse_hex(bin_str) // only multiples of 8
+{
+	var res = '';
+	var slice = '';
+	var val;
+	
+	for (var i = bin_str.length - 8; i >= 0; i -= 8) {
+
+		slice = bin_str.substring(i, i + 8);
+		slice = slice * 1;
+		
+		val = slice % 2;
+		
+		for (var j = 1; j < 8; j++) {
+			slice = div(slice, 10);
+			val += (slice % 2) * Math.pow(2, j);
+		}
+		
+		res = res + hex(val) + ' ';
+	}
+	
+	res = res.substring(0, res.length - 1); // cutting last space
 	
 	return res;
 }
@@ -302,7 +330,7 @@ function get_operand(opd_text) // reg, mem or imm
 			var siz = opd_text.substring(0, space);
 			siz = siz == 'byte' ? 8 : 32;
 		} else {
-			siz = 'depends on 1';
+			siz = 'depends on other';
 		}
 		
 		
@@ -311,8 +339,8 @@ function get_operand(opd_text) // reg, mem or imm
 		if (addr == '') 
 			return {type: 'err', value: 'Неопределенный адрес в памяти'};
 		
-		
-//console.log(addr);
+		addr = addr.replace(/\s/g, '');
+console.log(addr);
 
 		
 		// works only with reg +- disp now (reg, reg + disp, reg - disp, +-disp)
@@ -324,7 +352,7 @@ function get_operand(opd_text) // reg, mem or imm
 			var sgn = addr.match(/(\+|\-)/);
 				
 			if (sgn) {
-				if (sgn.length > 1 || sgn.index != 0) 
+				if (sgn.length != 2 || sgn.index != 0) 
 					return {type: 'err', value: 'Неверный адрес'};
 				
 				addr = addr.substring(1);
@@ -350,8 +378,9 @@ function get_operand(opd_text) // reg, mem or imm
 			if (/(\+|\-)/.test(addr)) { // if here's + or -
 				
 				var sgn = addr.match(/(\+|\-)/);
+//console.log(sgn);
 				
-				if (sgn.length != 1 || sgn.index != 3) 
+				if (sgn.length != 2 || sgn.index != 3) 
 					return {type: 'err', value: 'Неверный адрес'};
 				
 				var disp = addr.substring(4);
@@ -384,7 +413,7 @@ function get_operand(opd_text) // reg, mem or imm
 			var sgn = opd_text.match(/( \+ | \- )/g);
 			
 			if (sgn) {
-				if (sgn.length > 1 || sgn.index != 0)
+				if (sgn.length != 2 || sgn.index != 0)
 					return {type: 'err', value: 'Неверный операнд'};
 				
 				sgn = sgn[0];
@@ -446,12 +475,17 @@ function asm(address, cmd_text) //
 	
 	cmd_text = canonic(cmd_text); 
 
+
 	if(map[cmd_text] != undefined) 
-		return {address: address, err: '', codes: map[cmd_text].codes, cmd_text: cmd_text};
+		return {address: address, 
+				err: '',
+				codes: map[cmd_text].codes, 
+				cmd_text: cmd_text};
 	
 		
 	var cmd_shapes = cmd_explode(cmd_text);
-
+	
+	
 	if(cmd_shapes.err != '') // если в структуре есть ошибка, или  > 2 аргумента
 		return {err: cmd_shapes.err, codes_str: '', codes: [], cmd_text: ''};
 
@@ -463,7 +497,10 @@ function asm(address, cmd_text) //
 			if (cmd_shapes.length != 1) 
 				return {err: "У команды 'nop' нету операндов", codes: []};
 				
-			return {address: address, err: '', codes: [0x90], cmd_text: cmd_text};
+			return {address: address, 
+					err: '', 
+					codes: [0x90], 
+					cmd_text: cmd_text};
 		break;
 		
 		case 'add':
@@ -484,6 +521,9 @@ function asm(address, cmd_text) //
 			
 			if (op2.type == 'err')
 				return {err: op2.value, codes: []};
+			
+console.log(op1);
+console.log(op2);
 			
 			
 			var native_codeB = '000000';
@@ -508,38 +548,196 @@ function asm(address, cmd_text) //
 						
 						native_codeB += (op1.size == 8 ? '0' : '1');
 						
-						return {address: address, err: '', codes: codes_str_TO_codes(to_hex(native_codeB + int_to_sB(op2.value, op1.size)))};
+						return {address: address, 
+								err: '', 
+								codes: codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op2.value, op1.size))),
+								cmd_text: cmd_text};
 					}
 					
 					
 					switch (op2.type)
 					{
 						case 'reg':
-							return {address: address, err: '', codes: codes_str_TO_codes(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)))};
+//console.log(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)));
+
+							return {address: address, 
+									err: '', 
+									codes: codes_str_TO_codes(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1))),
+									cmd_text: cmd_text};
 						break;
 						
 						case 'mem': 
-							switch (op2.addr) {
+							native_codeB = native_codeB.substring(0, 6) + '1' + native_codeB.substring(7); //native_codeB[6] = '1'; - changing direction bit
+
+
+							switch (op2.adrr) {
 								case 'reg': // [reg]  in R/M
-									native_codeB[6] = '1'; // changing direction bit
+								
+									if (op2.value != 5)
+										return {address: address, 
+												err: '', 
+												codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1))),
+												cmd_text: cmd_text};
 									
-									return {address: address, err: '', codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)))};
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '01' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1) + '00000000')),
+											cmd_text: cmd_text};
 								break;
 								
 								case 'disponly':
-									native_codeB[6] = '1'; // changing direction bit
 								
-									return {address: address, err: '', codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op1.value, 4).substring(1) + '101' + int_to_sB(op2.value, 32)))};
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op1.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op2.value, 32))),
+											cmd_text: cmd_text};
+								break;
+								
+								case 'reg+disp':
+								
+									return {address: address,
+											err: '',
+											codes: codes_str_TO_codes(to_hex(native_codeB + (op2.disp_size == 8 ? '01' : '10') + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value2, (op2.disp_size == 8 ? 8 : 32)))),
+											cmd_text: cmd_text};
 								break;
 							}
 						break;
-					}
 						
+						case 'imm': // REG == 000, opcode = 100000sw, s == 0 => size as 1st oper, else - size 8 bit. w == 0 - opers are 1 byte
+							if (op1.size < op2.size)
+								return {err: "Число больше размера ячейки", codes: [], cmd_text: cmd_text};
+							
+							native_codeB = '100000';
+							
+							
+							if (op1.size > op2.size && op2.size == 8)
+								native_codeB += '1';
+							else 
+								native_codeB += '0';
+							
+							native_codeB += (op1.size == 8 ? '0' : '1');
+
+							return {address: address,
+									err: '',
+									codes: codes_str_TO_codes(to_hex(native_codeB + '11000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op1.size > op2.size && op2.size == 8 ? 8 : op1.size)))),
+									cmd_text: cmd_text};
+							
+						break;
+					}
 				break;
 				
 				case 'mem':
-					if (op2.type == 'mem')
-						return {err: "У команды 'add' не может быть 2 операнда из памяти", codes: [], cmd_text: cmd_text};
+				
+					switch (op2.type)
+					{
+						case 'mem':
+							return {err: "У команды 'add' не может быть 2 операнда из памяти", codes: [], cmd_text: cmd_text};
+						break;
+						
+						case 'reg':
+							if (typeof op1.size != 'string' && op1.size != op2.size)
+								return {err: "Размеры операндов не равны", codes: [], cmd_text: cmd_text};
+							
+							if (typeof op1.size == 'string')
+								op1.size = op2.size;
+								
+							native_codeB += '0' + (op1.size == 8 ? '0' : '1');
+							
+							switch (op1.adrr)
+							{
+								case 'reg':
+								
+									if (op1.value != 5)
+										return {address: address, 
+												err: '', 
+												codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1))),
+												cmd_text: cmd_text};
+console.log(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1) + '00000000'));									
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1) + '00000000')),
+											cmd_text: cmd_text};
+								break;
+								
+								case 'disponly':
+console.log(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op1.value, 32)));									
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op1.value, 32))),
+											cmd_text: cmd_text};
+								break;
+								
+								case 'reg+disp':
+console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))));
+									return {address: address,
+											err: '',
+											codes: codes_str_TO_codes(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32)))),
+											cmd_text: cmd_text};
+								break;
+							}
+						break;
+						case 'imm': // REG == 000, opcode = 100000sw, s == 0 => size as 1st oper, else - size 8 bit. w == 0 - opers are 1 byte
+						
+							native_codeB = '100000';
+						
+							if (typeof op1.size == 'string') {
+								if (op2.size == 16) 
+									op1.size = 32;
+								else
+									op1.size = op2.size;
+								
+								native_codeB += '0';
+							} else {
+								if (op1.size < op2.size)
+									return {err: "Размеры операндов не равны", codes: [], cmd_text: cmd_text};
+								
+								if (op1.size > op2.size && op2.size == 8)
+									native_codeB += '1';
+								else 
+									native_codeB += '0';
+							}
+							
+							native_codeB += (op1.size == 8 ? '0' : '1');
+							
+							switch (op1.adrr)
+							{
+								case 'reg':
+									if (op1.value != 5) {
+console.log(to_hex(native_codeB + '00000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+										
+										return {address: address, 
+												err: '', 
+												codes: codes_str_TO_codes(to_hex(native_codeB + '00000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))),
+												cmd_text: cmd_text};
+									}
+console.log(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))),
+											cmd_text: cmd_text};
+								break;
+								
+								case 'disponly':
+console.log(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32)));									
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32))),
+											cmd_text: cmd_text};
+								break;
+								
+								case 'reg+disp':
+								
+console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + '000' + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+								
+									return {address: address, 
+											err: '', 
+											codes: codes_str_TO_codes(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + '000' + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))),
+											cmd_text: cmd_text};
+								break;
+							}
+							
+						break;
+					}
 				break;
 			}
 			
@@ -570,7 +768,7 @@ function asm(address, cmd_text) //
 		break;
 	}
 	
-	return {err: 'Неизвестная команда', codes: [], cmd_text: '' };
+	return {err: 'Неизвестная команда', codes: []};
 }
 
 

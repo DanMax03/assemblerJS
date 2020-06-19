@@ -558,11 +558,11 @@ console.log(op2);
 					switch (op2.type)
 					{
 						case 'reg':
-//console.log(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)));
+console.log(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1)));
 
 							return {address: address, 
 									err: '', 
-									codes: codes_str_TO_codes(to_hex(native_codeB + '11' + int_to_sB(op1.value, 4).substring(1) + int_to_sB(op2.value, 4).substring(1))),
+									codes: codes_str_TO_codes(to_hex(native_codeB + '11' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1))),
 									cmd_text: cmd_text};
 						break;
 						

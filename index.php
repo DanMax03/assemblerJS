@@ -31,8 +31,8 @@ $exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
 
 ?>
 	<textarea id='asm_text'></textarea>
-	<a href='#' id='copy_asm2textarea'>&#8595;</a>
-	<a href='#' id='copy_textarea2asm'>&#8593;</a>
+	<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
+	<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
 	
 	<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
 	

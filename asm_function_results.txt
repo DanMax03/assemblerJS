@@ -1,0 +1,32 @@
+Здесь описаны объекты, которые могут вернуть те или иные функции.
+
+function get_command:
+	При любых условиях возвращаемый объект содержит поле type.
+	
+	type:
+		'err'
+			value - string
+		
+		'reg'
+			size: 8, 16 or 32
+			value: 0 - 7
+			
+		'mem'
+			size: 8, 32 or 'depends on other'
+		
+			adrr: 'reg', 'disponly' or 'reg+disp'
+				'reg'
+					value: 0 - 7
+					
+				'disponly'
+					size: 32
+					value: const signed number
+					
+				'reg+disp'
+					disp_size: 8 or 32
+					value1: 0 - 7 				// register
+					value2: const signed number // displacement
+					
+		'imm'
+			size: 8, 16 or 32
+			value: const signed number

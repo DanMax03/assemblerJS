@@ -1,4 +1,5 @@
 'use strict';
+
 var lines = []; // {address, codes_str, codes_len, cmd_text, edited, err}
 var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
 var NOP = 0x90; // команда для вставки
@@ -110,15 +111,17 @@ function delete_tr(line)
 	var i = line + offset
 	var address = lines[i].address;
 	var len = lines[i].codes_len;
-
 	exe.splice(address - address0, len);
-	for(var j = 0; j > len; ++j) exe.push(NOP);
+	for(var j = 0; j < len; ++j) exe.push(NOP);
 	lines.splice(i, 1);
+console.log(len)
 	// сдвигаем адреса у той команды, что встала на удалённое место и у следующих
 	for(var j = i; j < lines.length; ++j){
 		lines[j].address -= len;
 		// при этом может измениться код команды
+console.log(asm(lines[j].address, lines[j].cmd_text));
 		lines[j] = asm2line_format(asm(lines[j].address, lines[j].cmd_text));
+console.log(j, lines[j])
 	}
 	// отображаем
 	fill_table();

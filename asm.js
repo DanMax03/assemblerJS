@@ -782,6 +782,67 @@ function asm(address, cmd_text) //
 		break;
 		
 		case 'neg':
+			if (cmd_shapes.length > 2)
+				return {err: "У команды 'neg' лишь один операнд", codes: []};
+			
+			var op = get_operand(cmd_shapes[1]);
+			
+			if (op.type == 'err')
+				return {err: op.value, codes: []};
+			else if (op.type == 'imm')
+				return {err: "Операндом 'neg' не может быть константа", codes: []};
+			
+			var native_codeB = '1111011';
+			
+			if (op.type == 'reg') {
+				if (op.size == 8)
+					native_codeB += '0';
+				else
+					native_codeB += '1';
+				
+				return {address: address, 
+						err: '', 
+						codes: codes_str_TO_codes(to_hex(native_codeB + '11011' + int_to_sB(op.value, 4).substring(1))),
+						cmd_text: cmd_text};
+			} else {
+				if (typeof op.size == 'string')
+					return {err: "У операнда неопределенный размер", codes: []};
+				
+				if (op.size == 8)
+					native_codeB += '0';
+				else
+					native_codeB += '1';
+				
+				switch (op.adrr) 
+				{
+					case 'reg':
+						if (op.value != 5)
+							return {address: address, 
+									err: '', 
+									codes: codes_str_TO_codes(to_hex(native_codeB + '00011' + int_to_sB(op.value, 4).substring(1))),
+									cmd_text: cmd_text};
+									
+						return {address: address, 
+								err: '', 
+								codes: codes_str_TO_codes(to_hex(native_codeB + '01011101' + '00000000')),
+								cmd_text: cmd_text};
+					break;
+					
+					case 'disponly':
+						return {address: address, 
+								err: '', 
+								codes: codes_str_TO_codes(to_hex(native_codeB + '00011101') + ' ' + to_reverse_hex(int_to_sB(op.value, 32))),
+								cmd_text: cmd_text};
+					break;
+					
+					case 'reg+disp':
+						return {address: address, 
+								err: '', 
+								codes: codes_str_TO_codes(to_hex(native_codeB + (op.disp_size == 8 ? '01' : '10') + '011' + int_to_sB(op.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op.value2, op.disp_size))),
+								cmd_text: cmd_text};
+					break;
+				}
+			}
 		break;
 		
 		case 'mov':

@@ -114,14 +114,11 @@ function delete_tr(line)
 	exe.splice(address - address0, len);
 	for(var j = 0; j < len; ++j) exe.push(NOP);
 	lines.splice(i, 1);
-console.log(len)
 	// сдвигаем адреса у той команды, что встала на удалённое место и у следующих
 	for(var j = i; j < lines.length; ++j){
 		lines[j].address -= len;
 		// при этом может измениться код команды
-console.log(asm(lines[j].address, lines[j].cmd_text));
 		lines[j] = asm2line_format(asm(lines[j].address, lines[j].cmd_text));
-console.log(j, lines[j])
 	}
 	// отображаем
 	fill_table();

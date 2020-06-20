@@ -189,15 +189,17 @@ function codes_TO_codes_str(codes)
 		map[asm] = {codes: codes, codes_str: map[asm]};
 		// выворачиваем наизнанку (map_d = map^(-1))
 		var el = map_1;
-		for(var i in codes){
-			if(el[codes[i]] == undefined)
-				if(i == codes.length - 1)
+		
+		for (var i in codes) {
+			if (el[codes[i]] == undefined)
+				if (i == codes.length - 1)
 					el[codes[i]] = asm;
 				else
 					el[codes[i]] = {};
 			else
-				if(typeof el[codes[i]] == 'string')
+				if (typeof el[codes[i]] == 'string')
 					console.log('Ошибка обработки map[' + asm + ']');
+				
 			el = el[codes[i]];
 		}		
 	}
@@ -209,6 +211,16 @@ err = '' - нет ошибки
 
 cmd_explode возвращает массив слов - команду и операнды (если они есть)
 */
+
+for (var reg in registers) {
+	for (var reg2 in registers) {
+		if (reg != reg2) {
+			var cd = asm(40100, 'add ' + reg + ', ' + reg2).codes;
+			//console.log(cd);
+			console.log("'add " + reg + ', ' + reg2 + "' : '" + codes_TO_codes_str(cd) + "',");
+		}
+	}
+}
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -445,8 +457,8 @@ function asm(address, cmd_text) //
 			if (op2.type == 'err')
 				return {err: op2.value, codes: []};
 			
-console.log(op1);
-console.log(op2);
+//console.log(op1);
+//console.log(op2);
 			
 			
 			var native_codeB = '000000';
@@ -481,7 +493,7 @@ console.log(op2);
 					switch (op2.type)
 					{
 						case 'reg':
-console.log(to_hex(native_codeB + '11' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1)));
+//console.log(to_hex(native_codeB + '11' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1)));
 
 							return {address: address, 
 									err: '', 
@@ -575,7 +587,7 @@ console.log(to_hex(native_codeB + '11' + int_to_sB(op2.value, 4).substring(1) + 
 												err: '', 
 												codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1))),
 												cmd_text: cmd_text};
-console.log(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1) + '00000000'));									
+//console.log(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1) + '00000000'));									
 									return {address: address, 
 											err: '', 
 											codes: codes_str_TO_codes(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value, 4).substring(1) + '00000000')),
@@ -583,7 +595,7 @@ console.log(to_hex(native_codeB + '01' + int_to_sB(op2.value, 4).substring(1) + 
 								break;
 								
 								case 'disponly':
-console.log(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op1.value, 32)));									
+//console.log(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op1.value, 32)));									
 									return {address: address, 
 											err: '', 
 											codes: codes_str_TO_codes(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + '101') + ' ' + to_reverse_hex(int_to_sB(op1.value, 32))),
@@ -591,7 +603,7 @@ console.log(to_hex(native_codeB + '00' + int_to_sB(op2.value, 4).substring(1) + 
 								break;
 								
 								case 'reg+disp':
-console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))));
+//console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))));
 									return {address: address,
 											err: '',
 											codes: codes_str_TO_codes(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB(op2.value, 4).substring(1) + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32)))),
@@ -626,14 +638,14 @@ console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + int_to_sB
 							{
 								case 'reg':
 									if (op1.value != 5) {
-console.log(to_hex(native_codeB + '00000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+//console.log(to_hex(native_codeB + '00000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
 										
 										return {address: address, 
 												err: '', 
 												codes: codes_str_TO_codes(to_hex(native_codeB + '00000' + int_to_sB(op1.value, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))),
 												cmd_text: cmd_text};
 									}
-console.log(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+//console.log(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
 									return {address: address, 
 											err: '', 
 											codes: codes_str_TO_codes(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))),
@@ -641,7 +653,7 @@ console.log(to_hex(native_codeB + '010000101' + '00000000') + ' ' + to_reverse_h
 								break;
 								
 								case 'disponly':
-console.log(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32)));									
+//console.log(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32)));									
 									return {address: address, 
 											err: '', 
 											codes: codes_str_TO_codes(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32))),
@@ -650,7 +662,7 @@ console.log(to_hex(native_codeB + '00000101') + ' ' + to_reverse_hex(int_to_sB(o
 								
 								case 'reg+disp':
 								
-console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + '000' + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
+//console.log(to_hex(native_codeB + (op1.disp_size == 8 ? '01' : '10') + '000' + int_to_sB(op1.value1, 4).substring(1)) + ' ' + to_reverse_hex(int_to_sB(op1.value2, (op1.disp_size == 8 ? 8 : 32))) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32))));
 								
 									return {address: address, 
 											err: '', 
@@ -720,9 +732,9 @@ function disasm(address)
 		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1};
 }
 
-/*
+
 // ТЕСТИРОВАНИЕ 
-var tests = [
+/*var tests = [
 	{asm: 'add al, 7', codes_str: '04 07'},
 	{asm: 'add edi, 7', codes_str: '83 c7 07'},
 	{asm: 'add al, ch', codes_str: '00 e8'},
@@ -748,6 +760,5 @@ var tests = [
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
-}
+}*/
 
-*/

@@ -212,6 +212,15 @@ $('form.get_exe').on('submit', function(key){
 	$('input#codes_str').val(exe.join(' '));
 });
 
+$('fieldset.test_exe input[type=submit]').on('click', function(key){
+	var fieldset = this.closest('fieldset');
+	var action = $(fieldset).attr('action');
+	var task_id = $('input#task_id').val();
+	$.post(action, {task_id: task_id, codes: exe}, function(result){
+		$('textarea#test_result').val(result);
+	});
+});
+
 $('a#copy_asm2textarea').on('click', function(key){
 	var res = [];
 	for(var i in lines)

@@ -47,6 +47,14 @@ $exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
 		<input type='submit' value='Получить *.exe файл'>
 	</form>
 	
+	<fieldset method='post' action='test_exe.php' class='test_exe'>
+		Номер задачи
+		<input type='text' id='task_id' value=''>
+		<input type='submit' value='Протестировать'>
+		<p>Результат:</p>
+		<textarea id='test_result'></textarea>
+	</fieldset>
+	
 	<script>
 		'use strict';
 		var n_lines = <?=$n_lines?>;

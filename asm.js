@@ -709,7 +709,8 @@ function asm(address, cmd_text) //
 		case 'cmp':
 		break;
 		
-		case 'inc' || 'dec':
+		case 'inc':
+		case 'dec':
 			if (cmd_shapes.length > 2)
 				return {err: "У команды '" + cmd_shapes[0] + "'лишь один операнд", codes: []};
 			
@@ -751,9 +752,15 @@ function asm(address, cmd_text) //
 				switch (op.adrr) 
 				{
 					case 'reg':
+						if (op.value != 5)
+							return {address: address, 
+									err: '', 
+									codes: codes_str_TO_codes(to_hex(native_codeB + '00000' + int_to_sB(op.value, 4).substring(1))),
+									cmd_text: cmd_text};
+									
 						return {address: address, 
 								err: '', 
-								codes: codes_str_TO_codes(to_hex(native_codeB + '00000' + int_to_sB(op.value, 4).substring(1))),
+								codes: codes_str_TO_codes(to_hex(native_codeB + '01000101' + '00000000')),
 								cmd_text: cmd_text};
 					break;
 					
@@ -818,23 +825,23 @@ function disasm(address)
 
 
 // ТЕСТИРОВАНИЕ 
-/*var tests = [
-	{asm: 'add al, 7', codes_str: '04 07'},
-	{asm: 'add edi, 7', codes_str: '83 c7 07'},
-	{asm: 'add al, ch', codes_str: '00 e8'},
-	{asm: 'add edi, ecx', codes_str: '01 cf'},
-	{asm: 'add [ebp], ch', codes_str: '00 6d 00'},
-	{asm: 'add [ebp], ecx', codes_str: '01 4d 00'},
-	{asm: 'add [edi+8], ch', codes_str: '00 6f 08'},
-	{asm: 'add [edi+8], ecx', codes_str: '01 4f 08'},
-	{asm: 'add al, [ebp]', codes_str: '02 45 00'},
-	{asm: 'add edi, [ebp]', codes_str: '03 7d 00'},
-	{asm: 'add al, [ebp + 8]', codes_str: '02 45 08'},
-	{asm: 'add edi, [ebp + 8]', codes_str: '03 7d 08'},
-	{asm: 'add al, -3', codes_str: '04 fd'},
-	{asm: 'add edi, -3', codes_str: '83 c7 fd'},
-	{asm: 'add [edi-3], ch', codes_str: '00 6f fd'},
-	{asm: 'add [edi-3], ecx', codes_str: '01 4f fd'},
+var tests = [
+	{asm: 'inc al', codes_str: 'fe c0'},
+	{asm: 'inc cl', codes_str: 'fe c1'},
+	{asm: 'inc dl', codes_str: 'fe c2'},
+	{asm: 'inc bl', codes_str: 'fe c3'},
+	{asm: 'inc ah', codes_str: 'fe c4'},
+	{asm: 'inc ch', codes_str: 'fe c5'},
+	{asm: 'inc dh', codes_str: 'fe c6'},
+	{asm: 'inc bh', codes_str: 'fe c7'},
+	{asm: 'inc eax', codes_str: '40'},
+	{asm: 'inc ecx', codes_str: '41'},
+	{asm: 'inc edx', codes_str: '42'},
+	{asm: 'inc ebx', codes_str: '43'},
+	{asm: 'inc byte [eax]', codes_str: 'fe 00'},
+	{asm: 'inc dword [ebp + 100]', codes_str: 'ff 45 64'},
+	{asm: 'inc dword [ebp + 555h]', codes_str: 'ff 85 55 05 00 00'},
+	{asm: 'inc ebp', codes_str: '45'},
 	{asm: 'add al, [ebp-3]', codes_str: '02 45 fd'},
 	{asm: 'add edi, [ebp-3]', codes_str: '03 7d fd'},
 	{asm: 'add eax, [ebp+edx]', codes_str: '03 44 15 00'},
@@ -844,5 +851,5 @@ function disasm(address)
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
-}*/
+}
 

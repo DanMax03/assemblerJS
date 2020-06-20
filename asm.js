@@ -212,7 +212,10 @@ err = '' - нет ошибки
 cmd_explode возвращает массив слов - команду и операнды (если они есть)
 */
 
-for (var reg in registers) {
+
+// MAP GENERATOR
+
+/*for (var reg in registers) {
 	for (var reg2 in registers) {
 		if (reg != reg2) {
 			var cd = asm(40100, 'add ' + reg + ', ' + reg2).codes;
@@ -220,7 +223,7 @@ for (var reg in registers) {
 			console.log("'add " + reg + ', ' + reg2 + "' : '" + codes_TO_codes_str(cd) + "',");
 		}
 	}
-}
+}*/
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -436,6 +439,28 @@ function asm(address, cmd_text) //
 					err: '', 
 					codes: [0x90], 
 					cmd_text: cmd_text};
+		break;
+		
+		case 'db':
+			if (cmd_shapes.length > 2)
+				return {err: "У команды 'db' лишь один операнд", codes: []};
+			
+			var op = get_operand(cmd_shapes[1]);
+			
+			console.log(op);
+			
+			if (op.type == 'err')
+				return {err: op.value, codes: []};
+			else if (op.type == 'imm')
+				if (op.value > 255) // op.size - сколько байт надо, для ЗНАКОВОЙ записи
+					return {err: "Операнд 'db' может быть размером только 1 байт", codes: []};
+				else
+					return {address: address,
+							err: '',
+							codes: [codes_str_TO_codes(hex(op.value))],
+							cmd_text: cmd_text};
+			else 
+				return {err: "Операндом 'db' может быть только константа", codes: []};
 		break;
 		
 		case 'add':

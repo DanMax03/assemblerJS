@@ -1,6 +1,51 @@
 'use strict';
 
-var map = {
+var add_map = {
+	'add eax, ecx' : '01 c8',
+	'add eax, edx' : '01 d0',
+	'add eax, ebx' : '01 d8',
+	'add eax, ebp' : '01 e8',
+	'add eax, esi' : '01 f0',
+	'add eax, edi' : '01 f8',
+	'add ecx, eax' : '01 c1',
+	'add ecx, edx' : '01 d1',
+	'add ecx, ebx' : '01 d9',
+	'add ecx, ebp' : '01 e9',
+	'add ecx, esi' : '01 f1',
+	'add ecx, edi' : '01 f9',
+	'add edx, eax' : '01 c2',
+	'add edx, ecx' : '01 ca',
+	'add edx, ebx' : '01 da',
+	'add edx, ebp' : '01 ea',
+	'add edx, esi' : '01 f2',
+	'add edx, edi' : '01 fa',
+	'add ebx, eax' : '01 c3',
+	'add ebx, ecx' : '01 cb',
+	'add ebx, edx' : '01 d3',
+	'add ebx, ebp' : '01 eb',
+	'add ebx, esi' : '01 f3',
+	'add ebx, edi' : '01 fb',
+	'add ebp, eax' : '01 c5',
+	'add ebp, ecx' : '01 cd',
+	'add ebp, edx' : '01 d5',
+	'add ebp, ebx' : '01 dd',
+	'add ebp, esi' : '01 f5',
+	'add ebp, edi' : '01 fd',
+	'add esi, eax' : '01 c6',
+	'add esi, ecx' : '01 ce',
+	'add esi, edx' : '01 d6',
+	'add esi, ebx' : '01 de',
+	'add esi, ebp' : '01 ee',
+	'add esi, edi' : '01 fe',
+	'add edi, eax' : '01 c7',
+	'add edi, ecx' : '01 cf',
+	'add edi, edx' : '01 d7',
+	'add edi, ebx' : '01 df',
+	'add edi, ebp' : '01 ef',
+	'add edi, esi' : '01 f7',
+}
+
+var map = Object.assign({}, {
 	'nop': '90',
 	'inc al': 'fe c0',
 	'inc cl': 'fe c1',
@@ -55,4 +100,4 @@ var map = {
 	'neg ebp': 'f7 dd',
 	'neg esi': 'f7 de',
 	'neg edi': 'f7 df',
-}
+}, add_map)

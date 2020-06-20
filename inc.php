@@ -1,8 +1,8 @@
 <?php
 define('PAGE', 0x100); // должно совпадать с размером сегмента кода
 define('EXE_CS_OFFSET', 0x400); // должно совпадать с размером сегмента кода
-define('TASK_EXE_FULL_PATH', '../../asm_data/task.exe');
-define('JOBE_EXE_URL', 'http://jobe_exe/');
+define('TASK_EXE_FULL_PATH', './task.exe');
+define('JOBE_EXE_URL', 'http://192.168.112.129/');
 
 function string_force_download($s, $file_name) {
 	// заставляем браузер показать окно сохранения файла

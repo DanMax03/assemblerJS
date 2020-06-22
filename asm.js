@@ -911,10 +911,9 @@ var tests = [
 	{asm: 'neg dword [esi-edx];', codes_str: 'Не должно компилироваться'},
 	{asm: 'neg dword [esi+ecx]', codes_str: 'f7 1c 0e'},
 ];
-	
+/*	
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
-
-
+*/

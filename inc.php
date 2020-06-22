@@ -1,5 +1,5 @@
 <?php
-include 'inc.php';
+include 'conf.php';
 
 function string_force_download($s, $file_name) {
 	// заставляем браузер показать окно сохранения файла

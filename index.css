@@ -1,5 +1,6 @@
+div.segment{float: left;}
 table#main_table, td.asm input[type=text]{font-family: monospace;}
-td.asm input[type=text]{width: 300px; border: 0; outline:none;}
+td.asm input[type=text]{width: 200px; border: 0; outline:none;}
 table#main_table{border-collapse: collapse;}
 table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}

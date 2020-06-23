@@ -1,6 +1,6 @@
 'use strict';
 
-var lines = []; // {address, codes_str, codes_len, cmd_text, edited, err}
+var lines = []; // {address, codes_str, codes_len, cmd_text, edited, err, codes_cmd}
 var offset = 0; // Строка программы, показывающаяся в первой строке на экране. Не менять!
 var NOP = 0x90; // команда для вставки
 
@@ -16,14 +16,27 @@ function codes_TO_codes_str(codes)
 	return codes_str.join(' ');
 }
 
+// {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text, edited, err}
+function asm2line_format(a)
+{
+	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false, err: ''};
+}
+
+// {address, codes_str, codes_len, cmd_text} -> {address, codes_str, codes_len, cmd_text, edited, err, cmd_text}
+function disasm2line_format(da)
+{
+	da.codes_cmd = da.cmd_text;
+	da.edited = false;
+	da.err = '';
+	return da;
+}
+
 function fill_line(i)
 {
 	i = 1*i;
 	if(i > 0 && lines[i - 1] == undefined){ console.log('Почему-то предыдущей строки не существует'); return; }
 	var address = i ? lines[i - 1].address + lines[i - 1].codes_len : address0;
-	var res = disasm(address); // {address, codes_str, codes_len, cmd_text}
-	res.edited = false;
-	res.err = '';
+	var res = disasm2line_format(disasm(address));
 	if(i == lines.length)
 		lines.push(res);
 	else if(i < lines.length){
@@ -43,7 +56,6 @@ function fill_tr(line)
 	var i = line + offset;
 	if(lines[i] == undefined)
 		fill_line(i)
-
 	var tr = $('tr[line=' + line + ']');
 	tr.removeClass('edited');
 	$('td.address', tr).text(hex(lines[i].address, 4));
@@ -94,15 +106,12 @@ function asmLine(arg) // {line, real because of Enter}
 			lines[i].err = res.err;
 		}
 	}else{
-		if(res.err != '' || $('td.codes', tr).text() != codes_str)
+		if(res.err != '' || $('td.codes', tr).text() != codes_str){
 			tr.addClass('edited');
+			lines[i].edited = true;
+		}
 	}
-}
-
-// {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text}
-function asm2line_format(a)
-{
-	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false, err: ''};
+	lines[i].cmd_text = cmd_text;
 }
 
 function delete_tr(line)
@@ -118,14 +127,14 @@ function delete_tr(line)
 	for(var j = i; j < lines.length; ++j){
 		lines[j].address -= len;
 		// при этом может измениться код команды
-		lines[j] = asm2line_format(asm(lines[j].address, lines[j].cmd_text));
+		var res = asm(lines[j].address, lines[j].codes_cmd);
+		lines[j].codes_str = codes_TO_codes_str(res.codes);
+		if(lines[j].codes_cmd != res.cmd_text)
+			console.log('Текст команды не должен был измениться.');
 	}
 	// отображаем
 	fill_table();
 }
-
-
-
 
 function insert_tr(line)
 {
@@ -135,31 +144,18 @@ function insert_tr(line)
 
 	exe.splice(address - address0, 0, NOP);
 	exe.splice(PAGE, 1); 
-	lines.splice(i, 0, disasm(address)); // это надо делать здесь, чтобы обойти защиту от изменения длины команды
+	lines.splice(i, 0, disasm2line_format(disasm(address))); // это надо делать здесь, чтобы обойти защиту от изменения длины команды
 	// сдвигаем адреса у следующих команд
 	for(var j = i + 1; j < lines.length; ++j){
 		lines[j].address++;
 		// при этом может измениться код команды
-		lines[j] = asm2line_format(asm(lines[j].address, lines[j].cmd_text));
+		var res = asm(lines[j].address, lines[j].codes_cmd);
+		lines[j].codes_str = codes_TO_codes_str(res.codes);
+		if(lines[j].codes_cmd != res.cmd_text)
+			console.log('Текст команды не должен был измениться.');
 	}
 	// отображаем
 	fill_table();
-}
-
-function scrollUp()
-{
-	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + PAGE) return;
-	offset++;
-	for(var line = 0; line < n_lines; ++line)
-		fill_tr(line);
-}
-
-function scrollDown()
-{
-	if(offset == 0) return;
-	offset--;
-	for(var line = 0; line < n_lines; ++line)
-		fill_tr(line);
 }
 
 function scrollPageUp()
@@ -239,27 +235,56 @@ $('a#copy_textarea2asm').on('click', function(key){
 	return false;
 });
 
+function scrollUp()
+{
+	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + PAGE) return;
+	offset++;
+	for(var line = 0; line < n_lines; ++line)
+		fill_tr(line);
+}
+
+function scrollDown()
+{
+	if(offset == 0) return;
+	offset--;
+	for(var line = 0; line < n_lines; ++line)
+		fill_tr(line);
+}
+
+function ArrowUp(line)
+{
+	if(line > 0)
+		$('tr[line=' + (line - 1) + '] td.asm input').focus();
+	else
+		scrollDown();
+}
+
+function ArrowDown(line)
+{
+	if(line + 1 < n_lines)
+		$('tr[line=' + (line + 1) + '] td.asm input').focus();
+	else
+		scrollUp();
+}
+
 fill_table();
 
 $('td.asm input').on('keydown', function(key){
 	var line = 1*this.closest('tr').getAttribute('line');
-	if(key.code == 'ArrowUp'){
+	if(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Insert'].indexOf(key.code) != -1)
 		asmLine({line: line, real: false});
-		if(line > 0)
-			$('tr[line=' + (line - 1) + '] td.asm input').focus();
-		else
-			scrollDown();
+	
+	if(key.code == 'ArrowUp'){
+		ArrowUp(line);
 	}
 	else
-	if(key.code == 'ArrowDown' || key.code == 'Enter'){
-		if(key.code == 'Enter')
-			asmLine({line: line, real: true});
-		else
-			asmLine({line: line, real: false});
-		if(line + 1 < n_lines)
-			$('tr[line=' + (line + 1) + '] td.asm input').focus();
-		else
-			scrollUp();
+	if(key.code == 'ArrowDown'){
+		ArrowDown(line)
+	}
+	else
+	if(key.code == 'Enter'){
+		asmLine({line: line, real: true});
+		ArrowDown(line)
 	}
 	else
 	if(key.code == 'PageUp'){
@@ -271,6 +296,7 @@ $('td.asm input').on('keydown', function(key){
 	}
 	else
 	if(key.code == 'Escape'){
+		lines[line + offset] = disasm2line_format(disasm(lines[line + offset].address));
 		fill_tr(line);
 	}
 	else

@@ -1,3 +1,27 @@
+<?php
+	include 'inc.php';
+	$n_lines = min(20, PAGE);
+
+	$exe_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_CS_OFFSET, PAGE);
+	$exe = array();
+	for($i = 0; $i < strlen($exe_str); ++$i)
+		$exe[] = ord($exe_str[$i]);
+
+	// пример
+	//$exe = array(); for($i = 0; $i < PAGE; ++$i) $exe[] = 0x90; 
+	/*
+	$exe[0] = 0xfe; $exe[1] = 0xc7;	// inc bh
+	$exe[2] = 0x90;	// nop
+	$exe[3] = 0x40; // inc eax
+	$exe[4] = 0xfe; $exe[5] = 0xc8; // dec al
+	$exe[6] = 0x49; // dec ecx
+	$exe[7] = 0xfe; $exe[8] = 0x0e; // dec [esi]
+	$exe[9] = 0xf6; $exe[10] = 0xdf; // neg bh
+	$exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
+	//$exe[13] = 0xfe; $exe[14] = 0x48; $exe[15] = 0x34; // dec [eax+34h]
+	*/
+
+?>
 <!doctype html>
 <html>
 <head>
@@ -7,53 +31,41 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
+	<div class='segment'>
 <?php
-include 'inc.php';
-$n_lines = min(20, PAGE);
-echo "<table id='main_table'>\n";
+echo "\t\t<table id='main_table'>\n";
 for($i = 0; $i < $n_lines; ++$i)
-	echo "\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
-echo "</table>\n";
-
-
-$exe_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_CS_OFFSET, PAGE);
-$exe = array();
-for($i = 0; $i < strlen($exe_str); ++$i)
-	$exe[] = ord($exe_str[$i]);
-
-// пример
-//$exe = array(); for($i = 0; $i < PAGE; ++$i) $exe[] = 0x90; 
-/*
-$exe[0] = 0xfe; $exe[1] = 0xc7;	// inc bh
-$exe[2] = 0x90;	// nop
-$exe[3] = 0x40; // inc eax
-$exe[4] = 0xfe; $exe[5] = 0xc8; // dec al
-$exe[6] = 0x49; // dec ecx
-$exe[7] = 0xfe; $exe[8] = 0x0e; // dec [esi]
-$exe[9] = 0xf6; $exe[10] = 0xdf; // neg bh
-$exe[11] = 0xf7; $exe[12] = 0xd8; // neg eax
-//$exe[13] = 0xfe; $exe[14] = 0x48; $exe[15] = 0x34; // dec [eax+34h]
-*/
-
+	echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
+echo "\t\t</table>\n";
 ?>
-	<textarea id='asm_text'></textarea>
-	<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
-	<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
+		<textarea id='asm_text'></textarea>
+		<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
+		<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
+	</div>
+
+	<div class='segment'>
+		<textarea cols=75 rows=33></textarea>
+		<div id='tweakTheCode_editable' contenteditable>Этот <span style="color: red;">текст красный</span>, этот <span style="color: green;">текст зелёный</span>, а этот <span style="color: blue;">уже синий</span>.</div>  
+<div id='tweakTheCode_not_editable'>this text is not editable</div>
+	</div>
 	
-	<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
 	
-	<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
-		<input type='text' name='codes_str' id='codes_str' value=''>
-		<input type='submit' value='Получить *.exe файл'>
-	</form>
-	
-	<fieldset method='post' action='test_exe.php' class='test_exe'>
-		Номер задачи
-		<input type='text' id='task_id' value=''>
-		<input type='submit' value='Протестировать'>
-		<p>Результат:</p>
-		<textarea id='test_result'></textarea>
-	</fieldset>
+	<div class='segment'>
+		<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
+		
+		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
+			<input type='text' name='codes_str' id='codes_str' value=''>
+			<input type='submit' value='Получить *.exe файл'>
+		</form>
+		
+		<fieldset method='post' action='test_exe.php' class='test_exe'>
+			Номер задачи
+			<input type='text' id='task_id' value=''>
+			<input type='submit' value='Протестировать'>
+			<p>Результат:</p>
+			<textarea id='test_result'></textarea>
+		</fieldset>
+	</div>
 	
 	<script>
 		'use strict';

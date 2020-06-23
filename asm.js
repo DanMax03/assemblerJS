@@ -705,12 +705,155 @@ function asm(address, cmd_text)
 		break;
 		
 		case 'mov':
+			if (cmd_shapes.length != 3)
+				return make_ans("У команды 'add' 2 операнда");
+			
+			var op1 = get_operand(cmd_shapes[1]);
+			var op2 = get_operand(cmd_shapes[2]);
+			
+			
+			if (op1.type == 'err')
+				return make_ans(op1.value);
+			else if (op1.type == 'imm')
+				return make_ans("Первым операндом команды 'mov' не может быть константа");
+			
+			if (op2.type == 'err')
+				return make_ans(op2.value);
+			
+			var native_codeB = '';
+			
+			switch (op1.type + ' ' + op2.type)
+			{
+				case 'reg reg':
+					if (op1.size != op2.size)
+						return make_ans("Операнды команды 'mov' разных размеров");
+					
+					native_codeB = '1000100' + (op1.size == 8 ? '0' : '1');
+					
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + '11' + op2.r_m + op1.r_m)));
+				break;
+				
+				case 'reg mem':
+				case 'mem reg':
+					if (op1.type == 'mem') {
+						op2 = [op1, op1 = op2][0]; // swap op1 and op2,
+						native_codeB = '0'; // and setting direction bit
+					} else {
+						native_codeB = '1';
+					}
+				
+					op2.size = (typeof op2.size == 'string' ? op1.size : op2.size);
+					
+					if (op2.size == 16)
+						return make_ans("Неверный размер операнда памяти");
+					
+				
+					if (op1.size != op2.size)
+						return make_ans("Операнды команды 'mov' разных размеров");
+					
+					
+					if (op1.r_m == '000' && op2.adrr == 'disponly') { // working without prefixes, so 32 is dsize
+						native_codeB = '101000' + native_codeB + (op1.size == 8 ? '0' : '1');
+						
+						return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op2.dval, 32))));
+					}
+					
+					
+					native_codeB = '100010' + native_codeB + (op1.size == 8 ? '0' : '1');
+					
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + (op2.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op2.dval, op2.dsize))) : '')));
+				break;
+				
+				case 'reg imm':
+					if (op1.size < op2.size)
+						return make_ans("Операнды команды 'mov' разных размеров");
+					
+					native_codeB = '1011' + (op1.size == 8 ? '0' : '1') + op1.r_m;
+//console.log(op1);
+//console.log(op2);
+//console.log(native_codeB);
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op2.value, op1.size))));
+				break;
+				
+				case 'mem imm':
+					op1.size = (typeof op1.size == 'string' ? op2.size : op1.size);
+					
+					if (op1.size == 16)
+						return make_ans("Неверный размер операнда памяти");
+					
+					if (op1.size < op2.size)
+						return make_ans("Операнды команды 'mov' разных размеров");
+					
+					native_codeB = '1100011' + (op1.size == 8 ? '0' : '1');
+					
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + (op1.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op1.dval, op1.dsize))) : '') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op1.size > 16 ? 32 : op1.size)))));
+				break;
+			}
 		break;
 		
-		case 'call':
+		/*
+		Если вместо имени процедуры используется адрес, то он может быть записан в формате СЕГМЕНТ:СМЕЩЕНИЕ. 
+		Если в качестве адреса указать только смещение, то считается, что адрес расположен в том же сегменте, 
+		что и команда CALL (при этом выполняется ближний вызов процедуры).
+		
+		near - когда дано только смещение для call
+		example - call 0x1
+		far - когда дан весь адрес
+		*/
+		
+		
+		case 'call': // только NEAR переходы
+			
+			if (cmd_shapes.length > 2)
+				return make_ans("У команды 'call' лишь один операнд");
+			
+			var op = get_operand(cmd_shapes[1]);
+			var native_codeB = '';
+			
+			if (op.type == 'err')
+				return make_ans(op.value);
+			
+			switch (op.type)
+			{
+				case 'imm':
+					if (op.value == 0)
+						return make_ans("Команда call не работает с 0");
+				
+					native_codeB = '11101000';
+//console.log(op);
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op.value, (op.size > 16 || op.value < 0) ? 32 : 16))));
+				break;
+				
+				case 'reg':
+				case 'mem':
+					if (op.type == 'mem' && typeof op.size == 'string')
+						return make_ans("Неверный операнд");
+				
+					native_codeB = '11111111';
+					
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '010' + op.r_m) + (op.adrr && op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
+				break;
+			}
 		break;
 		
-		case 'ret':
+		case 'retn':
+			
+			if (cmd_shapes.length > 2)
+				return make_ans("У команды 'ret' может быть лишь один операнд");
+			
+			if (cmd_shapes.length == 2) {
+				var op = get_operand(cmd_shapes[1]);
+				var native_codeB = '11000010';
+				
+				if (op.type == 'err')
+					return make_ans(op.value);
+				else if (op.type != 'imm' || (op.type == 'mem' && typeof op.size == 'string') || op.size > 16)
+					return make_ans("Неверный операнд");
+				
+				return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op.value, 16))));
+			} else {
+				return make_ans([0xc3]);
+			}
 		break;
 	}
 	
@@ -829,8 +972,28 @@ var tests = [
 	{asm: 'neg dword [esi+edx]', codes_str: 'f7 1c 16'},
 	{asm: 'neg dword [esi-edx];', codes_str: 'Не должно компилироваться'},
 	{asm: 'neg dword [esi+ecx]', codes_str: 'f7 1c 0e'},
+	
+	{asm: 'mov al, [eax + 1h]', codes_str: '8a 40 01'},
+	{asm: 'mov [eax + 1h], al', codes_str: '88 40 01'},
+	{asm: 'mov al, 1', codes_str: 'b0 01'},
+	{asm: 'mov ah, -30', codes_str: 'b4 e2'},
+	{asm: 'mov eax, 1157h', codes_str: 'b8 57 11 00 00'},
+	{asm: 'mov eax, [eax]', codes_str: '8b 00'},
+	{asm: 'mov ecx, [ebp]', codes_str: '8b 4d 00'},
+	{asm: 'mov [ebx + abcdh], 44fedch', codes_str: 'c7 83 cd ab 00 00 dc fe 44 00'},
+	{asm: 'mov eax, ecx', codes_str: '89 c8'},
+	{asm: 'mov [ecx], 10', codes_str: 'c6 01 0a'},
+	
+	{asm: 'call byte [eax + 1]', codes_str: "ff 50 01"},
+	{asm: 'call 1', codes_str: 'e8 01 00'},
+	{asm: 'call -1', codes_str: 'e8 ff ff ff ff'},
+	{asm: 'call 8FFAh', codes_str: 'e8 fa 8f 00 00'},
+	{asm: 'retn', codes_str: 'c3'},
+	{asm: 'retn 0', codes_str: 'c2 00 00'},
+	{asm: 'retn 1', codes_str: 'c2 01 00'},
+	{asm: 'retn 2', codes_str: 'c2 02 00'},
 ];
-/*	
+/*
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));

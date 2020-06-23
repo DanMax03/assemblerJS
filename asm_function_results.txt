@@ -18,19 +18,18 @@ function get_command:
 		
 			adrr: 'reg', 'disponly' or 'reg+disp'
 				'reg'
-					value: 0 - 7
 					mod: '00'
 					r_m: '000' - '111' \ '101' // код регистра
 					
 				'disponly'
-					size: 32
-					value: const signed number
+					dsize: 32
+					dval: const signed number
 					mod: '00'
 					r_m: '101' // 32-bit Displacement mode
 					
 				'reg+disp'
-					disp_size: 8 or 32
-					dispval: const signed number // displacement
+					dsize: 8 or 32
+					dval: const signed number // displacement
 					mod: '01' or '10' // зависит от размера смещениЯ
 					r_m: '000' - '111' // код регистра
 					

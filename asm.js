@@ -321,7 +321,7 @@ function get_operand(opd_text) // reg, mem or imm
 			if (typeof disp == "string")
 				return {type: 'err', value: disp};
 			
-			return {type: 'mem', size: siz, adrr: 'disponly', value: (sgn && sgn == '-' ? -disp : disp), mod: '00', r_m: '101'};
+			return {type: 'mem', size: siz, adrr: 'disponly', dsize: 32, dval: (sgn && sgn == '-' ? -disp : disp), mod: '00', r_m: '101'};
 			
 		} else {
 			rg = rg[0]; // make rg just string
@@ -329,7 +329,7 @@ function get_operand(opd_text) // reg, mem or imm
 			// dated    return {type: 'mem', size: siz, adrr: 'reg', value: registers[rg], mod: '00', r_m: registersB[rg]};
 			if (addr.length == 3)
 				if (rg == 'ebp')
-					return {type: 'mem', size: siz, adrr: 'reg+disp', disp_size: 8, dispval: 0, mod: '01', r_m: '101'}; // [ebp] == [ebp+00h]
+					return {type: 'mem', size: siz, adrr: 'reg+disp', dsize: 8, dval: 0, mod: '01', r_m: '101'}; // [ebp] == [ebp+00h]
 				else
 					return {type: 'mem', size: siz, adrr: 'reg', mod: '00', r_m: registersB[rg]};
 			
@@ -348,8 +348,7 @@ function get_operand(opd_text) // reg, mem or imm
 				if (typeof disp == "string") 
 					return {type: 'err', value: disp}
 				
-				// disp_size сохранен для использования в функции int_to_sB	
-				return {type: 'mem', size: siz, adrr: 'reg+disp', disp_size: (disp < 128 ? 8 : 32), dispval: (sgn[0] == '+' ? disp : -disp), mod: (disp < 128 ? '01' : '10'), r_m: registersB[rg]};
+				return {type: 'mem', size: siz, adrr: 'reg+disp', dsize: (disp < 128 ? 8 : 32), dval: (sgn[0] == '+' ? disp : -disp), mod: (disp < 128 ? '01' : '10'), r_m: registersB[rg]};
 				
 			} else {
 				return {type: 'err', value: 'Неверный адрес'};
@@ -388,6 +387,8 @@ function get_operand(opd_text) // reg, mem or imm
 		}
 	}
 }
+
+
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // {err, codes_str, codes, cmd_text}
@@ -509,20 +510,7 @@ function asm(address, cmd_text)
 						case 'mem': 
 							native_codeB = native_codeB.substring(0, 6) + '1' + native_codeB.substring(7); //native_codeB[6] = '1'; - changing direction bit
 
-
-							switch (op2.adrr) {
-								case 'reg': // [reg]  in R/M
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m)));
-								break;
-								
-								case 'disponly':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + ' ' + to_reverse_hex(int_to_sB(op2.value, 32))));
-								break;
-								
-								case 'reg+disp':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + ' ' + to_reverse_hex(int_to_sB(op2.dispval, op2.disp_size))));
-								break;
-							}
+							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + (op2.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op2.dval, op2.dsize))) : '')));
 						break;
 						
 						case 'imm': // REG == 000, opcode = 100000sw, s == 0 => size as 1st oper, else - size 8 bit. w == 0 - opers are 1 byte
@@ -531,11 +519,7 @@ function asm(address, cmd_text)
 							
 							native_codeB = '100000';
 							
-							
-							if (op1.size > op2.size && op2.size == 8)
-								native_codeB += '1';
-							else 
-								native_codeB += '0';
+							native_codeB += (op1.size > op2.size && op2.size == 8 ? '1' : '0');
 							
 							native_codeB += (op1.size == 8 ? '0' : '1');
 
@@ -561,20 +545,7 @@ function asm(address, cmd_text)
 								
 							native_codeB += '0' + (op1.size == 8 ? '0' : '1');
 							
-							switch (op1.adrr)
-							{
-								case 'reg':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + op2.r_m + op1.r_m)));
-								break;
-								
-								case 'disponly':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + op2.r_m + op1.r_m) + ' ' + to_reverse_hex(int_to_sB(op1.value, 32))));
-								break;
-								
-								case 'reg+disp':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + op2.r_m + op1.r_m) + ' ' + to_reverse_hex(int_to_sB(op1.dispval, op1.disp_size))));
-								break;
-							}
+							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + op2.r_m + op1.r_m) + (op1.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op1.dval, op1.dsize))) : '')));
 						break;
 						
 						case 'imm': // REG == 000, opcode = 100000sw, s == 0 => size as 1st oper, else - size 8 bit. w == 0 - opers are 1 byte
@@ -600,20 +571,7 @@ function asm(address, cmd_text)
 							
 							native_codeB += (op1.size == 8 ? '0' : '1');
 							
-							switch (op1.adrr)
-							{
-								case 'reg': 
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))));
-								break;
-								
-								case 'disponly':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + ' ' + to_reverse_hex(int_to_sB(op2.size == 8 ? 8 : 32))));
-								break;
-								
-								case 'reg+disp':
-									return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + ' ' + to_reverse_hex(int_to_sB(op1.dispval, op1.disp_size)) + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))));
-								break;
-							}
+							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + (op1.adrr != 'reg' ? (' ' + int_to_sB(op1.dval, op1.dsize)) : '') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op2.size == 8 ? 8 : 32)))));
 						break;
 					}
 				break;
@@ -660,20 +618,7 @@ function asm(address, cmd_text)
 				else
 					native_codeB = '11111111';
 				
-				switch (op.adrr) 
-				{
-					case 'reg':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m)));
-					break;
-					
-					case 'disponly':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.value, 32))));
-					break;
-					
-					case 'reg+disp':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.dispval, op.disp_size))));
-					break;
-				}
+				return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 			}
 		break;		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -708,20 +653,7 @@ function asm(address, cmd_text)
 				else
 					native_codeB += '1';
 				
-				switch (op.adrr) 
-				{
-					case 'reg':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m)));
-					break;
-					
-					case 'disponly':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.value, 32))));
-					break;
-					
-					case 'reg+disp':
-						return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.dispval, op.disp_size))));
-					break;
-				}
+				return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m) + (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 			}
 		break;		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
@@ -756,20 +688,7 @@ function asm(address, cmd_text)
 					native_codeB = (cmd_shapes[0] == 'push' ? '11111111' : '01111111');
 					var reg_value = (cmd_shapes[0] == 'push' ? '110' : '000');
 					
-					switch (op.adrr) 
-					{
-						case 'reg':
-							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m)));
-						break;
-						
-						case 'disponly':
-							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.value, 32))));
-						break;
-						
-						case 'reg+disp':
-							return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + ' ' + to_reverse_hex(int_to_sB(op.dispval, op.disp_size))));
-						break;
-					}
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 				break;
 				
 				case 'imm':

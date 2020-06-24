@@ -1,4 +1,5 @@
 div.segment{float: left;}
+div.data.segment textarea{resize: none;}
 table#main_table, td.asm input[type=text]{font-family: monospace;}
 td.asm input[type=text]{width: 200px; border: 0; outline:none;}
 table#main_table{border-collapse: collapse;}
@@ -7,3 +8,4 @@ table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
 form.get_exe input[type="text"]{display: none;}
+textarea.noframe{border: none;}

@@ -15,3 +15,12 @@ function string_force_download($s, $file_name) {
 	echo $s;
 	exit;
 }
+
+function hex($n, $len)
+{
+	$len *= 2;
+	$n = dechex($n);
+	while(strlen($n) < $len)
+		$n = '0' . $n;
+	return $n;
+}

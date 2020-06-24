@@ -56,32 +56,34 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<div class='segment'><fieldset>
-		<legend>Сегмент кода</legend>
-<?php
-echo "\t\t<table id='main_table'>\n";
-for($i = 0; $i < $n_lines; ++$i)
-	echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
-echo "\t\t</table>\n";
-?>
-		<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
-		<textarea id='asm_text'></textarea>
-		<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
-		<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
-	</fieldset></div>
+	<div class='segment'>
+		<div class='segment'><fieldset>
+			<legend>Сегмент кода</legend>
+	<?php
+	echo "\t\t<table id='main_table'>\n";
+	for($i = 0; $i < $n_lines; ++$i)
+		echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
+	echo "\t\t</table>\n";
+	?>
+			<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
+			<textarea id='asm_text'></textarea>
+			<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
+			<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
+		</fieldset></div>
 
-	<div class='data segment'><fieldset>
-		<legend>Сегмент данных</legend>
-		<textarea cols=7 rows=1 readonly class='noframe'></textarea>
-		<textarea cols=47 rows=1 readonly class='noframe'>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
-		<textarea cols=15 rows=1 readonly class='noframe'>0123456789abcdef</textarea>
-		<br>
-		<textarea cols=7 rows=<?=$ds_lines?> readonly class='noframe'><?=$ds_addresses?></textarea>
-		<textarea cols=47 rows=<?=$ds_lines?> maxlength=<?=$maxlen_datacode?>><?=$ds_bytes?></textarea>
-		<textarea cols=15 rows=<?=$ds_lines?> maxlength=<?=$maxlen_datatext?>><?=$ds_str?></textarea>
-		<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
-	</fieldset></div>
-	
+		<div class='data segment'><fieldset>
+			<legend>Сегмент данных</legend>
+			<textarea cols=7 rows=1 readonly class='noframe'></textarea>
+			<textarea cols=47 rows=1 readonly class='noframe'>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
+			<textarea cols=15 rows=1 readonly class='noframe'>0123456789abcdef</textarea>
+			<br>
+			<textarea cols=7 rows=<?=$ds_lines?> readonly class='noframe'><?=$ds_addresses?></textarea>
+			<textarea cols=47 rows=<?=$ds_lines?> maxlength=<?=$maxlen_datacode?>><?=$ds_bytes?></textarea>
+			<textarea cols=15 rows=<?=$ds_lines?> maxlength=<?=$maxlen_datatext?>><?=$ds_str?></textarea>
+			<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
+		</fieldset></div>
+	</div>
+		
 	<div class='segment'>
 		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
 			<input type='text' name='codes_str' id='codes_str' value=''>
@@ -90,12 +92,12 @@ echo "\t\t</table>\n";
 	</div>
 		
 	<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
-			<legend>Тестирование</legend>
-			Номер задачи
-			<input type='text' id='task_id' value=''>
-			<input type='submit' value='Протестировать'>
-			<p>Результат:</p>
-			<textarea id='test_result'></textarea>
+		<legend>Тестирование</legend>
+		Номер задачи
+		<input type='text' id='task_id' value=''>
+		<input type='submit' value='Протестировать'>
+		<p>Результат:</p>
+		<textarea id='test_result'></textarea>
 	</fieldset></div>
 	
 	<script>

@@ -83,22 +83,20 @@ echo "\t\t</table>\n";
 	</fieldset></div>
 	
 	<div class='segment'>
-		
 		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
 			<input type='text' name='codes_str' id='codes_str' value=''>
 			<input type='submit' value='Получить *.exe файл'>
 		</form>
+	</div>
 		
-		<fieldset method='post' action='test_exe.php' class='test_exe'>
+	<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
 			<legend>Тестирование</legend>
 			Номер задачи
 			<input type='text' id='task_id' value=''>
 			<input type='submit' value='Протестировать'>
 			<p>Результат:</p>
 			<textarea id='test_result'></textarea>
-		</fieldset>
-		
-	</div>
+	</fieldset></div>
 	
 	<script>
 		'use strict';

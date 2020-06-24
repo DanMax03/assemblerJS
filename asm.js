@@ -321,7 +321,13 @@ function get_operand(opd_text) // reg, mem or imm
 			if (typeof disp == "string")
 				return {type: 'err', value: disp};
 			
-			return {type: 'mem', size: siz, adrr: 'disponly', dsize: 32, dval: (sgn && sgn == '-' ? -disp : disp), mod: '00', r_m: '101'};
+			return {type: 'mem', 
+					size: siz, 
+					adrr: 'disponly', 
+					dsize: 32, 
+					dval: (sgn && sgn == '-' ? -disp : disp), 
+					mod: '00', 
+					r_m: '101'};
 			
 		} else {
 			rg = rg[0]; // make rg just string
@@ -329,9 +335,19 @@ function get_operand(opd_text) // reg, mem or imm
 			// dated    return {type: 'mem', size: siz, adrr: 'reg', value: registers[rg], mod: '00', r_m: registersB[rg]};
 			if (addr.length == 3)
 				if (rg == 'ebp')
-					return {type: 'mem', size: siz, adrr: 'reg+disp', dsize: 8, dval: 0, mod: '01', r_m: '101'}; // [ebp] == [ebp+00h]
+					return {type: 'mem', 
+							size: siz, 
+							adrr: 'reg+disp', 
+							dsize: 8, 
+							dval: 0, 
+							mod: '01', 
+							r_m: '101'}; // [ebp] == [ebp+00h]
 				else
-					return {type: 'mem', size: siz, adrr: 'reg', mod: '00', r_m: registersB[rg]};
+					return {type: 'mem', 
+							size: siz, 
+							adrr: 'reg', 
+							mod: '00', 
+							r_m: registersB[rg]};
 			
 			if (/(\+|\-)/.test(addr)) { // if here's + or -
 				
@@ -348,7 +364,12 @@ function get_operand(opd_text) // reg, mem or imm
 				if (typeof disp == "string") 
 					return {type: 'err', value: disp}
 				
-				return {type: 'mem', size: siz, adrr: 'reg+disp', dsize: (disp < 128 ? 8 : 32), dval: (sgn[0] == '+' ? disp : -disp), mod: (disp < 128 ? '01' : '10'), r_m: registersB[rg]};
+				return {type: 'mem', 
+						size: siz, adrr: 'reg+disp', 
+						dsize: (disp < 128 ? 8 : 32), 
+						dval: (sgn[0] == '+' ? disp : -disp), 
+						mod: (disp < 128 ? '01' : '10'), 
+						r_m: registersB[rg]};
 				
 			} else {
 				return {type: 'err', value: 'Неверный адрес'};
@@ -377,13 +398,18 @@ function get_operand(opd_text) // reg, mem or imm
 			if (typeof imm == "string") 
 				return {type: 'err', value: imm};
 			
-			return {type: 'imm', size: 8 * byte_cost(imm), value: (sgn && sgn == '-' ? -imm : imm)};
+			return {type: 'imm', 
+					size: 8 * byte_cost(imm), 
+					value: (sgn && sgn == '-' ? -imm : imm)};
 			
 		} else { // just reg
 		
 			rg = rg[0]; // make rg just string
 
-			return {type: 'reg', size: bitsize[rg], mod: '11', r_m: registersB[rg]};
+			return {type: 'reg', 
+					size: bitsize[rg], 
+					mod: '11', 
+					r_m: registersB[rg]};
 		}
 	}
 }
@@ -623,38 +649,29 @@ function asm(address, cmd_text)
 		break;		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		case 'neg':	//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		case 'not':
 			if (cmd_shapes.length > 2)
-				return make_ans("У команды 'neg' лишь один операнд");
+				return make_ans("У команды '" + cmd_shapes[0] + "' лишь один операнд");
 			
 			var op = get_operand(cmd_shapes[1]);
 			
 			if (op.type == 'err')
 				return make_ans(op.value);
 			else if (op.type == 'imm')
-				return make_ans("Операндом 'neg' не может быть константа");
+				return make_ans("Операндом '" + cmd_shapes[0] + "' не может быть константа");
 			
 //console.log(op);
 			
 			var native_codeB = '1111011';
+			var reg_value = (cmd_shapes[0] == 'neg' ? '011' : '010');
 			
-			if (op.type == 'reg') {
-				if (op.size == 8)
-					native_codeB += '0';
-				else
-					native_codeB += '1';
-				
-				return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m)));
-			} else {
-				if (typeof op.size == 'string')
-					return make_ans("У операнда неопределенный размер");
-				
-				if (op.size == 8)
-					native_codeB += '0';
-				else
-					native_codeB += '1';
-				
-				return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '011' + op.r_m) + (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
-			}
+			if (typeof op.size == 'string')
+				return make_ans("У операнда неопределенный размер");
+			
+			native_codeB += (op.size == 8 ? '0' : '1');
+			
+			return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + 
+											   (op.type != 'reg' && op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 		break;		//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 		
 		case 'push'://////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -688,7 +705,8 @@ function asm(address, cmd_text)
 					native_codeB = (cmd_shapes[0] == 'push' ? '11111111' : '01111111');
 					var reg_value = (cmd_shapes[0] == 'push' ? '110' : '000');
 					
-					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + reg_value + op.r_m) + 
+													   (op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 				break;
 				
 				case 'imm':
@@ -761,7 +779,8 @@ function asm(address, cmd_text)
 					
 					native_codeB = '100010' + native_codeB + (op1.size == 8 ? '0' : '1');
 					
-					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + (op2.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op2.dval, op2.dsize))) : '')));
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op2.mod + op1.r_m + op2.r_m) + 
+													   (op2.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op2.dval, op2.dsize))) : '')));
 				break;
 				
 				case 'reg imm':
@@ -786,7 +805,9 @@ function asm(address, cmd_text)
 					
 					native_codeB = '1100011' + (op1.size == 8 ? '0' : '1');
 					
-					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + (op1.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op1.dval, op1.dsize))) : '') + ' ' + to_reverse_hex(int_to_sB(op2.value, (op1.size > 16 ? 32 : op1.size)))));
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op1.mod + '000' + op1.r_m) + 
+													   (op1.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op1.dval, op1.dsize))) : '') + 
+													   ' ' + to_reverse_hex(int_to_sB(op2.value, (op1.size > 16 ? 32 : op1.size)))));
 				break;
 			}
 		break;
@@ -831,13 +852,13 @@ function asm(address, cmd_text)
 				
 					native_codeB = '11111111';
 					
-					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '010' + op.r_m) + (op.adrr && op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB + op.mod + '010' + op.r_m) + 
+													   (op.adrr && op.adrr != 'reg' ? (' ' + to_reverse_hex(int_to_sB(op.dval, op.dsize))) : '')));
 				break;
 			}
 		break;
 		
-		case 'retn':
-			
+		case 'ret':
 			if (cmd_shapes.length > 2)
 				return make_ans("У команды 'ret' может быть лишь один операнд");
 			
@@ -868,21 +889,26 @@ function asm(address, cmd_text)
 function disasm(address)
 {
 	var adr = address - address0
-	if(adr >= PAGE) return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
+	
+	if(adr >= PAGE) 
+		return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
 
 	var el = map_1;
 	var a = adr;
-	while(typeof el == 'object' && a < exe.length){
+	
+	while(typeof el == 'object' && a < exe.length) {
 		el = el[exe[a]];
 		a++;
 	}
-	if(typeof el == 'string'){
-		if(a - adr != map[el].codes.length){
+	
+	if(typeof el == 'string') {
+		if(a - adr != map[el].codes.length) {
 //!!!			console.log('')
 			return {address: address, cmd_text: 'db ' + hex(exe[adr]), codes_str: hex(exe[adr]), codes_len: 1};
 		}
+		
 		return {address: address, cmd_text: el, codes_str: map[el].codes_str, codes_len: map[el].codes.length};
-	}else
+	} else
 		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1};
 }
 
@@ -988,14 +1014,13 @@ var tests = [
 	{asm: 'call 1', codes_str: 'e8 01 00'},
 	{asm: 'call -1', codes_str: 'e8 ff ff ff ff'},
 	{asm: 'call 8FFAh', codes_str: 'e8 fa 8f 00 00'},
-	{asm: 'retn', codes_str: 'c3'},
-	{asm: 'retn 0', codes_str: 'c2 00 00'},
-	{asm: 'retn 1', codes_str: 'c2 01 00'},
-	{asm: 'retn 2', codes_str: 'c2 02 00'},
+	{asm: 'ret', codes_str: 'c3'},
+	{asm: 'ret 0', codes_str: 'c2 00 00'},
+	{asm: 'ret 1', codes_str: 'c2 01 00'},
+	{asm: 'ret 2', codes_str: 'c2 02 00'},
 ];
-/*
+
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
-*/

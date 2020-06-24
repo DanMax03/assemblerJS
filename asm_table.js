@@ -101,3 +101,52 @@ var map = Object.assign({}, {
 	'neg esi': 'f7 de',
 	'neg edi': 'f7 df',
 }, add_map)
+
+var disasm_map = {
+	'01': '01 add reg_value=r op1=r/m16/32 op2=r16/32 ------dw MRM',
+	'02': '02 add reg_value=r op1=r8 op2=r/m8 ------dw MRM',
+	'03': '03 add reg_value=r op1=r16/32 op2=r/m16/32 ------dw MRM',
+	'04': '04 add op1=al op2=imm8 -------w data(1)',
+	'05': '05 add op1=eax op2=imm16/32 -------w data(2/4)',
+
+	'28': '28 sub reg_value=r op1=r/m8 op2=r8 ------dw MRM',
+	'29': '29 sub reg_value=r op1=r/m16/32 op2=r16/32 ------dw MRM',
+	'2A': '2A sub reg_value=r op1=r8 op2=r/m8 ------dw MRM',
+	'2B': '2B sub reg_value=r op1=r16/32 op2=r/m16/32 ------dw MRM',
+	'2C': '2C sub op1=al op2=imm8 -------w data(1)',
+	'2D': '2D sub op1=eax op2=imm16/32 -------w data(2/4)',
+
+	'68': '68 push op1=imm16/32 ------s- data(2/4)',
+	'6A': '6A push op1=imm8 ------s- data(1)',
+
+	'80': '80 sub reg_value=5 op1=r/m8 op2=imm8 ------sw NNN data(1)',
+	'81': '81 sub reg_value=5 op1=r/m16/32 op2=imm16/32 ------sw NNN data(2/4)',
+	'83': '83 sub reg_value=5 op1=r/m16/32 op2=imm8 ------sw NNN data(1)',
+
+	'88': '88 mov reg_value=r op1=r/m8 op2=r8 ------dw MRM',
+	'89': '89 mov reg_value=r op1=r/m16/32 op2=r16/32 ------dw MRM',
+	'8A': '8A mov reg_value=r op1=r8 op2=r/m8 ------dw MRM',
+	'8B': '8B mov reg_value=r op1=r16/32 op2=r/m16/32 ------dw MRM',
+	'8C': '8C mov reg_value=r op1=m16 op2=sreg ------d- MRM',
+	'8E': '8E mov reg_value=r op1=sreg op2=r/m16 ------d- MRM',
+
+	'8F': '8F pop reg_value=0 op1=r/m64/16 -------- NNN ',
+
+	'90': '90 nop --------',
+
+	'A0': 'A0 mov op1=al op2=moffs8 ------dw addr(2/4)',
+	'A1': 'A1 mov op1=eax op2=moffs16/32 ------dw addr(2/4)',
+	'A2': 'A2 mov op1=moffs8 op2=al ------dw addr(2/4)',
+	'A3': 'A3 mov op1=moffs16/32 op2=eax ------dw addr(2/4)',
+	'C6': 'C6 mov reg_value=0 op1=r/m8 op2=imm8 -------w NNN data(1)',
+	'C7': 'C7 mov reg_value=0 op1=r/m16/32 op2=imm16/32 -------w NNN data(2/4)',
+
+	'E8': 'E8 call op1=rel16/32 -------- addr(2/4) ',
+
+	'F6': 'F6 neg reg_value=3 op1=r/m8 -------w NNN ',
+	'F7': 'F7 neg reg_value=3 op1=r/m16/32 -------w NNN ',
+
+	'FE': 'FE dec reg_value=1 op1=r/m8 -------w NNN ',
+
+	'FF': 'FF push reg_value=6 op1=r/m64/16 -------- NNN ',
+}

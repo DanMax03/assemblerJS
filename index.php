@@ -64,7 +64,7 @@
 	<?php
 	echo "\t\t<table id='main_table'>\n";
 	for($i = 0; $i < $n_lines; ++$i)
-		echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td><td class='err'></td></tr>\n";
+		echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td></tr>\n";
 	echo "\t\t</table>\n";
 	?>
 			<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
@@ -74,6 +74,20 @@
 			<textarea id='asm_text2' readonly> Warning! Error: 00040100: Неизвестная команда</textarea>
 		</fieldset></div>
 
+		<div class='err segment'><fieldset>
+			<legend>Ошибки ассемблирования</legend>
+			<table>
+				<thead>
+					<tr><th>Адрес</th><th>Ошибка</th></tr>
+				</thead>
+				<tbody>
+					<tr><td>00040100</td><td>В записи числа обнаружена недопустимая цифра.</td></tr>
+					<tr><td>00040101</td><td>Неизвестная команда</td></tr>
+				</tbody>
+			</table>
+		</fieldset></div>
+	</div>
+		
 		<div class='data segment'><fieldset>
 			<legend>Сегмент данных</legend>
 			<textarea cols=7 rows=1 readonly class='noframe'></textarea>

@@ -1,4 +1,25 @@
-div.segment{float: left;}
+#logo{
+    width: 51rem;
+    display: block;
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: -15%;
+    margin-bottom: -15%;
+}
+
+#main_background{
+    display: block;
+    position: absolute;
+    margin: 0 5% 0 5%;
+    background-color: white;
+    width: 90%;
+    -webkit-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    -moz-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+}
+
+div.segment{float: left; position: relative;}
 div.data.segment textarea{resize: none;}
 table#main_table, td.asm input[type=text]{font-family: monospace;}
 td.asm input[type=text]{width: 200px; border: 0; outline:none;}

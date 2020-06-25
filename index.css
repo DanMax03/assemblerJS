@@ -11,19 +11,80 @@
 #main_background{
     display: block;
     position: absolute;
-    margin: 0 5% 0 5%;
-    background-color: white;
+    background-color: white;left: 50%;
+    transform: translateX(-50%);
     width: 90%;
     -webkit-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
     -moz-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
     box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    padding: 1%;
 }
 
-div.segment{float: left; position: relative;}
-div.data.segment textarea{resize: none;}
-table#main_table, td.asm input[type=text]{font-family: monospace;}
-td.asm input[type=text]{width: 200px; border: 0; outline:none;}
-table#main_table{border-collapse: collapse;}
+div.segment{
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    display: inline-block;
+}
+
+fieldset{
+    position: relative;
+    padding: 1rem;
+    margin: 1rem 0 1rem 0;
+    border-top:0.25rem solid gray;
+    border-left:0.25rem solid white;
+    border-bottom:0.25rem solid white;
+    border-right:0.25rem solid white;
+}
+
+legend{
+    font-family: Arial, Helvetica,serif;
+    font-size: 1.5rem;
+    color: gray;
+}
+
+div.data.segment textarea{
+    width: 50%;
+}
+
+td {
+  color: #575757;
+  border: 0.1rem dashed #ababab;
+  background:#d1d1d1;
+  font-size: medium;
+  padding: 0.5rem;
+}
+
+table#main_table, td.asm input[type=text]{
+    font-size: medium;
+    font-family: Arial, Helvetica, sans-serif;
+    border: 1px solid #c1c1c1;
+    color: #575757;
+}
+
+td.asm input[type=text]{
+    width: auto;
+    text-align: center;
+    border: 0;
+    outline:none; 
+    background: #d1d1d1;
+}
+
+textarea#asm_text{
+    width: 40%;
+}
+
+textarea#asm_text2{
+    width: 40%;
+    background: grey;
+    color: black;
+}
+table#main_table{
+    margin-right: 1rem;
+    float: left;
+    width: 50%;
+    border-collapse: collapse;
+}
 table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}

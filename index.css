@@ -9,3 +9,4 @@ table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
 form.get_exe input[type="text"]{display: none;}
 textarea.noframe{border: none;}
+textarea.ds_editor{overflow: noscroll;}

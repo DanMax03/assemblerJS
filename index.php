@@ -56,8 +56,11 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
+<<<<<<< HEAD
 	<img src="logo.svg" alt="" id="logo">
 	<div id="main_background">
+=======
+>>>>>>> 7b7a04c3a298290b46bdf015cf429555ab1f0f0f
 	<div class='segment'>
 		<div class='segment'><fieldset>
 			<legend>Сегмент кода</legend>
@@ -91,6 +94,7 @@
 			<input type='text' name='codes_str' id='codes_str' value=''>
 			<input type='submit' value='Получить *.exe файл'>
 		</form>
+<<<<<<< HEAD
 	</div>
 		
 	<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
@@ -102,6 +106,19 @@
 		<textarea id='test_result'></textarea>
 	</fieldset></div>
 	</div>
+=======
+	</div>
+		
+	<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
+		<legend>Тестирование</legend>
+		Номер задачи
+		<input type='text' id='task_id' value=''>
+		<input type='submit' value='Протестировать'>
+		<p>Результат:</p>
+		<textarea id='test_result'></textarea>
+	</fieldset></div>
+	
+>>>>>>> 7b7a04c3a298290b46bdf015cf429555ab1f0f0f
 	<script>
 		'use strict';
 		var n_lines = <?=$n_lines?>;

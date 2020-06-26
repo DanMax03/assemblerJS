@@ -56,7 +56,7 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><h1>?</h1></div></button>
+	<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><div style="margin-top:-0.4rem;"><h1>?</h1></div></div></button>
 
 	<div class="overlay" id="commands-window">
 	<div class="flex-window" >

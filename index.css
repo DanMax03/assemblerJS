@@ -43,10 +43,6 @@ legend{
     color: gray;
 }
 
-div.data.segment textarea{
-    width: 50%;
-}
-
 td {
   color: #575757;
   border: 0.1rem dashed #ababab;
@@ -79,7 +75,7 @@ textarea#asm_text2{
     background: grey;
     color: black;
 }
-table#main_table{
+table#main_table {
     margin-right: 1rem;
     float: left;
     width: 50%;
@@ -89,5 +85,5 @@ table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
-form.get_exe input[type="text"]{display: none;}
+form.get_exe input[type="text"]{display: block; position: relative;}
 textarea.noframe{border: none;}

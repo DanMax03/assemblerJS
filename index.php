@@ -86,7 +86,6 @@
 				</tbody>
 			</table>
 		</fieldset></div>
-	</div>
 		
 		<div class='data segment'><fieldset>
 			<legend>Сегмент данных</legend>
@@ -116,7 +115,7 @@
 		<p>Результат:</p>
 		<textarea id='test_result'></textarea>
 	</fieldset></div>
-	
+	</div>
 	<script>
 		'use strict';
 		var n_lines = <?=$n_lines?>;

@@ -56,7 +56,58 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
+	<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><h1>?</h1></div></button>
+
+	<div class="overlay" id="commands-window">
+	<div class="flex-window" >
+		<div class="window">
+		<div class="close_window"><p id="close_symbol" >&#215;</p></div>
+		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором</p>
+		<table id="table_for_commands">
+			<tr>
+				<td id="tsp1"><p id="hq">Клавиша</p></td>
+				<td id="tsp1"><p>Действие</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Enter</p></td>
+				<td id="tsp1"><p>Трансляция команды в машинный код</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Down</p></td>
+				<td id="tsp1"><p>Переход на строку вниз без трансляции команды</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Up</p></td>
+				<td id="tsp1"><p>Переход на строку вверх без трансляции команды</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">PageDown</p></td>
+				<td id="tsp1"><p>Прокрутка страницы на несколько строк вниз</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">PageUp</p></td>
+				<td id="tsp1"><p>Прокрутка страницы на несколько строк вверх</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Escape</p></td>
+				<td id="tsp1"><p>Повторное дизассемблирование команды текущей строки (отмена изменений)</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Insert</p></td>
+				<td id="tsp1"><p>Добавление команды nop перед текущей строкой</p></td>
+			</tr>
+			<tr>
+				<td id="tsp1"><p id="hq">Delete</p></td>
+				<td id="tsp1"><p>Удаление команды текущей строки</p></td>
+			</tr>
+		</table>
+		</div>
+	</div>
+	</div>
 	<img src="logo.svg" alt="" id="logo">
+
+
+
 	<div id="main_background">
 	<div class='segment'>
 		<div class='segment'><fieldset>

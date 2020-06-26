@@ -1,3 +1,120 @@
+#commands-buttom{
+    display: block;
+    position: fixed;
+    top:0;
+    right: 0;
+    z-index: 5;
+    width: 5rem;
+    height: 5rem;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: white solid 0.25rem;
+    border-radius: 50%;
+    background: black;
+    outline: none;
+    box-sizing:border-box;
+    padding: 0.1rem;
+}
+
+#inside-border{
+    text-align: center;
+    position: relative;
+    display: block;
+    height: 75%;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    border: white solid 0.25rem;
+    border-radius: 50%;
+    margin: auto;
+}
+.overlay {
+    position: fixed;
+    z-index: 5;
+    height: 50%;
+    width: 30%;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    background-color: rgba(0,0,0);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: white solid 0.25rem;
+    border-radius: 0.25rem;
+    overflow: auto;
+  }
+
+  .overlay.active {
+    display: block;
+  }
+
+  .flex-window {
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border: white dashed 0.25rem;
+    padding: 0.5rem;
+    display: block;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    overflow: auto;
+  }
+
+    .window{
+    position: relative;
+    color: white;
+    position: relative;
+  }
+  
+  #close_symbol{
+      width: 100%;
+      font-size: xx-large;
+      text-align: right;
+      margin-top: -1%;
+      margin-bottom: -2%;
+  }
+
+  .close-window{
+      position: relative;
+      width: 100%;
+      margin: 0;
+      top: 0;
+  }
+
+p{
+    font-family: 'Times New Roman', Times, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  p#hq{
+      text-decoration: underline;
+  }
+
+  table#table_for_commands{
+      width: 100%;
+      text-align: left;
+      overflow: scroll;
+  }
+
+  td#tsp1{
+    padding: 0.3rem;
+    border: white dashed 0.1rem;
+    background: black;
+    color: white;
+  }
+
+
+
+
+
 #logo{
     width: 51rem;
     display: block;
@@ -43,7 +160,7 @@ legend{
     color: gray;
 }
 
-td {
+td{
   color: #575757;
   border: 0.1rem dashed #ababab;
   background:#d1d1d1;
@@ -64,6 +181,7 @@ td.asm input[type=text]{
     border: 0;
     outline:none; 
     background: #d1d1d1;
+    
 }
 
 textarea#asm_text{
@@ -85,5 +203,5 @@ table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
-form.get_exe input[type="text"]{display: block; position: relative;}
+form.get_exe input[type="text"]{display: none; }
 textarea.noframe{border: none;}

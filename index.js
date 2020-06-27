@@ -314,11 +314,10 @@ $('td.asm input').on('keydown', function(key){
 $('tr[line=0] input').focus();
 
 function show_window() {
-	$('#commands-window').toggle(500);
-	$('#commands-buttom').hide(500);
+	$('.overlay').toggle(500);
 }
   
 $(".close_window").click( function(){
 	$(".overlay").hide(500);
-	$('#commands-buttom').show(500);
 });
+

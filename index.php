@@ -56,13 +56,12 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
-	<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><div style="margin-top:-0.4rem;"><h1>?</h1></div></div></button>
 
 	<div class="overlay" id="commands-window">
 	<div class="flex-window" >
 		<div class="window">
 		<div class="close_window"><p id="close_symbol" >&#215;</p></div>
-		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором</p>
+		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором (относится только к сегменту кода)</p>
 		<table id="table_for_commands">
 			<tr>
 				<td id="tsp1"><p id="hq">Клавиша</p></td>
@@ -104,6 +103,7 @@
 		</div>
 	</div>
 	</div>
+	</style>
 	<img src="logo.svg" alt="" id="logo">
 
 
@@ -118,7 +118,7 @@
 		echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td></tr>\n";
 	echo "\t\t</table>\n";
 	?>
-			<p><a href='help_editor.html' target='_blank'>Справка по кнопочкам</a></p>
+		<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
 			<textarea id='asm_text'></textarea>
 			<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
 			<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
@@ -158,14 +158,14 @@
 		</form>
 	</div>
 		
-	<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
-		<legend>Тестирование</legend>
-		Номер задачи
-		<input type='text' id='task_id' value=''>
-		<input type='submit' value='Протестировать'>
-		<p>Результат:</p>
-		<textarea id='test_result'></textarea>
-	</fieldset></div>
+		<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
+			<legend>Тестирование</legend>
+			Номер задачи
+			<input type='text' id='task_id' value=''>
+			<input type='submit' value='Протестировать'>
+			<p>Результат:</p>
+			<textarea id='test_result'></textarea>
+		</fieldset></div>
 	</div>
 	<script>
 		'use strict';

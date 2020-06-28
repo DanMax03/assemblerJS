@@ -140,7 +140,8 @@
 		
 	<div class='segment'>
 		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
-			<input type='text' name='codes_str' id='codes_str' value=''>
+			<input type='text' name='cs_str' id='cs_str' value=''>
+			<input type='text' name='ds_str' id='ds_str' value=''>
 			<input type='submit' value='Получить *.exe файл'>
 		</form>
 	</div>

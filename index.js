@@ -205,7 +205,8 @@ function asmLines(asm_area)
 }
 
 $('form.get_exe').on('submit', function(key){
-	$('input#codes_str').val(exe.join(' '));
+	$('input#cs_str').val(exe.join(' '));
+	$('input#ds_str').val(data.join(' '));
 });
 
 $('fieldset.test_exe input[type=submit]').on('click', function(key){

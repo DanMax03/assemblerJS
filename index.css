@@ -208,6 +208,10 @@ div.segment{
     display: block;
 }
 
+div.data.segment textarea{
+	resize: none;
+}
+
 fieldset{
     position: relative;
     padding: 1rem;
@@ -269,7 +273,7 @@ table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
 form.get_exe input[type="text"]{display: none; }
-textarea.noframe{border: none;}
+textarea.noframe{border-color: transparent;}
 
 textarea.asm_text{
     border: gray solid 0.25rem;

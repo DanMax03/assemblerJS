@@ -38,7 +38,6 @@ var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32,
 			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
 
-//var map_1 = {};
 
 function div(val, by) // в js нету деления нацело. Шок
 {
@@ -207,50 +206,6 @@ function codes_TO_codes_str(codes)
 	}
 	return codes_str.join(' ');
 }
-
-/* (function () {
-	for(var asm in map) {
-		var codes = codes_str_TO_codes(map[asm]);
-		map[asm] = {codes: codes, codes_str: map[asm]};
-		// выворачиваем наизнанку (map_d = map^(-1))
-		var el = map_1;
-		
-		for (var i in codes) {
-			if (el[codes[i]] == undefined)
-				if (i == codes.length - 1)
-					el[codes[i]] = asm;
-				else
-					el[codes[i]] = {};
-			else
-				if (typeof el[codes[i]] == 'string')
-					console.log('Ошибка обработки map[' + asm + ']');
-				
-			el = el[codes[i]];
-		}		
-	}
-})(); */
-
-/*
-canonic - привести к каноническому виду: убрать лишние пробелы, оставить один между командой и операндами, и после запятой, отделяющей операнды, остальные убрать, привести к нижнему регистру.
-err = '' - нет ошибки
-
-cmd_explode возвращает массив слов - команду и операнды (если они есть)
-*/
-
-
-// MAP GENERATOR
-
-/*for (var reg in registers) {
-	for (var reg2 in registers) {
-		if (reg != reg2) {
-			var cd = asm(40100, 'add ' + reg + ', ' + reg2).codes;
-			//console.log(cd);
-			console.log("'add " + reg + ', ' + reg2 + "' : '" + codes_TO_codes_str(cd) + "',");
-		}
-	}
-}*/
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 function canonic(s)
 {
@@ -436,7 +391,6 @@ function get_operand(opd_text) // reg, mem or imm
 
 
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // {err, codes_str, codes, cmd_text}
 function asm(address, cmd_text)
 {

@@ -1,5 +1,29 @@
 'use strict';
 
+//console.log(disasm_map);
+
+function reverse_dict(dict) // works only with 1 -> 1 dictionaries (registers dict is wrong)
+{
+	var res = {};
+	
+	for (key in dict) {
+		res[dict[key]] = key;
+	}
+	
+	return res;
+}
+
+var reverse_reg3 = {0: 'eax', 1: 'ecx', 2: 'edx', 3: 'ebx', 4: 'esp', 5: 'ebp', 6: 'esi', 7: 'edi'};
+var reverse_reg3B = {'000': 'eax', '001': 'ecx', '010': 'edx', '011': 'ebx', '100': 'esp', '101': 'ebp', '110': 'esi', '111': 'edi'};
+
+var reverse_reg2 = {0: 'al', 1: 'cl', 2: 'dl', 3: 'bl', 4: 'ah', 5: 'ch', 6: 'dh', 7: 'bh'};
+var reverse_reg3B = {'000': 'al', '001': 'cl', '010': 'dl', '011': 'bl', '100': 'ah', '101': 'ch', '110': 'dh', '111': 'bh'};
+
+var reverse_sreg = {0: 'es', 1: 'cs', 2: 'ss', 3: 'ds'};
+var reverse_sregB = {'000' : 'es', '001': 'cs', '010': 'ss', '011': 'ds', '100': 'fs', '101': 'gs'};
+
+
+
 var registers = {'eax': 0, 'ecx': 1, 'edx': 2, 'ebx': 3, 'ebp': 5, 'esi': 6, 'edi': 7,
 				 'ax': 0, 'cx': 1, 'dx': 2, 'bx': 3, 'bp': 5, 'si': 6, 'di': 7,
 				 'al': 0, 'cl': 1, 'dl': 2, 'bl': 3, 'ah': 4, 'ch': 5, 'dh': 6, 'bh': 7};
@@ -14,11 +38,7 @@ var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32,
 			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
 
-var map1 = [
-	{reg: /^dec \[(eax|ecx|edx|ebx|ebp|esi|edi)\+([0-9a-fhoq]+)\]$/, num_len: 1, codes: [0xfe, 0x48]}
-];
-
-var map_1 = {};
+//var map_1 = {};
 
 function div(val, by) // в js нету деления нацело. Шок
 {
@@ -188,8 +208,8 @@ function codes_TO_codes_str(codes)
 	return codes_str.join(' ');
 }
 
-(function (){
-	for(var asm in map){
+/* (function () {
+	for(var asm in map) {
 		var codes = codes_str_TO_codes(map[asm]);
 		map[asm] = {codes: codes, codes_str: map[asm]};
 		// выворачиваем наизнанку (map_d = map^(-1))
@@ -208,7 +228,7 @@ function codes_TO_codes_str(codes)
 			el = el[codes[i]];
 		}		
 	}
-})();
+})(); */
 
 /*
 canonic - привести к каноническому виду: убрать лишние пробелы, оставить один между командой и операндами, и после запятой, отделяющей операнды, остальные убрать, привести к нижнему регистру.
@@ -884,33 +904,639 @@ function asm(address, cmd_text)
 
 
 
-
-// {address, cmd_text, codes_str, codes_len}
-function disasm(address)
+/*
+	returns object:
+	type:
+		'err' - error
+			value
+			
+		'reg' - register
+			value: 'register_str'
+			size: register_size
+		
+		'r' - undefined register, depends on command
+			size: []
+			
+		'r/m' - undefined r/m operand, could be reg or memory, depends on command
+			size: []
+			
+		'rel' == 'imm' - immediate operand, constant, depends on command
+			size: []
+			
+		'ptr' - full address
+			base_size: 16
+			disp_size: 32
+*/
+function cut_op(op_str)
 {
-	var adr = address - address0
+	var type = op_str.match(/^[a-z]+/i);
 	
-	if(adr >= PAGE) 
-		return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
-
-	var el = map_1;
-	var a = adr;
 	
-	while(typeof el == 'object' && a < exe.length) {
-		el = el[exe[a]];
-		a++;
+	if (type == null)
+		return {type: 'err', value: 'Что-то пошло не так с ' + op_str};
+	
+	
+	type = type[0];
+	
+	var size;
+	
+	
+	if (type == op_str) {
+		size = bitsize[op_str];
+	
+		return {type: 'reg', value: op_str, size: size};
 	}
 	
-	if(typeof el == 'string') {
-		if(a - adr != map[el].codes.length) {
-//!!!			console.log('')
-			return {address: address, cmd_text: 'db ' + hex(exe[adr]), codes_str: hex(exe[adr]), codes_len: 1};
+	
+	switch (type)
+	{
+		case 'r':
+		
+			if (op_str[1] == '/') { // op_str = 'r/m8/16/32' or anything like this
+				size = op_str.substring(3).split('/').map(item => parse_int(item));
+				
+				if (size.length > 1)  // deleting 16 bit
+					size = size[1];
+				else
+					size = size[0];
+				
+				return {type: 'r/m', size: size};
+			}
+			
+			size = op_str.substring(1).split('/').map(item => parse_int(item));
+			
+			if (size.length > 1)  // deleting 16 bit
+				size = size[1];
+			else
+				size = size[0];
+			
+			return {type: 'r', size: size};
+			
+		break;
+		
+		case 'm':
+			return {type: 'm', size: 32};
+		break;
+		
+		case 'rel':
+		case 'imm':
+		
+			size = op_str.substring(3).split('/').map(item => parse_int(item));
+			
+			if (size.length > 1)  // deleting 16 bit
+				size = size[1];
+			else
+				size = size[0];
+			
+			return {type: 'imm', size: size};
+			
+		break;
+		
+		case 'moffs':
+			
+			size = op_str.substring(5).split('/').map(item => parse_int(item));
+			
+			if (size.length > 1)  // deleting 16 bit
+				size = size[1];
+			else
+				size = size[0];
+			
+			return {type: 'moffs', size: size}; // moffs
+			
+		break;
+		
+		case 'sreg':
+		
+			return {type: 'sreg'};	
+		
+		break;
+		
+		case 'ptr':
+		
+			return {type: 'ptr', base_size: 16, disp_size: 32};
+			
+		break;
+	}
+	
+	if (op_str.match(/^\d+$/)[0] == op_str)
+		return {type: 'c', value: op_str};
+	
+	return {type: 'err', value: 'Что-то пошло не так с ' + op_str};
+}
+
+
+function get_mrm_op(adr, op) // return {value, add_codes, add_str}
+{
+	var mrm = int_to_sB(exe[adr + 1], 8);
+				
+	var mod = mrm.substr(0, 2);
+	var r_m = mrm.substr(5, 3); // r_m1 != '100' outside of the function
+	
+	
+	switch (mod)
+	{
+		case '00':
+			
+			if (r_m != '101')
+				return {value: '[' + reverse_reg3B[r_m] + ']', add_codes: 0, add_str: ''};
+			else { // 32-bit Displacement mode
+				var disp_value = read_rev_data(adr, 2, 4, '');
+				disp_value = (disp_value[0] == '1' ? ('-' + disp_value.substring(1)) : disp_value);
+				
+				return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + disp_value + ']', add_codes: 4, add_str: read_data(adr, 2, 4, ' ')};
+			}
+			
+		break;
+		
+		case '01':
+		case '10':
+			
+			var disp_size = (mod == '01' ? 1 : 4);
+			var disp_value = read_rev_data(adr, 2, disp_size, '');
+			disp_value = (disp_value[0] == '1' ? ('-' + disp_value.substring(1)) : '+' + disp_value);
+		
+			return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[r_m] + disp_value + ']', add_codes: disp_size, add_str: read_data(adr, 2, disp_size, ' ')};
+			
+		break;
+		
+		case '11':
+		
+			if (op.type == 'sreg')
+				return {value: reverse_sregB[r_m], add_codes: 0, add_str: ''};
+			else if (op.size == 8)
+				return {value: reverse_reg2B[r_m], add_codes: 0, add_str: ''};
+			else
+				return {value: reverse_reg3B[r_m], add_codes: 0, add_str: ''};
+			
+		break;
+	}
+}	
+
+/*
+	Возвращает объект, содержащий следующие параметры:
+	cmd - непосредственно имя инструкции (add, mov)
+	
+	c_str - начальная двоичная байтовая строка, содержит только изначальный байт команды,
+			который в последствие должен быть дополнен до полной команды
+			
+	c_len = 1 - число байт в команде, раз изначально c_str - 1 байт, то и значение c_len очевидно
+	
+	temp - шаблон команды. Задаёт все её возможные виды, с учётом первого байта
+!!!	Максимальная длина шаблона команды - 3 слова !!!
+	
+*p*	reg_value - значение REG байта MRM
+	
+*p*	op1 - first operand of the instruction
+
+*p*	op2 - second operand of the instruction
+
+*p*	op3 - third operand of the instruction
+
+	*p* means it may not be (if it isn't, then variable has value null
+*/
+
+function cut_str(str, adr) // str == 'cmd reg_value op1 op2 op3 temp'
+{
+	var c_len = 1;
+	var op_count = 0;
+	var temp;
+	var reg_value = null;
+	var op1 = null;
+	var op2 = null;
+	var op3 = null;
+	var c_str;
+	var cmd;
+	
+	
+	var space = 0;
+	
+	
+	c_str = hex(exe[adr]); // exe[adr] - command opcode
+	
+	space = str.indexOf(' ');
+	cmd = str.substring(0, space);
+	str = str.substring(space + 1);
+	
+	
+	if (str.indexOf('reg_value=') != -1) {
+		var p = str.indexOf('reg_value='); // 'reg_value='.length == 10
+		
+		reg_value = str.substr(p + 10, 1);
+		
+		if (reg_value != 'r')
+			reg_value = parse_int(reg_value);
+		
+		space = str.indexOf(' ');
+		str = str.substring(space + 1);
+	}
+	
+	// now it's 'op1 op2 op3 temp'
+	
+	if (str.indexOf('op1=') != -1) {
+		var p = str.indexOf('op1='); // 'op1='.length = 4
+		
+		var copy_str = str.substring(p + 4);
+		
+		space = copy_str.indexOf(' ');
+		op1 = copy_str.substring(0, space);
+		
+		op_count += 1;
+		
+		space = str.indexOf(' ');
+		str = str.substring(space + 1);
+	}
+	
+	// now it's 'op2 op3 temp'
+	
+	if (str.indexOf('op2=') != -1) {
+		var p = str.indexOf('op2='); // 'op2='.length = 4
+		
+		var copy_str = str.substring(p + 4);
+		
+		space = copy_str.indexOf(' ');
+		op2 = copy_str.substring(0, space);
+		
+		op_count += 1;
+		
+		space = str.indexOf(' ');
+		str = str.substring(space + 1);
+	}
+	
+	// now str is 'op3 temp'
+	
+	if (str.indexOf('op3=') != -1) {
+		var p = str.indexOf('op3='); // 'op3='.length = 4
+		
+		var copy_str = str.substring(p + 4);
+		
+		space = copy_str.indexOf(' ');
+		op3 = copy_str.substring(0, space);
+		
+		op_count += 1;
+		
+		space = str.indexOf(' ');
+		str = str.substring(space + 1);
+	}
+	
+	// now str is 'temp'
+	
+	if (op1 != null)
+		op1 = cut_op(op1);
+	
+	if (op2 != null)
+		op2 = cut_op(op2);
+	
+	if (op3 != null)
+		op3 = cut_op(op3);
+	
+	temp = str.split(' ');
+	
+	return {cmd: cmd, 
+			c_str: c_str, 
+			c_len: 1, 
+			temp: temp,
+			reg_value: reg_value, 
+			op1: op1, 
+			op2: op2,
+			op3: op3};
+}
+
+
+function disasm(address)
+{
+	var make_ans = function(cmd_obj)
+	{
+		return {address: address, cmd_text: cmd_obj.cmd, codes_str: cmd_obj.c_str, codes_len: cmd_obj.c_len};
+	};
+	
+	
+	var make_byte_ans = function()
+	{
+		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1}
+	};
+	
+	
+	var read_rev_data = function(adr, disp, len, sep)
+	{
+		var res = '';
+		
+		for (var i = adr + disp; i < adr + disp + len; i++) {
+			res = hex(exe[i]) + sep + res;
 		}
 		
-		return {address: address, cmd_text: el, codes_str: map[el].codes_str, codes_len: map[el].codes.length};
-	} else
-		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1};
-}
+		res = res.substring(0, res.length - sep.length);
+		
+		return res;
+	};
+	
+	
+	var read_data = function(adr, disp, len, sep)
+	{
+		var res = '';
+		
+		for (var i = adr + disp; i < adr + disp + len; i++) {
+			res = res + sep + hex(exe[i]);
+		}
+		
+		res = res.substring(sep.length);
+		
+		return res;
+	};
+	
+	
+	var adr = address - address0; // address0 - первый адрес в блоке кода
+	
+	if (adr >= PAGE) 
+		return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
+	
+	
+//console.log(hex(exe[adr]));
+	var str = disasm_map[hex(exe[adr])];
+	
+	if (!str)
+		return make_byte_ans();
+	
+	
+	var cmd_obj;
+	
+	if (str.length == 1) {
+		cmd_obj = cut_str(str[0], adr);
+	} else {
+		var mrm = int_to_sB(exe[adr + 1], 8);
+		
+		var true_reg_value = 'reg_value=' + parse_int(mrm.substr(2, 3) + 'b');
+		
+		for (var s in str) {
+			if (s.indexOf(true_reg_value) != -1) {
+				cmd_obj = cut_str(s, adr);
+				break;
+			}
+		}
+	}
+	
+	if (cmd_obj == undefined)
+		return make_byte_ans();
+	
+		
+	if (cmd_obj.temp.length == 1) {
+		var chk = cmd_obj.temp[0].substring(5);
+		
+		if (chk == 'reg') { // there's no ----wreg
+			cmd_obj.cmd += ' ' + cmd_obj.op1.value + (cmd_obj.op2 != null && cmd_obj.op2.type == 'reg' ? (' ' + cmd_obj.op2.value) : '');
+			
+			return make_ans(cmd_obj);
+		}
+		
+		chk = cmd_obj.temp[0].substr(3, 2);
+		
+		if (chk == 'sr') {
+			cmd_obj.cmd += ' ' + cmd_obj.op1.value;
+			
+			return make_ans(cmd_obj);
+		} else {
+			return make_ans(cmd_obj);
+		}
+	}
+	
+	
+	switch (cmd_obj.op_count)
+	{
+		case 1:
+		
+			if (cmd_obj.reg_value == null) { // only instructions with temp.length == 2, where 2nd is data or addr
+					
+				l_br = cmd_obj.temp[1].indexOf('(');
+				
+				var temp1_size = parse_int(cmd_obj.substr(l_br + 1, 1));
+				
+				var temp1_value;
+				
+				if (cmd_obj.temp[1][l_br - 1] == 'a') { // data
+					
+					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
+					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value)
+					
+				} else { // addr
+					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
+				}
+				
+				cmd_obj.c_len += temp1_size;
+				
+				cmd_obj.cmd += ' ' + (cmd_obj.op1.type != 'ptr' ? temp1_value : temp1_value.substr(0, 4) + ':' + temp1_value.substring(4));
+				
+				cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ');
+				
+				return make_ans(cmd_obj);
+				
+			} else {
+				
+				var mrm = int_to_sB(exe[adr + 1], 8);
+				
+				var r_m = mrm.substr(5, 3);
+				
+				
+				cmd_obj.c_len = 2;
+				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+				
+				
+				if (r_m != '100') {
+					
+					cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1)
+					
+					cmd_obj.c_len += cmd_obj.op1.add_codes;
+					cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
+					cmd_obj.cmd += ' ' + cmd_obj.op1.value;
+					
+					return make_ans(cmd_obj);
+				
+				} else {
+					
+					console.log("Disasm doesn't work with SIB byte");
+					return make_byte_ans();
+					
+				}
+			}
+			
+		break;
+		
+		case 2:
+			
+			if (cmd_obj.reg_value == null) { // temp.length == 2
+				
+				if (cmd_obj.temp[1] == '00001010') { // catching aam or aad
+				
+					cmd_obj.c_str += ' 0a';
+					cmd_obj.c_len += 1;
+					
+					return make_ans(cmd_obj);
+					
+				}
+				
+				
+				var l_br = cmd_obj.temp[1].indexOf('(');
+				var temp1_size = parse_int(cmd_obj.temp[1].substr(l_br + 1, 1));
+				var temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
+				
+				
+				cmd_obj.c_len += temp1_size;
+				cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ');
+				
+				
+				if (cmd_obj.cmd.indexOf('loop') != -1 || 
+				    cmd_obj.cmd == 'jecxz' || 
+					cmd_obj.cmd == 'int') { // catching loops, jecxz and int
+				
+					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value);
+					cmd_obj.cmd += ' ' + to_hex(int_to_sB(parse_int(temp1_value) + 2, 8 * temp1_size)) + 'h';
+					
+					return make_ans(cmd_obj);
+					
+				}
+				
+				
+				if (cmd_obj.temp[1][l_br - 1] == 'a') {
+					
+					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value);
+					
+				}
+				
+				
+				// other instructions has 2 visible operands
+				if (cmd_obj.op1.type == 'reg') {
+					
+					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + (cmd_obj.op2.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value);
+					
+				} else {
+					
+					cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ' ' + cmd_obj.op2.value;
+					
+				}
+				
+				return make_ans(cmd_obj);
+				
+			} else {
+				
+				var mrm = int_to_sB(exe[adr + 1], 8);
+				var r_m = mrm.substr(5, 3);				
+				
+				cmd_obj.c_len = 2;
+				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+				
+				
+				if (reg_value == 'r') {
+					
+					var reg = mrm.substr(2, 3);
+					
+					var direction_bit = cmd_obj.temp[0].indexOf('d');
+					direction_bit = (direction_bit == -1 ? '1' : int_to_sB(exe[adr], 8).substr(direction_bit, 1));
+					
+					if (direction_bit == '1') { // op1 == REG, op2 == R/M
+						var buf = cmd_obj.op1;
+						cmd_obj.op1 = cmd_obj.op2;
+						cmd_obj.op2 = buf;
+					}
+					
+					// op1 == R/M, op2 == REG
+						
+					if (cmd_obj.op2.type == 'sreg')
+						cmd_obj.op2.value = reverse_sregB[reg];
+					else if (cmd_obj.op2.size == 8)
+						cmd_obj.op2.value = reverse_reg2[reg];
+					else
+						cmd_obj.op2.value = reverse_reg3[reg];
+					
+					
+					if (r_m != '101') {
+						
+						cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
+						
+						cmd_obj.c_len += cmd_obj.op1.add_codes;
+						cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
+						cmd_obj.cmd += ' ' + (direction_bit == '1' ? cmd_obj.op2.value : cmd_obj.op1.value) + ' ' + (direction_bit == '1' ? cmd_obj.op1.value : cmd_obj.op2.value);
+						
+						return make_ans(cmd_obj);
+					
+					} else {
+						
+						console.log("Disasm doesn't work with SIB byte");
+						return make_byte_ans();
+						
+					}
+					
+				} else {
+				
+					if (cmd_obj.temp.length == 2) { // 2nd op is already defined
+						
+						var mrm = int_to_sB(exe[adr + 1], 8);
+						var r_m = mrm.substr(5, 3);	
+						
+						if (r_m != '101') {
+						
+							cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
+							
+							cmd_obj.c_len += cmd_obj.op1.add_codes;
+							cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
+							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
+							
+							return make_ans(cmd_obj);
+						
+						} else {
+
+							console.log("Disasm doesn't work with SIB byte");
+							return make_byte_ans();
+						
+						}
+						
+					} else { // length == 3
+						
+						var mrm = int_to_sB(exe[adr + 1], 8);
+						var r_m = mrm.substr(5, 3);	
+						
+						if (r_m != '101') {
+						
+							cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
+							
+							cmd_obj.c_len += cmd_obj.op1.add_codes;
+							cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
+							
+							
+							var l_br = temp[2].indexOf('(');
+							var temp2_size = temp[2].substr(l_br + 1, 1);
+							
+							
+							cmd_obj.op2.value = read_rev_data(adr, cmd_obj.c_len, temp2_size, '') + 'h';
+							
+							cmd_obj.c_str += ' ' + read_data(adr, cmd_obj.c_len, temp2_size, ' ');
+							cmd_obj.c_len += temp2_size;
+							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
+							
+							return make_ans(cmd_obj);
+						
+						} else {
+
+							console.log("Disasm doesn't work with SIB byte");
+							return make_byte_ans();
+						
+						}
+						
+					}
+				
+				}
+				
+			}
+			
+		break;
+		
+		case 3:
+			
+			
+			
+		break;
+	}
+	
+	
+	return make_byte_ans();
+}; 
 
 
 // ТЕСТИРОВАНИЕ 
@@ -1019,8 +1645,9 @@ var tests = [
 	{asm: 'ret 1', codes_str: 'c2 01 00'},
 	{asm: 'ret 2', codes_str: 'c2 02 00'},
 ];
-
+/*
 for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
+*/

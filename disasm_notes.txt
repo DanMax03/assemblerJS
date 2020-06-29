@@ -1,0 +1,50 @@
+Disasm algorithm:
+
+1. Compare with disasm_map
+	if not, make instruction 'db imm'
+
+2. Parse str from disasm_map
+
+3. Identification operand number
+
+switch (op_num)
+{
+	case 0:
+	break;
+	
+	case 1:
+	break;
+	
+	case 2:
+	break;
+	
+	case 3:
+	break;
+}
+
+4. In each case (exclude case 0) determine all operands
+
+Check, if operand is already determined
+
+if not, found it's type
+
+
+
+
+
+
+Disasm notes:
+
+Each command with opcode which has "reg" in the end has first already determined operand and could have 1 or at most 2 DEFINED operands
+
+Multireference bytes always have reg_value in the str (e.g. 80, 81, c1)
+
+All instructions with ----(w?)reg have first operand as defined register and if this instruction has width bit then it determine size of operands
+Also this instructions at least 1 operand and at most 2 operands.
+
+
+All instructions with 1 byte template which hasn't reg or sr in it just have command string 'cmd'
+
+All instructions with 2 operands and with no MRM byte have data or addr, temp.length == 2 (except d4 and d5 instructions)
+
+!!! Any command which has MRM(NNN) byte has reg_value

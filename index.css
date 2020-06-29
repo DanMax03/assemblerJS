@@ -1,9 +1,280 @@
-div.segment{float: left;}
-table#main_table, td.asm input[type=text]{font-family: monospace;}
-td.asm input[type=text]{width: 200px; border: 0; outline:none;}
-table#main_table{border-collapse: collapse;}
+/*#commands-buttom{
+    display: block;
+    position: fixed;
+    top:0;
+    right: 0;
+    z-index: 5;
+    width: 5rem;
+    height: 5rem;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    border: white solid 0.25rem;
+    border-radius: 50%;
+    background: black;
+    outline: none;
+    box-sizing:border-box;
+    padding: 0.1rem;
+}
+
+#inside-border{
+    text-align: center;
+    position: relative;
+    display: block;
+    height: 75%;
+    width: 75%;
+    margin-left: auto;
+    margin-right: auto;
+    border: white solid 0.25rem;
+    border-radius: 50%;
+    margin: auto;
+}*/
+
+#commands-buttom{
+    display: block;
+    position: relative;
+    width: 40%;
+    align-items: center;
+    justify-content: center;
+    background: black;
+    padding: 0.3rem;
+    font-size: 1rem;
+    margin: 0 10% 1rem 10%;
+    outline: none;
+    border: black solid 0.1rem;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+#inside-border p{
+    background: black;
+    color: white;
+    width: 50%;
+    display: block;
+    margin-left:auto;
+    margin-right: auto;
+    padding: 0.25rem;
+}
+
+#inside-border{
+    text-align: center;
+    position: relative;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    border: white solid 0.25rem;
+    margin: auto;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#commands-buttom:hover{
+    background: white;
+    border: black solid 0.25rem;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+#commands-buttom:hover > #inside-border{
+    background: white;
+    color: black;
+    border: black solid 0.25rem;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+
+
+.overlay {
+    background: black;
+    position: fixed;
+    z-index: 5;
+    height: 60%;
+    width: 40%;
+    right: 0;
+    bottom: 0;
+    padding: 0.75rem;
+    margin-right: 1rem;
+    margin-bottom: 1rem;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    border: white solid 0.25rem;
+    border-radius: 0.25rem;
+    overflow: auto;
+  }
+
+  .overlay.active {
+    display: block;
+  }
+
+  .flex-window {
+    background: black;
+    position: relative;
+    height: 100%;
+    width: 100%;
+    border: white dashed 0.25rem;
+    padding: 0.5rem;
+    display: block;
+    -webkit-box-sizing:border-box;
+    -moz-box-sizing:border-box;
+    box-sizing:border-box;
+    overflow: auto;
+  }
+
+    .window{
+    position: relative;
+    color: white;
+    position: relative;
+  }
+  
+  #close_symbol{
+      width: 100%;
+      font-size: xx-large;
+      text-align: left;
+      margin-top: -1%;
+      margin-bottom: -2%;
+  }
+
+  .close-window{
+      position: relative;
+      width: 100%;
+      margin: 0;
+      top: 0;
+  }
+
+p{
+    font-family: 'Times New Roman', Times, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+  }
+
+  p#hq{
+      text-decoration: underline;
+  }
+
+  table#table_for_commands{
+      width: 100%;
+      text-align: left;
+      overflow: scroll;
+  }
+
+  td#tsp1{
+    padding: 0.3rem;
+    border: white dashed 0.1rem;
+    background: black;
+    color: white;
+  }
+
+
+
+
+
+#logo{
+    width: 65%;
+    display: block;
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+    margin-top: -15%;
+    margin-bottom: -15%;
+}
+
+#main_background{
+    display: block;
+    position: absolute;
+    background-color: white;left: 50%;
+    transform: translateX(-50%);
+    width: 90%;
+    -webkit-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    -moz-box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    box-shadow: 0px 0px 25px 0px rgba(34, 60, 80, 0.41);
+    padding: 1%;
+}
+
+div.segment{
+    position: relative;
+    margin: 0 auto;
+    width: 100%;
+    display: block;
+}
+
+div.data.segment textarea{
+	resize: none;
+}
+
+fieldset{
+    position: relative;
+    padding: 1rem;
+    margin: 1rem 0 1rem 0;
+    border-top:0.25rem solid gray;
+    border-left:0.25rem solid white;
+    border-bottom:0.25rem solid white;
+    border-right:0.25rem solid white;
+}
+
+legend{
+    font-family: Arial, Helvetica,serif;
+    font-size: 1.5rem;
+    color: gray;
+}
+
+td{
+  color: #575757;
+  border: 0.1rem dashed #ababab;
+  background:#d1d1d1;
+  font-size: medium;
+  padding: 0.5rem;
+}
+
+table#main_table, td.asm input[type=text]{
+    font-size: medium;
+    font-family: monospace;
+    border: 1px solid #c1c1c1;
+    color: #575757;
+}
+
+td.asm input[type=text]{
+    width: auto;
+    text-align: center;
+    border: 0;
+    outline:none; 
+    background: #d1d1d1;
+    
+}
+
+textarea#asm_text{
+    width: 40%;
+}
+
+textarea#asm_text2{
+    width: 40%;
+    background: grey;
+    color: black;
+}
+table#main_table {
+    position: relative;
+    margin-right: 1rem;
+    float: left;
+    width: 50%;
+    border-collapse: collapse;
+}
 table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: blue;}
-form.get_exe input[type="text"]{display: none;}
+form.get_exe input[type="text"]{display: none; }
+textarea.noframe{border-color: transparent;}
+
+textarea.asm_text{
+    border: gray solid 0.25rem;
+}

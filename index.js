@@ -205,14 +205,15 @@ function asmLines(asm_area)
 }
 
 $('form.get_exe').on('submit', function(key){
-	$('input#codes_str').val(exe.join(' '));
+	$('input#cs_str').val(exe.join(' '));
+	$('input#ds_str').val(data.join(' '));
 });
 
 $('fieldset.test_exe input[type=submit]').on('click', function(key){
 	var fieldset = this.closest('fieldset');
 	var action = $(fieldset).attr('action');
 	var task_id = $('input#task_id').val();
-	$.post(action, {task_id: task_id, codes: exe}, function(result){
+	$.post(action, {task_id: task_id, cs: exe, ds: data}, function(result){
 		$('textarea#test_result').val(result);
 	});
 });
@@ -312,3 +313,12 @@ $('td.asm input').on('keydown', function(key){
 });
 
 $('tr[line=0] input').focus();
+
+function show_window() {
+	$('.overlay').toggle(500);
+}
+  
+$(".close_window").click( function(){
+	$(".overlay").hide(500);
+});
+

@@ -381,10 +381,8 @@ var disasm_mas =[
 	'fe dec reg_value=1 op1=r/m8 -------w nnn',
 	'fe inc reg_value=0 op1=r/m8 -------w nnn',
 	'ff call reg_value=2 op1=r/m16/32 -------- nnn',
-	'ff call reg_value=2 op1=r/m16/32 -------- nnn',
 	'ff dec reg_value=1 op1=r/m16/32 -------w nnn',
 	'ff inc reg_value=0 op1=r/m16/32 -------w nnn',
-	'ff jmp reg_value=4 op1=r/m16/32 -------- nnn',
 	'ff jmp reg_value=4 op1=r/m16/32 -------- nnn',
 	'ff push reg_value=6 op1=r/m16/32 -------- nnn',
 ];

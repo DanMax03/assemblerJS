@@ -46,6 +46,14 @@ function div(val, by) // в js нету деления нацело. Шок
 
 function neg_sB(s)
 {
+	var hex_s = false;
+	
+	if (s.substr(s.length - 1, 1) == 'h') {
+		hex_s = true;
+		
+		s = int_to_sB(parse_int(s));
+	}
+	
 	var s1;
 	s1 = '';
 	
@@ -62,6 +70,11 @@ function neg_sB(s)
 		s1 = (+s.charAt(i) && +p || !+s.charAt(i) && !+p ? '0' : '1') + s1;
 		
 		p = p1;
+	}
+	
+	if (hex_s) {
+		s1 = to_hex(s1).replace(/\s/g, '');
+		s1 += 'h';
 	}
 	
 	return s1;
@@ -858,6 +871,35 @@ function asm(address, cmd_text)
 
 
 
+
+
+function read_rev_data(adr, disp, len, sep)
+{
+	var res = '';
+	
+	for (var i = adr + disp; i < adr + disp + len; i++) {
+		res = hex(exe[i]) + sep + res;
+	}
+	
+	res = res.substring(0, res.length - sep.length);
+	
+	return res;
+};
+
+function read_data(adr, disp, len, sep)
+{
+	var res = '';
+	
+	for (var i = adr + disp; i < adr + disp + len; i++) {
+		res = res + sep + hex(exe[i]);
+	}
+	
+	res = res.substring(sep.length);
+	
+	return res;
+};
+
+
 /*
 	returns object:
 	type:
@@ -995,7 +1037,7 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 				return {value: '[' + reverse_reg3B[r_m] + ']', add_codes: 0, add_str: ''};
 			else { // 32-bit Displacement mode
 				var disp_value = read_rev_data(adr, 2, 4, '');
-				disp_value = (disp_value[0] == '1' ? ('-' + disp_value.substring(1)) : disp_value);
+				disp_value = (disp_value[0] == '1' ? ('-' + neg_sB(disp_value.substring(1))) : disp_value);
 				
 				return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + disp_value + ']', add_codes: 4, add_str: read_data(adr, 2, 4, ' ')};
 			}
@@ -1007,7 +1049,7 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 			
 			var disp_size = (mod == '01' ? 1 : 4);
 			var disp_value = read_rev_data(adr, 2, disp_size, '');
-			disp_value = (disp_value[0] == '1' ? ('-' + disp_value.substring(1)) : '+' + disp_value);
+			disp_value = (disp_value[0] == '1' ? ('-' + neg_sB(disp_value.substring(1))) : '+' + disp_value);
 		
 			return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[r_m] + disp_value + ']', add_codes: disp_size, add_str: read_data(adr, 2, disp_size, ' ')};
 			
@@ -1149,7 +1191,8 @@ function cut_str(str, adr) // str == 'cmd reg_value op1 op2 op3 temp'
 			c_str: c_str, 
 			c_len: 1, 
 			temp: temp,
-			reg_value: reg_value, 
+			reg_value: reg_value,
+			op_count: op_count,
 			op1: op1, 
 			op2: op2,
 			op3: op3};
@@ -1167,34 +1210,6 @@ function disasm(address)
 	var make_byte_ans = function()
 	{
 		return {address: address, cmd_text: 'db ' + hex(exe[adr]) + 'h', codes_str: hex(exe[adr]), codes_len: 1}
-	};
-	
-	
-	var read_rev_data = function(adr, disp, len, sep)
-	{
-		var res = '';
-		
-		for (var i = adr + disp; i < adr + disp + len; i++) {
-			res = hex(exe[i]) + sep + res;
-		}
-		
-		res = res.substring(0, res.length - sep.length);
-		
-		return res;
-	};
-	
-	
-	var read_data = function(adr, disp, len, sep)
-	{
-		var res = '';
-		
-		for (var i = adr + disp; i < adr + disp + len; i++) {
-			res = res + sep + hex(exe[i]);
-		}
-		
-		res = res.substring(sep.length);
-		
-		return res;
 	};
 	
 	
@@ -1220,7 +1235,7 @@ function disasm(address)
 		
 		var true_reg_value = 'reg_value=' + parse_int(mrm.substr(2, 3) + 'b');
 		
-		for (var s in str) {
+		for (var s of str) {
 			if (s.indexOf(true_reg_value) != -1) {
 				cmd_obj = cut_str(s, adr);
 				break;
@@ -1236,7 +1251,7 @@ function disasm(address)
 		var chk = cmd_obj.temp[0].substring(5);
 		
 		if (chk == 'reg') { // there's no ----wreg
-			cmd_obj.cmd += ' ' + cmd_obj.op1.value + (cmd_obj.op2 != null && cmd_obj.op2.type == 'reg' ? (' ' + cmd_obj.op2.value) : '');
+			cmd_obj.cmd += ' ' + cmd_obj.op1.value + (cmd_obj.op2 != null && cmd_obj.op2.type == 'reg' ? (', ' + cmd_obj.op2.value) : '');
 			
 			return make_ans(cmd_obj);
 		}
@@ -1261,14 +1276,14 @@ function disasm(address)
 					
 				l_br = cmd_obj.temp[1].indexOf('(');
 				
-				var temp1_size = parse_int(cmd_obj.substr(l_br + 1, 1));
+				var temp1_size = parse_int(cmd_obj.temp[1].substr(l_br + 1, 1));
 				
 				var temp1_value;
 				
 				if (cmd_obj.temp[1][l_br - 1] == 'a') { // data
 					
 					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
-					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value)
+					temp1_value = (temp1_value[0] == '1' ? ('-' + neg_sB(temp1_value.substring(1))) : temp1_value)
 					
 				} else { // addr
 					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
@@ -1340,7 +1355,7 @@ function disasm(address)
 				    cmd_obj.cmd == 'jecxz' || 
 					cmd_obj.cmd == 'int') { // catching loops, jecxz and int
 				
-					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value);
+					temp1_value = (temp1_value[0] == '1' ? ('-' + neg_sB(temp1_value.substring(1))) : temp1_value);
 					cmd_obj.cmd += ' ' + to_hex(int_to_sB(parse_int(temp1_value) + 2, 8 * temp1_size)) + 'h';
 					
 					return make_ans(cmd_obj);
@@ -1350,7 +1365,7 @@ function disasm(address)
 				
 				if (cmd_obj.temp[1][l_br - 1] == 'a') {
 					
-					temp1_value = (temp1_value[0] == '1' ? ('-' + temp1_value.substring(1)) : temp1_value);
+					temp1_value = (temp1_value[0] == '1' ? ('-' + neg_sB(temp1_value.substring(1))) : temp1_value);
 					
 				}
 				
@@ -1358,11 +1373,11 @@ function disasm(address)
 				// other instructions has 2 visible operands
 				if (cmd_obj.op1.type == 'reg') {
 					
-					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + (cmd_obj.op2.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value);
+					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + (cmd_obj.op2.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value);
 					
 				} else {
 					
-					cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ' ' + cmd_obj.op2.value;
+					cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ', ' + cmd_obj.op2.value;
 					
 				}
 				
@@ -1406,7 +1421,7 @@ function disasm(address)
 						
 						cmd_obj.c_len += cmd_obj.op1.add_codes;
 						cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
-						cmd_obj.cmd += ' ' + (direction_bit == '1' ? cmd_obj.op2.value : cmd_obj.op1.value) + ' ' + (direction_bit == '1' ? cmd_obj.op1.value : cmd_obj.op2.value);
+						cmd_obj.cmd += ' ' + (direction_bit == '1' ? cmd_obj.op2.value : cmd_obj.op1.value) + ', ' + (direction_bit == '1' ? cmd_obj.op1.value : cmd_obj.op2.value);
 						
 						return make_ans(cmd_obj);
 					
@@ -1430,7 +1445,7 @@ function disasm(address)
 							
 							cmd_obj.c_len += cmd_obj.op1.add_codes;
 							cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
-							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
+							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + cmd_obj.op2.value;
 							
 							return make_ans(cmd_obj);
 						
@@ -1462,7 +1477,7 @@ function disasm(address)
 							
 							cmd_obj.c_str += ' ' + read_data(adr, cmd_obj.c_len, temp2_size, ' ');
 							cmd_obj.c_len += temp2_size;
-							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
+							cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + cmd_obj.op2.value;
 							
 							return make_ans(cmd_obj);
 						

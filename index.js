@@ -57,7 +57,7 @@ function fill_tr(line)
 	if(lines[i] == undefined)
 		fill_line(i)
 	var tr = $('tr[line=' + line + ']');
-	tr.removeClass('edited');
+	tr.removeClass('edited error');
 	$('td.address', tr).text(hex(lines[i].address, 4));
 	$('td.codes', tr).text(lines[i].codes_str);
 	$('td.codes', tr).attr('len', lines[i].codes_len);
@@ -65,12 +65,23 @@ function fill_tr(line)
 	$('td.err', tr).text(lines[i].err);
 	if(lines[i].edited)
 		tr.addClass('edited');
+	if(lines[i].err)
+		tr.addClass('error');
 }
 
 function fill_table()
 {
 	for(var line = 0; line < n_lines; ++line)
 		fill_tr(line)
+}
+
+function err_show()
+{
+	$('div.err.segment table > tbody').empty();
+	for(var i in lines){
+		if(lines[i].err)
+			$('div.err.segment table > tbody').append('<tr><td>' + hex(lines[i].address, 4) + '</td><td>' + lines[i].cmd_text + '</td><td>' + lines[i].err + '</td></tr>');
+	}
 }
 
 function exe_update(address, codes)
@@ -101,13 +112,15 @@ function asmLine(arg) // {line, real because of Enter}
 			fill_tr(line);
 		}else{
 			$('td.err', tr).text(res.err);
-			tr.addClass('edited');
+			tr.addClass('edited error');
 			lines[i].edited = true;
 			lines[i].err = res.err;
 		}
 	}else{
-		if(res.err != '' || $('td.codes', tr).text() != codes_str){
+		if(res.err || $('td.codes', tr).text() != codes_str){
 			tr.addClass('edited');
+			if(res.err)
+				tr.addClass('error');
 			lines[i].edited = true;
 		}
 	}
@@ -310,8 +323,11 @@ $('td.asm input').on('keydown', function(key){
 	}
 //	else
 //		console.log(key.code);
+	if(['Enter', 'Escape', 'Insert', 'Delete'].indexOf(key.code) != -1)
+		err_show();
 });
 
+err_show();
 $('tr[line=0] input').focus();
 
 function show_window() {

@@ -185,7 +185,6 @@ function sB_to_hex(bin_s)
 	return res;
 }
 
-
 function abs_hexB(hex_s)
 {
 	var sB = hex_to_sB(hex_s);
@@ -1321,6 +1320,15 @@ function disasm(address)
 		} else {
 			return make_ans(cmd_obj);
 		}
+		
+		if (cmd_obj.cmd == 'int') {
+			cmd_obj.cmd += ' 3';
+			
+			return make_ans(cmd_obj);
+		} else {
+			console.log("Необработанная команда:")
+			console.log(cmd_obj);
+		}
 	}
 	
 	
@@ -1427,10 +1435,6 @@ function disasm(address)
 					
 				}
 				
-				if (cmd_obj.cmd == 'int') {
-					
-				}
-				
 				
 				if (cmd_obj.temp[1][l_br - 1] == 'a') {
 					
@@ -1446,8 +1450,10 @@ function disasm(address)
 					
 				} else {
 					
-					cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ', ' + cmd_obj.op2.value;
-					
+					if (cmd_obj.cmd != 'int')
+						cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ', ' + cmd_obj.op2.value;
+					else
+						cmd_obj.cmd += ' ' + temp1_value;
 				}
 				
 				return make_ans(cmd_obj);
@@ -1505,9 +1511,6 @@ function disasm(address)
 				
 					if (cmd_obj.temp.length == 2) { // 2nd op is already defined
 						
-						var mrm = int_to_sB(exe[adr + 1], 8);
-						var r_m = mrm.substr(5, 3);	
-						
 						if (r_m != '101') {
 						
 							cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
@@ -1526,9 +1529,6 @@ function disasm(address)
 						}
 						
 					} else { // length == 3
-						
-						var mrm = int_to_sB(exe[adr + 1], 8);
-						var r_m = mrm.substr(5, 3);	
 						
 						if (r_m != '101') {
 						
@@ -1567,8 +1567,123 @@ function disasm(address)
 		
 		case 3:
 			
-			if (cmd_obj.c_str == 'f6' && (cmd_obj.cmd == 'div' || cmd_obj.cmd == 'idiv')) { // Actually this instructions have 4th operand - r/m8 and only them.
+			switch (cmd_obj.cmd)
+			{
+				case 'div':
+				case 'idiv':
+					
+					var mrm = int_to_sB(exe[adr + 1], 8);
+					var r_m = mrm.substr(5, 3);				
+					
+					cmd_obj.c_len = 2;
+					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+					
+					if (r_m != '101') {
+						
+						if (cmd_obj.op3.type == 'reg') // f6
+							
+							cmd_obj.op1 = get_mrm_op(adr, {type: 'r/m', size: 8});
+							
+						else
+							
+							cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op3);
+						
+						cmd_obj.c_len += cmd_obj.op1.add_codes;
+						cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
+						cmd_obj.cmd += ' ' + cmd_obj.op1.value;
+						
+						return make_ans(cmd_obj);
+						
+					} else {
+						
+						console.log("disasm doesn't work with SIB byte");
+						return make_byte_ans();
+						
+					}
 				
+				break;
+				
+				case 'mul':
+				case 'imul':
+				
+					var mrm = int_to_sB(exe[adr + 1], 8);
+					var r_m = mrm.substr(5, 3);				
+					
+					cmd_obj.c_len = 2;
+					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+					
+					if (r_m != '101') {
+							
+						cmd_obj.op3 = get_mrm_op(adr, cmd_obj.op3);
+						
+						cmd_obj.c_len += cmd_obj.op3.add_codes;
+						cmd_obj.c_str += (cmd_obj.op3.add_str != '' ? (' ' + cmd_obj.op3.add_str) : '');
+						cmd_obj.cmd += ' ' + cmd_obj.op3.value;
+						
+						return make_ans(cmd_obj);
+						
+					} else {
+						
+						console.log("disasm doesn't work with SIB byte");
+						return make_byte_ans();
+						
+					}
+				
+				break;
+				
+				case 'bound':
+				
+					var mrm = int_to_sB(exe[adr + 1], 8);
+					var r_m = mrm.substr(5, 3);
+					var reg = mrm.substr(2, 3);
+					
+					cmd_obj.c_len = 2;
+					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+				
+					if (r_m != '101') {
+						
+						cmd_obj.op1.value = reverse_reg3B[reg];
+							
+						cmd_obj.op2 = get_mrm_op(adr, cmd_obj.op2);
+						
+						cmd_obj.c_len += cmd_obj.op2.add_codes;
+						cmd_obj.c_str += (cmd_obj.op2.add_str != '' ? (' ' + cmd_obj.op2.add_str) : '');
+						cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
+						
+						return make_ans(cmd_obj);
+						
+					} else {
+						
+						console.log("disasm doesn't work with SIB byte");
+						return make_byte_ans();
+						
+					}
+				
+				break;
+				
+				case 'enter':
+				
+					var temp1_size = 2;
+					var temp2_size = 1;
+					
+					var temp1_value = read_rev_data(adr, 1, temp1_size, '');
+					var temp2_value = read_rev_data(adr, 1 + temp1_size, temp2_size, '');
+					
+					cmd_obj.c_len += temp1_size + temp2_size;
+					cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ') + ' ' + read_data(adr, 1 + temp1_size, temp2_size, ' ');
+					cmd_obj.cmd += ' ' + temp1_value + 'h, ' + temp2_value + 'h';
+					
+					return make_ans(cmd_obj);
+				
+				break;
+				
+				default:
+				
+					console.log("Coming soon, maybe");
+					console.log(cmd_obj);
+					return make_byte_ans();
+				
+				break;
 			}
 			
 		break;

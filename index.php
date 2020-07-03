@@ -116,11 +116,9 @@
 			<legend>Ошибки ассемблирования</legend>
 			<table>
 				<thead>
-					<tr><th>Адрес</th><th>Ошибка</th></tr>
+					<tr><th>Адрес</th><th>Команда</th><th>Ошибка</th></tr>
 				</thead>
 				<tbody>
-					<tr><td>00040100</td><td>В записи числа обнаружена недопустимая цифра.</td></tr>
-					<tr><td>00040101</td><td>Неизвестная команда</td></tr>
 				</tbody>
 			</table>
 		</fieldset></div>

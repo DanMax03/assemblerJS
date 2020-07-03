@@ -17,7 +17,7 @@ var reverse_reg3 = {0: 'eax', 1: 'ecx', 2: 'edx', 3: 'ebx', 4: 'esp', 5: 'ebp', 
 var reverse_reg3B = {'000': 'eax', '001': 'ecx', '010': 'edx', '011': 'ebx', '100': 'esp', '101': 'ebp', '110': 'esi', '111': 'edi'};
 
 var reverse_reg2 = {0: 'al', 1: 'cl', 2: 'dl', 3: 'bl', 4: 'ah', 5: 'ch', 6: 'dh', 7: 'bh'};
-var reverse_reg3B = {'000': 'al', '001': 'cl', '010': 'dl', '011': 'bl', '100': 'ah', '101': 'ch', '110': 'dh', '111': 'bh'};
+var reverse_reg2B = {'000': 'al', '001': 'cl', '010': 'dl', '011': 'bl', '100': 'ah', '101': 'ch', '110': 'dh', '111': 'bh'};
 
 var reverse_sreg = {0: 'es', 1: 'cs', 2: 'ss', 3: 'ds'};
 var reverse_sregB = {'000' : 'es', '001': 'cs', '010': 'ss', '011': 'ds', '100': 'fs', '101': 'gs'};
@@ -54,6 +54,7 @@ function neg_sB(s)
 		s = int_to_sB(parse_int(s));
 	}
 	
+	
 	var s1;
 	s1 = '';
 	
@@ -72,6 +73,7 @@ function neg_sB(s)
 		p = p1;
 	}
 	
+	
 	if (hex_s) {
 		s1 = to_hex(s1).replace(/\s/g, '');
 		s1 += 'h';
@@ -80,10 +82,12 @@ function neg_sB(s)
 	return s1;
 }
 
-function int_to_sB(i, n) // i - число, n - разрядность (8, 16, 32)
+function int_to_sB(i, n) // i - знаковое число, n - разрядность (8, 16, 32)
 {
-	if (i < -Math.pow(2, n - 1) || i >= Math.pow(2, n - 1)) 
-		return '-';
+	var lim = 1 << (n - 1);
+	
+	if (i < -lim || i >= lim) 
+		return 'Out of borders';
 	
 	var s = '';
 	var sign = i < 0 ? 1 : 0;
@@ -91,14 +95,14 @@ function int_to_sB(i, n) // i - число, n - разрядность (8, 16, 3
 	
 	i = Math.abs(i);
 	
-	for (var k = 0; k < n - 1; k++){
+	for (var k = 0; k < n - 1; k++) {
 		
-		s = ( i % 2 + '') + s;
-		i /= 2; i = i - (i % 1);
+		s = i % 2 + s;
+		i = div(i, 2);
 		
 	}
 	
-	s = (i_orig == -Math.pow(2, n - 1) ? '1' : '0') + s;
+	s = (i_orig == -lim ? '1' : '0') + s;
 	
 	if (sign)
 		s = neg_sB(s);
@@ -106,6 +110,24 @@ function int_to_sB(i, n) // i - число, n - разрядность (8, 16, 3
 	return s;
 }
 
+function uint_to_sB(i, n) // i - беззнаковое число, i - разрядность
+{
+	var lim = 1 << n;
+	
+	if (i >= lim || i < 0)
+		return 'Out of borders';
+	
+	var s = '';
+	
+	for (var k = 0; k < n; k++) {
+		
+		s = i % 2 + s;
+		i = div(i, 2);
+		
+	}
+	
+	return s;
+}
 
 function parse_int(s)
 {
@@ -1078,7 +1100,7 @@ function cut_op(op_str)
 
 function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 {
-	var mrm = int_to_sB(exe[adr + 1], 8);
+	var mrm = uint_to_sB(exe[adr + 1], 8);
 				
 	var mod = mrm.substr(0, 2);
 	var r_m = mrm.substr(5, 3); // r_m1 != '100' outside of the function
@@ -1286,7 +1308,7 @@ function disasm(address)
 	if (str.length == 1) {
 		cmd_obj = cut_str(str[0], adr);
 	} else {
-		var mrm = int_to_sB(exe[adr + 1], 8);
+		var mrm = uint_to_sB(exe[adr + 1], 8);
 		
 		var true_reg_value = 'reg_value=' + parse_int(mrm.substr(2, 3) + 'b');
 		
@@ -1370,7 +1392,7 @@ function disasm(address)
 				
 			} else {
 				
-				var mrm = int_to_sB(exe[adr + 1], 8);
+				var mrm = uint_to_sB(exe[adr + 1], 8);
 				
 				var r_m = mrm.substr(5, 3);
 				
@@ -1460,19 +1482,19 @@ function disasm(address)
 				
 			} else {
 				
-				var mrm = int_to_sB(exe[adr + 1], 8);
+				var mrm = uint_to_sB(exe[adr + 1], 8);
 				var r_m = mrm.substr(5, 3);				
 				
 				cmd_obj.c_len = 2;
 				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
 				
 				
-				if (reg_value == 'r') {
+				if (cmd_obj.reg_value == 'r') {
 					
 					var reg = mrm.substr(2, 3);
 					
 					var direction_bit = cmd_obj.temp[0].indexOf('d');
-					direction_bit = (direction_bit == -1 ? '1' : int_to_sB(exe[adr], 8).substr(direction_bit, 1));
+					direction_bit = (direction_bit == -1 ? '1' : uint_to_sB(exe[adr], 8).substr(direction_bit, 1));
 					
 					if (direction_bit == '1') { // op1 == REG, op2 == R/M
 						var buf = cmd_obj.op1;
@@ -1485,9 +1507,9 @@ function disasm(address)
 					if (cmd_obj.op2.type == 'sreg')
 						cmd_obj.op2.value = reverse_sregB[reg];
 					else if (cmd_obj.op2.size == 8)
-						cmd_obj.op2.value = reverse_reg2[reg];
+						cmd_obj.op2.value = reverse_reg2B[reg];
 					else
-						cmd_obj.op2.value = reverse_reg3[reg];
+						cmd_obj.op2.value = reverse_reg3B[reg];
 					
 					
 					if (r_m != '101') {
@@ -1538,8 +1560,8 @@ function disasm(address)
 							cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
 							
 							
-							var l_br = temp[2].indexOf('(');
-							var temp2_size = temp[2].substr(l_br + 1, 1);
+							var l_br = cmd_obj.temp[2].indexOf('(');
+							var temp2_size = parse_int(cmd_obj.temp[2].substr(l_br + 1, 1));
 							
 							
 							cmd_obj.op2.value = read_rev_data(adr, cmd_obj.c_len, temp2_size, '') + 'h';
@@ -1572,7 +1594,7 @@ function disasm(address)
 				case 'div':
 				case 'idiv':
 					
-					var mrm = int_to_sB(exe[adr + 1], 8);
+					var mrm = uint_to_sB(exe[adr + 1], 8);
 					var r_m = mrm.substr(5, 3);				
 					
 					cmd_obj.c_len = 2;
@@ -1606,7 +1628,7 @@ function disasm(address)
 				case 'mul':
 				case 'imul':
 				
-					var mrm = int_to_sB(exe[adr + 1], 8);
+					var mrm = uint_to_sB(exe[adr + 1], 8);
 					var r_m = mrm.substr(5, 3);				
 					
 					cmd_obj.c_len = 2;
@@ -1633,7 +1655,7 @@ function disasm(address)
 				
 				case 'bound':
 				
-					var mrm = int_to_sB(exe[adr + 1], 8);
+					var mrm = uint_to_sB(exe[adr + 1], 8);
 					var r_m = mrm.substr(5, 3);
 					var reg = mrm.substr(2, 3);
 					

@@ -84,10 +84,17 @@ function neg_sB(s)
 
 function int_to_sB(i, n) // i - знаковое число, n - разрядность (8, 16, 32)
 {
-	var lim = 1 << (n - 1);
-	
-	if (i < -lim || i >= lim) 
-		return 'Out of borders';
+	if (n < 32) {
+		var lim = 1 << (n - 1);
+		
+		if (i < -lim || i >= lim) 
+			return 'Out of borders';
+	} else {
+		var lim = ~(1 << (n - 1));
+		
+		if (i < -lim - 1 || i > lim)
+			return 'Out of borders';
+	}
 	
 	var s = '';
 	var sign = i < 0 ? 1 : 0;
@@ -904,13 +911,16 @@ function asm(address, cmd_text)
 				
 					native_codeB = '11101000';
 //console.log(op);
+					
+
 					return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op.value, (op.size > 16 || op.value < 0) ? 32 : 16))));
 				break;
 				
 				case 'reg':
 				case 'mem':
-					if (op.type == 'mem' && typeof op.size == 'string')
+					if (op.type == 'mem' && typeof op.size == 'string') {
 						return make_ans("Неверный операнд");
+					}
 				
 					native_codeB = '11111111';
 					

@@ -109,12 +109,14 @@ function asmLine(arg) // {line, real because of Enter}
 		if(res.err == ''){
 			exe_update(address, res.codes);
 			fill_line(i);
+			lines[i].cmd_text = lines[i].codes_cmd;
 			fill_tr(line);
 		}else{
 			$('td.err', tr).text(res.err);
 			tr.addClass('edited error');
 			lines[i].edited = true;
 			lines[i].err = res.err;
+			lines[i].cmd_text = cmd_text;
 		}
 	}else{
 		if(res.err || $('td.codes', tr).text() != codes_str){
@@ -123,8 +125,8 @@ function asmLine(arg) // {line, real because of Enter}
 				tr.addClass('error');
 			lines[i].edited = true;
 		}
+		lines[i].cmd_text = cmd_text;
 	}
-	lines[i].cmd_text = cmd_text;
 }
 
 function delete_tr(line)

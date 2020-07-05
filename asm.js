@@ -906,21 +906,17 @@ function asm(address, cmd_text)
 			switch (op.type)
 			{
 				case 'imm':
-					if (op.value == 0)
-						return make_ans("Команда call не работает с 0");
-				
 					native_codeB = '11101000';
 //console.log(op);
-					
+					op.value -= address + 5;
 
-					return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op.value, (op.size > 16 || op.value < 0) ? 32 : 16))));
+					return make_ans(codes_str_TO_codes(to_hex(native_codeB) + ' ' + to_reverse_hex(int_to_sB(op.value, 32))));
 				break;
 				
 				case 'reg':
 				case 'mem':
-					if (op.type == 'mem' && typeof op.size == 'string') {
-						return make_ans("Неверный операнд");
-					}
+					if (op.type == 'mem' && typeof op.size == 'string')
+						op.size = 32;
 				
 					native_codeB = '11111111';
 					

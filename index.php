@@ -114,7 +114,7 @@
 				?>
 				<div id="for-error-table">
 				<div id="if">
-					<textarea id='asm_text'></textarea>
+					<textarea id='asm_text'>Поле</textarea>
 					<textarea id='asm_text2' readonly> Achtung! Error: 00040100: Неизвестная команда</textarea>
 					</div>
 				</div>

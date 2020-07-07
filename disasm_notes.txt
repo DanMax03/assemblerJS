@@ -48,3 +48,15 @@ All instructions with 1 byte template which hasn't reg or sr in it just have com
 All instructions with 2 operands and with no MRM byte have data or addr, temp.length == 2 (except d4 and d5 instructions)
 
 !!! Any command which has MRM(NNN) byte has reg_value
+
+All string-instructions has already defined ops
+All s-instructions:
+MOVS es:[edi], ds:[esi]
+CMPS ds:[esi], es:[edi]
+STOS es:[edi], eax
+LODS eax, ds:[esi]
+SCAS es:[edi], eax
+INS es:[edi], dx
+OUTS dx, ds:[esi]
+
+INS instruction has first operand as es:[edi]

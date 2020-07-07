@@ -1,45 +1,49 @@
-/*#commands-buttom{
+#menu-segment-1{
+    z-index: 4;
     display: block;
-    position: fixed;
-    top:0;
-    right: 0;
-    z-index: 5;
-    width: 5rem;
-    height: 5rem;
-    align-items: center;
-    justify-content: center;
-    color: white;
-    border: white solid 0.25rem;
-    border-radius: 50%;
+    position: relative;
+    width: 100%;
     background: black;
+    overflow: visible;
+    border: none;
     outline: none;
-    box-sizing:border-box;
-    padding: 0.1rem;
+    margin-bottom:-0.25rem;
+}
+#editor-segment-1{
+    border-collapse: collapse;
+    background: #d1d1d1;
+    display: table;
+    position: relative;
+    width: 96%;
+    margin: auto;
+    outline: none;
+    height: 100%;
+
+}
+#flex-box{
+    position: relative;
+    display: block;
+    width: 72%;
+    display:flex;
+    padding: 0;
 }
 
-#inside-border{
-    text-align: center;
-    position: relative;
-    display: block;
-    height: 75%;
-    width: 75%;
-    margin-left: auto;
-    margin-right: auto;
-    border: white solid 0.25rem;
-    border-radius: 50%;
-    margin: auto;
-}*/
-
-#commands-buttom{
-    display: block;
-    position: relative;
-    width: 40%;
+.commands-buttom{
+    margin: 0.25rem 0.25rem  0.25rem 0.25rem ;
+    border-radius: 2rem;
+    text-decoration: none;
     align-items: center;
     justify-content: center;
+    text-align: center;
+    flex: 1;
+    display: block;
+    position: relative;
+    right: 0;
     background: black;
-    padding: 0.3rem;
+    color: white;
+    padding: 0.2rem;
     font-size: 1rem;
-    margin: 0 10% 1rem 10%;
+    font-weight: bolder;
     outline: none;
     border: black solid 0.1rem;
     -webkit-transition: all 0.5s ease;
@@ -47,50 +51,30 @@
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
+
+a{
+    text-decoration: none;
+}
 #inside-border p{
-    background: black;
-    color: white;
-    width: 50%;
-    display: block;
-    margin-left:auto;
-    margin-right: auto;
-    padding: 0.25rem;
-}
-
-#inside-border{
-    text-align: center;
+    background: none;
     position: relative;
+    width: fit-content;
     display: block;
-    margin-left: auto;
-    margin-right: auto;
-    border: white solid 0.25rem;
     margin: auto;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+    padding: 2% 5% 2% 5%;
 }
 
-#commands-buttom:hover{
-    background: white;
-    border: black solid 0.25rem;
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
-}
 
-#commands-buttom:hover > #inside-border{
+.commands-buttom:hover{
     background: white;
     color: black;
-    border: black solid 0.25rem;
+    outline: white;
+    /*text-decoration: underline black;*/
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
-
-
 
 .overlay {
     background: black;
@@ -205,17 +189,16 @@ div.segment{
     position: relative;
     margin: 0 auto;
     width: 100%;
+    height: max-content;
     display: block;
-}
-
-div.data.segment textarea{
-	resize: none;
+    align-items: center;
+    justify-content: center;
 }
 
 fieldset{
     position: relative;
     padding: 1rem;
-    margin: 1rem 0 1rem 0;
+    margin: 0 1rem 0;
     border-top:0.25rem solid gray;
     border-left:0.25rem solid white;
     border-bottom:0.25rem solid white;
@@ -229,52 +212,109 @@ legend{
 }
 
 td{
-  color: #575757;
-  border: 0.1rem dashed #ababab;
-  background:#d1d1d1;
-  font-size: medium;
-  padding: 0.5rem;
+    position: relative;
+    color: #575757;
+    border: 1px dashed #ababab;
+    border-top: none;
+    /*background:#d1d1d1;*/
+    font-size: large;
+    padding: 0.5rem;
 }
 
-table#main_table, td.asm input[type=text]{
-    font-size: medium;
+td.address, td.codes{
+    width: 30%;
+}
+
+td.asm{
+    padding-left: 0;
+    width: max-content;
+}
+
+table#main_table,td.asm input[type=text]{
+    font-size: large;
     font-family: monospace;
-    border: 1px solid #c1c1c1;
     color: #575757;
 }
 
 td.asm input[type=text]{
-    width: auto;
-    text-align: center;
+    text-align: left;
     border: 0;
     outline:none; 
-    background: #d1d1d1;
+    background: none;
     
 }
 
-textarea#asm_text{
-    width: 40%;
+textarea#asm_text, textarea#asm_text2{
+    border: none;
+    float: left;
+    display: block;
+    resize: none;
+    height: 50%;
+    top:0;
+    position: absolute;
+    width: 100%;
+    outline: none;
+    overflow: auto;
+    margin-left: -1px;
+    background: #e6e5e5;
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
+}
+
+textarea#asm_text:focus{
+    background: linear-gradient(0deg, #c1c0c0, #ffffff);
+    -webkit-transition: all 0.5s ease;
+    -moz-transition: all 0.5s ease;
+    -o-transition: all 0.5s ease;
+    transition: all 0.5s ease;
 }
 
 textarea#asm_text2{
-    width: 40%;
     background: grey;
     color: black;
+    top:50%;
+    border-top: 0.25rem solid #a0a0a0;
 }
+
 table#main_table {
-    position: relative;
-    margin-right: 1rem;
-    float: left;
     width: 50%;
     border-collapse: collapse;
+    height: 100%;
+    background: linear-gradient(0deg, #c1c0c0, #ffffff);
+
+}
+
+#if{
+    display: table;
+    border-collapse: collapse;
+    width: 100%;
+    height: 100%;
+    top:0;
+    position: static;
+}
+
+#for-error-table, table#main_table{
+    position: relative;
+    display: table-cell;
+    border: 0.25rem solid #a0a0a0;
+    overflow: hidden;
+    height: 100%;
+    align-content: stretch;
+    justify-content: space-between;
+
+}
+#for-error-table{
+    width: auto;
+    height: 100%;
 }
 table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
-table#main_table tr.edited td.asm input{color: blue;}
-table#main_table tr.edited.error td.asm input{color: red;}
+table#main_table tr.edited td.asm input{color: brown;}
 form.get_exe input[type="text"]{display: none; }
-textarea.noframe{border-color: transparent;}
+textarea.noframe{border: none;}
 
 textarea.asm_text{
     border: gray solid 0.25rem;

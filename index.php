@@ -96,20 +96,29 @@
 
 
 	<div id="main_background">
-	<div class='segment'>
-		<div class='segment'><fieldset>
+	<div class='segment'><fieldset>
 			<legend>Сегмент кода</legend>
-	<?php
-	echo "\t\t<table id='main_table'>\n";
-	for($i = 0; $i < $n_lines; ++$i)
-		echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td></tr>\n";
-	echo "\t\t</table>\n";
-	?>
-		<button onclick="show_window()" id="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
-			<textarea id='asm_text'></textarea>
-			<a href='#' id='copy_asm2textarea' title='Скопировать программу в поле memo'>&#8595;</a>
-			<a href='#' id='copy_textarea2asm' title='Скопировать программу из поля memo'>&#8593;</a>
-			<textarea id='asm_text2' readonly> Warning! Error: 00040100: Неизвестная команда</textarea>
+			<div id="menu-segment-1">
+				<div id="flex-box">
+					<button onclick="show_window()" id="commands-buttom" class="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
+					<a href='#' id='copy_asm2textarea' class="commands-buttom" title='Скопировать программу в поле memo'><div id="inside-border"> <p>Скопировать программу в поле</p></div></a>
+					<a href='#' id='copy_textarea2asm' class="commands-buttom" title='Скопировать программу из поля memo'><div id="inside-border"> <p>Скопировать программу из поля</p></div></a>
+				</div>
+			</div>
+			<div id="editor-segment-1">
+				<?php
+				echo "\t\t<table id='main_table'>\n";
+				for($i = 0; $i < $n_lines; ++$i)
+					echo "\t\t\t<tr line='$i'><td class='address'>address<td class='codes' len=''><td class='asm'><input type='text' autocomplete='off'></td></tr>\n";
+				echo "\t\t</table>\n";
+				?>
+				<div id="for-error-table">
+				<div id="if">
+					<textarea id='asm_text'></textarea>
+					<textarea id='asm_text2' readonly> Achtung! Error: 00040100: Неизвестная команда</textarea>
+					</div>
+				</div>
+			</div>
 		</fieldset></div>
 
 		<div class='err segment'><fieldset>
@@ -134,7 +143,6 @@
 			<textarea cols=15 rows=<?=$ds_lines + 1?> id='ds_text' maxlength=<?=$maxlen_datatext?>></textarea>
 			<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
 		</fieldset></div>
-	</div>
 		
 	<div class='segment'>
 		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>

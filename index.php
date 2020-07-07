@@ -154,11 +154,10 @@
 		
 		<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
 			<legend>Тестирование</legend>
-			Номер задачи
-			<input type='text' id='task_id' value=''>
+<?php include 'select.inc.html'; ?>
 			<input type='submit' value='Протестировать'>
 			<p>Результат:</p>
-			<textarea id='test_result'></textarea>
+			<textarea id='test_result' cols=80 rows=20></textarea>
 		</fieldset></div>
 	</div>
 	<script>

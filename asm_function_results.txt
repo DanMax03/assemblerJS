@@ -1,42 +1,44 @@
 Здесь описаны объекты, которые могут вернуть те или иные функции.
 
 function get_command:
-	При любых условиях возвращаемый объект содержит поле type.
+	err: 'string' // ошибка, если есть - всего остального нет.
 	
-	type:
-		'err'
-			value - string
-		
-		'reg'
+	type: ['r', 'sreg', 'm', 'imm', 'rel', 'moffs', 'ptr', self_register, const]
+	
+		'ptr':
+			b_size - base size
+			d_size - displacement size
+			data - готовые байты адреса
+	
+		'r', 'sreg':
 			size: 8, 16 or 32
 			mod: '11' // понадобится, если 2 операнд или есть imm как операнд
 			r_m: '000' - '111' // код регистра
 			
-		'mem'
+			
+		'm', 'moffs':
 			size: 8, 32 or 'depends on other'
-		
-			adrr: 'reg', 'disponly' or 'reg+disp'
-				'reg'
-					mod: '00'
-					r_m: '000' - '111' \ '101' // код регистра
+			mem_adr
+			
 					
-				'disponly'
-					dsize: 32
-					dval: const signed number
-					mod: '00'
-					r_m: '101' // 32-bit Displacement mode
-					
-				'reg+disp'
-					dsize: 8 or 32
-					dval: const signed number // displacement
-					mod: '01' or '10' // зависит от размера смещения
-					r_m: '000' - '111' // код регистра
-					
-		'imm'
+		'imm', 'rel', const:
 			size: 8, 16 or 32
 			value: const signed number
-			
-p.s причина, по которой нельзя отказаться от type - типы err и imm
+
+
+mem_adr - общее название свойств:
+	adr_type: 'reg', 'reg+disp', 'disponly', 'reg+reg*n', 'disp+reg+reg*n', 'disp+reg*n'
+	mod: // значение MOD в MRM байте
+	r_m: // значение R/M в MRM байте
+	?sib: // SIB байт, в 16й системе
+	?d_c_str: // байтовая строка смещения, в 16й системе
+	
+	
+
+
+
+
+p.s причина, по которой нельзя отказаться от type - тип imm
 			
 
 function asm:
@@ -53,18 +55,12 @@ function asm:
 		cmd_text - канонический вид команды, в крайнем случае можно вернуть то, что дали, 
 		в идеале должно быть то, чтобы вернул дизассемблер, если бы получил коды команд.
 		
-	На данный момент реализованы следующие команды:
-	nop
-	db
-	add
-	inc
-	dec
-	neg
-	not
-	push
-	pop
-	pusha
-	popa
-	mov
-	call
-	ret
+	/*
+		Если вместо имени процедуры используется адрес, то он может быть записан в формате СЕГМЕНТ:СМЕЩЕНИЕ. 
+		Если в качестве адреса указать только смещение, то считается, что адрес расположен в том же сегменте, 
+		что и команда CALL (при этом выполняется ближний вызов процедуры).
+		
+		near - когда дано только смещение для call
+		example - call 0x1
+		far - когда дан весь адрес
+	*/

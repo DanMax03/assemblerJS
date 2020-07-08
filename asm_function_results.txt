@@ -1,5 +1,22 @@
 Здесь описаны объекты, которые могут вернуть те или иные функции.
 
+function cut_temp_op:
+	err: 'string' - just error
+	
+	type:
+		['self'] - just str of object, should always be constant
+		
+		['register(eax or other)'] - e.g 'eax', 'cs'
+			size: number
+		
+		['r', 'm', 'moffs', 'rel', 'imm'] - 1 or 2
+			size: number or 'depends on other'
+		
+		['ptr']
+			bsize:
+			dsize:
+
+
 function get_command:
 	err: 'string' // ошибка, если есть - всего остального нет.
 	

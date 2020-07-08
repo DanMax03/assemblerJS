@@ -1,6 +1,6 @@
 'use strict';
 
-//console.log(disasm_map);
+//console.log(asm_map);
 
 
 var reverse_reg3 = {0: 'eax', 1: 'ecx', 2: 'edx', 3: 'ebx', 4: 'esp', 5: 'ebp', 6: 'esi', 7: 'edi'};
@@ -29,6 +29,9 @@ var registersB = {'eax': '000', 'ecx': '001', 'edx': '010', 'ebx': '011', 'ebp':
 var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32, 'edi': 32,
 			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
+			   
+
+var manual_build_instructions = ['bound', 'les', 'lds'];
 
 
 function div(val, by) // в js нету деления нацело. Шок
@@ -179,7 +182,7 @@ function hex_to_sB(hex_s)
 	var res = '';
 	
 	for (var d of hex_s) {
-		res += convert_dict[hex_s];
+		res += convert_dict[d];
 	}
 	
 	return res;
@@ -301,7 +304,7 @@ function codes_TO_codes_str(codes)
 
 function canonic(s)
 {
-	if (s.match(/[a-zA-Z0-9\+\-\*\:\.]+/) != s)
+	if (s.match(/([a-zA-Z0-9]|\+|\-|\*|\:|\.|\[|\]|\s|\,)+/)[0] != s)
 		return {err: 'Недопустимый символ в команде'};
 	
 	s = s.replace(/\[/g, ' [').replace(/\[\s+/g, ' [').replace(/\s+\]/g, ']').replace(/\]\s+/g, ']').replace(/\s+\+/g, '+').replace(/\+\s+/g, '+').replace(/,/g, ', ').replace(/\s+/g, ' ').trim().toLowerCase();
@@ -402,11 +405,17 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 	
 	
 	if (/^(eax|ecx|edx|ebx|ebp|esi|edi)$/.test(mem_text)) // reg32
-		return {adr_type: 'reg',
-				mod: '11',
-				r_m: registersB[mem_text]};
+		if (mem_text != 'ebp')
+			return {adr_type: 'reg',
+					mod: '00',
+					r_m: registersB[mem_text]};
+		else
+			return {adr_type: 'reg+disp',
+					mod: '01',
+					r_m: registersB[mem_text],
+					d_c_str: '00'};
 	
-	if (/^(eax|ecx|edx|ebx|ebp|esi|edi)(\+|\-)(\d|\w)+$/.test(mem_text)) { // reg32+disp8/32
+	if (/^(eax|ecx|edx|ebx|ebp|esi|edi)(\+|\-)([a-h0-9])+$/.test(mem_text)) { // reg32+disp8/32
 		
 		var disp = mem_text.substring(3);
 		var size;
@@ -468,7 +477,7 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 	var convert_scale = {'1': '00', '2': '01', '4': '10', '8': '11'};
 	
 	
-	if (/^(eax|ecx|edx|ebx|ebp|esi|edi)\+(eax|ecx|edx|ebx|ebp|esi|edi)\*\d$/.test(mem_text)) { // reg32 + reg32*n
+	if (/^(eax|ecx|edx|ebx|ebp|esi|edi)\+(eax|ecx|edx|ebx|ebp|esi|edi)(\*\d)?$/.test(mem_text)) { // reg32 + reg32*n
 		
 		var reg1, reg2, n;
 		
@@ -477,8 +486,14 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 		n = mem_text.substr(8, 1);
 		
 		
-		if (convert_scale[n] == undefined)
-			return {err: "Неверная адресация памяти"};
+		if (convert_scale[n] == undefined) {
+			
+			if (n.match(/\d/) == null)
+				n = '1';
+			else
+				return {err: "Неверная адресация памяти"};
+			
+		}
 		
 		
 		if (reg1 == 'ebp')
@@ -486,7 +501,7 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 					mod: '01',
 					r_m: '100',
 					sib: to_hex(convert_scale[n] + registersB[reg2] + registersB[reg1]),
-					d_c_str: to_hex('00000000')};
+					d_c_str: '00'};
 			
 		
 		
@@ -497,7 +512,7 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 				
 	}
 	
-	if (/^(\+|\-|)[\d\w]+\+(eax|ecx|edx|ebx|ebp|esi|edi)\+(eax|ecx|edx|ebx|ebp|esi|edi)\*\d$/.test(mem_text)) { // disp8/32 + reg32 + reg32*n
+	if (/^(\+|\-|)[\d\w]+\+(eax|ecx|edx|ebx|ebp|esi|edi)\+(eax|ecx|edx|ebx|ebp|esi|edi)(\*\d)?$/.test(mem_text)) { // disp8/32 + reg32 + reg32*n
 		
 		var plus;
 		var reg1, reg2, n;
@@ -514,8 +529,14 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 		n = mem_text.substring(mem_text.length - 1);
 		
 		
-		if (convert_scale[n] == undefined)
-			return {err: "Неверная адресация памяти"};
+		if (convert_scale[n] == undefined) {
+			
+			if (n.match(/\d/) == null)
+				n = '1';
+			else
+				return {err: "Неверная адресация памяти"};
+			
+		}
 		
 		
 		disp = parse_int(disp);
@@ -542,7 +563,7 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 				
 	}
 	
-	if (/^(\+|\-|)[\d\w]+\+(eax|ecx|edx|ebx|ebp|esi|edi)\*\d$/.test(mem_text)) { // disp + reg32*n
+	if (/^(\+|\-|)[\d\w]+\+(eax|ecx|edx|ebx|ebp|esi|edi)(\*\d)?$/.test(mem_text)) { // disp + reg32*n
 		
 		var plus;
 		var reg2, n;
@@ -558,8 +579,14 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 		n = mem_text.substring(mem_text.length - 1);
 		
 		
-		if (convert_scale[n] == undefined)
-			return {err: "Неверная адресация памяти"};
+		if (convert_scale[n] == undefined) {
+			
+			if (n.match(/\d/) == null)
+				n = '1';
+			else
+				return {err: "Неверная адресация памяти"};
+			
+		}
 		
 		
 		disp = parse_int(disp);
@@ -590,7 +617,7 @@ function cut_mem_address(mem_text) // '...[mem_text]...'
 	return {err: "Неверная адресация памяти"};
 }
 
-function asm_cut_temp_op(op_str) // 'op\d=operand'
+function cut_temp_op(op_str) // 'op\d=operand'
 {
 	var type;
 	var size;
@@ -599,15 +626,55 @@ function asm_cut_temp_op(op_str) // 'op\d=operand'
 	
 	type = op_str.match(/[a-z]+/g);
 	
-	if (type[0] != 'ptr')
-		size = op_str.match(/\d+/g).map(item => parse_int(item));
-	else {
+	
+	if (type == null && op_str.match(/\d+/) == op_str)
+		
+		return {type: [op_str]};
+	
+	else if (type == null)
+		
+		return {err: "С шаблоном что-то не так"};
+	
+	else if (type[0] != 'ptr') {
+		
+		var gpr = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi',
+				   'ax', 'cx', 'dx', 'bx', 'sp', 'bp', 'si', 'di',
+				   'al', 'cl', 'dl', 'bl', 'ah', 'ch', 'dh', 'bh'];
+		var sgr = ['es', 'cs', 'ss', 'ds', 'fs', 'gs'];
+		
+		
+		if (gpr.indexOf(type[0]) != -1) {
+			
+			type = [type[0]];
+			size = [bitsize[type[0]]];
+			
+		} else if (sgr.indexOf(type[0]) != -1) {
+			
+			type = [type[0]];
+			size = [16];
+			
+		} else {
+			
+			if (type[0] != 'sreg') {
+				
+				size = op_str.match(/\d+/g);
+				
+				size = size == null ? ['depends on other'] : size.map(item => parse_int(item));
+				
+			} else 
+				
+				size = [16];
+			
+		}
+		
+	} else {
+		
 		var bsize, dsize;
 		
-		bsize = op_str.match(/\d+\:/);
+		bsize = op_str.match(/\d+\:/)[0];
 		bsize = parse_int(bsize.substring(0, bsize.length - 1));
 		
-		dsize = op_str.match(/\:\d+(\/\d+)*/).substring(1).split('/');
+		dsize = op_str.match(/\:\d+(\/\d+)*/)[0].substring(1).split('/');
 		dsize = dsize.map(item => parse_int(item));
 		
 		return {type: type,
@@ -725,6 +792,10 @@ function get_operand(opd_text) // mem, reg, ptr, moffs, rel
 				return {err: imm};
 			
 			
+			var size = 8 * byte_cost(imm);
+			size = size == 8 ? [8, 32] : [size];
+			
+			
 			return {type: ['imm', 'rel', imm.toString()], 
 					size: 8 * byte_cost(imm), 
 					value: imm};
@@ -733,7 +804,7 @@ function get_operand(opd_text) // mem, reg, ptr, moffs, rel
 		
 			rg = rg[0]; // make rg just string
 			
-			if ('es cs ss ds fs gs'.indexOf(rg) != -1)
+			if (/^(es|cs|ss|ds|fs|gs)$/.test(rg))
 				return {type: [rg, 'sreg'],
 						size: 16,
 						mod: '11',
@@ -749,9 +820,9 @@ function get_operand(opd_text) // mem, reg, ptr, moffs, rel
 	}
 }
 
-function get_template(instr, instr_ops)
+function get_template(instr, address, instr_ops)
 {
-	var templates = asm_map[instr]; // code true_op_count op_start reg_value? op1? op2? op3? temp
+	var templates = asm_map[instr]; //.sort(cmpTemp); // code true_op_count op_start reg_value? op1? op2? op3? temp
 	var copy_str;
 	
 	var key1;
@@ -761,12 +832,22 @@ function get_template(instr, instr_ops)
 	var str_ops;
 	var temp_op;
 	var visible_ops_count, ops_pos;
+	var copy_ops;
+	
+	
+	if (templates == undefined)
+		return {err: "Неизвестная команда"};
 	
 	
 	for (var i = 0; i < templates.length; i++) { // сопоставление шаблона
 		
 		str_ops = templates[i].match(/op\d=([a-z0-9]|\:|\/|\&)+/g);
 		copy_str = templates[i];
+		
+		
+		copy_ops = [];
+		for (var el of instr_ops)
+			copy_ops.push(Object.assign({}, el));
 		
 		
 		space = copy_str.indexOf(' ');
@@ -778,28 +859,52 @@ function get_template(instr, instr_ops)
 		ops_pos = parse_int(copy_str[0]);
 		
 		
-		if (visible_ops_count == cmd_shapes.length - 1) {
+		if (visible_ops_count == instr_ops.length) {
 			
 			key1 = true; // key1 = true => полное совпадение команд
 			
 			for (var j = 0; j < visible_ops_count && key1; j++) { // проход по операндам команд
 				
-				temp_op = asm_cut_temp_op(str_ops[j + ops_pos]);
+				temp_op = cut_temp_op(str_ops[j + ops_pos]);
 				found_suit_temp = false;
 				
 				
 				for (var k = 0; k < temp_op.type.length && !found_suit_temp; k++) // проход по возможным типам шаблона операнда
 					if (instr_ops[j].type.indexOf(temp_op.type[k]) != -1) {
 						
-						if (temp_op.bsize == undefined && temp_op.size.indexOf(instr_ops[j].size) != -1) { // 16:16/32
+						if (temp_op.type[k] == 'rel') {
 							
-							instr_ops[j].type = temp_op.type[k];
+							copy_ops[j].value -= address + 1;
+							copy_ops[j].size = 8 * byte_cost(copy_ops[j].value);
+							copy_ops[j].size = copy_ops[j].size == 8 ? [8, 32] : [copy_ops[j].size];
+							
+						}
+						
+						
+						if (temp_op.bsize == undefined && 
+							(temp_op.size.indexOf(instr_ops[j].size) != -1 || 
+							 (temp_op.type[k] == 'm' || temp_op.type[k] == 'moffs') && instr_ops[j].size == 'depends on other') ||
+							 temp_op.type[k] == 'imm' && instr_ops[j].size.indexOf(temp_op.size[temp_op.size.length - 1]) != -1 ||
+							 temp_op.type[k] == 'rel' && copy_ops[j].size.indexOf(temp_op.size[temp_op.size.length - 1]) != -1) {
+							
+							copy_ops[j].type = temp_op.type[k];
+							
 							
 							if (instr_ops[j].size == 16 && temp_op.size.indexOf(32) != -1)
-								instr_ops[j].size = 32;
+								
+								copy_ops[j].size = 32;
+								
+							else if (temp_op.type[k] == 'imm' || temp_op.type[k] == 'rel' || instr_ops[j].size == 'depends on other') {
+							
+								copy_ops[j].size = temp_op.size[temp_op.size.length - 1];
+								
+							}
+							
 							
 							found_suit_temp = true;
-						} else if (temp_op.bsize != undefined)
+							
+						} else if (temp_op.bsize != undefined) // 16:16/32
+							
 							found_suit_temp = true;
 						
 					}
@@ -810,25 +915,42 @@ function get_template(instr, instr_ops)
 				
 			}
 			
-			if (key1)
-				return {temp: templates[i], ops: instr_ops};
+			if (key1) {
+				return {temp: templates[i], ops: copy_ops};
+			}
 			
 		}
 		
 	}
 	
-	return {err: "Неизвестная команда: " + instr};
+	/*
+	for (var el of instr_ops) // I want goto(
+		if (el.type[0] == 'imm' && el.size == 8) {
+		
+			el.size = 32;
+			var ans = get_template(instr, address, instr_ops);
+			
+			if (ans.err != undefined)
+				return {err: ans.err};
+			else
+				return ans;
+			
+		}
+	*/
+	
+	
+	return {err: "Неизвестная команда"};
 }
 
 function asm_cut_str(str) // from 'code true_op_count op_start reg_value? op1? op2? op3? temp' outputs {code, reg_value, temp}
 {
 	var code;
 	var ptr;
-	var convert_reg = {0: '000', 1: '001', 2: '010', 3: '011', 4: '100', 5: '101', 6: '110', 7: '111'};
+	var convert_reg = {'0': '000', '1': '001', '2': '010', '3': '011', '4': '100', '5': '101', '6': '110', '7': '111'};
 	var reg_value = null;
 	
 	ptr = str.indexOf(' ');
-	code = str.substring(0, space);
+	code = str.substring(0, ptr);
 	
 	ptr = str.indexOf('reg_value='); // 'reg_value='.length = 10
 	
@@ -837,12 +959,12 @@ function asm_cut_str(str) // from 'code true_op_count op_start reg_value? op1? o
 		reg_value = str.substr(ptr + 10, 1);
 		
 		if (reg_value != 'r')
-			reg_value = convert_reg(reg_value);
+			reg_value = convert_reg[reg_value];
 		
 	}
 	
 	ptr = str.indexOf('-'); // Если где-то не произошла магия, то всегда любой шаблон начинается с -
-	str = substring(ptr);
+	str = str.substring(ptr);
 	
 	return {code: code, 
 			reg_value: reg_value, 
@@ -863,9 +985,10 @@ function get_code_bit(temp0, code, bit)
 
 function make_mrm(op, reg_value)
 {
-	return to_hex(op.mod + reg_value + op.r_m + (op.sib != undefined ? op.sib : '')) + (op.d_c_str != undefined ? ' ' + op.d_c_str : '');
+	return to_hex(op.mod + reg_value + op.r_m) + (op.sib != undefined ? ' ' + op.sib : '') + (op.d_c_str != undefined ? ' ' + op.d_c_str : '');
 }
 
+//console.log(asm_map);
 // {err, codes_str, codes, cmd_text}
 function asm(address, cmd_text)
 {
@@ -903,12 +1026,20 @@ function asm(address, cmd_text)
 	
 	
 	var ops = [];
-	for (var i = 1; i < cmd_shapes.length; i++)
+	for (var i = 1; i < cmd_shapes.length; i++) {
 		ops.push(get_operand(cmd_shapes[i]));
+		
+		if (ops[i - 1].err != undefined) 
+			return make_ans(ops[i - 1].err);
+	}
+	
 	
 	if (manual_build_instructions.indexOf(cmd_shapes[0]) == -1) {
 		
-		var cmd_template = get_template(cmd_shapes[0], ops); // finds template and fully determines operands
+		var cmd_template = get_template(cmd_shapes[0], address, ops); // finds template and fully determines operands
+		
+		if (cmd_template.err != undefined)
+			return make_ans(cmd_template.err);
 		
 		ops = cmd_template.ops;
 		cmd_template = cmd_template.temp;
@@ -925,13 +1056,18 @@ function asm(address, cmd_text)
 				var direction_bit = get_code_bit(cmd_obj.temp[0], cmd_obj.code, 'd');
 				direction_bit = direction_bit == '-' ? '1' : direction_bit;
 				
-				if (direction_bit == '1' && ops.length >= 2) {
+				if (direction_bit == '1' && ops.length >= 2 && (ops[0].type != 'm' && ops[0].type != 'moffs')) {
 					
 					var buf = ops[0];
 					ops[0] = ops[1];
 					ops[1] = buf;
 					
 				} // now first op is R/M operand
+				
+				
+				if (cmd_obj.reg_value == 'r')
+					cmd_obj.reg_value = ops[1].r_m;
+				
 				
 				cmd_obj.code += ' ' + make_mrm(ops[0], cmd_obj.reg_value);
 				
@@ -949,7 +1085,7 @@ function asm(address, cmd_text)
 					}
 					
 				
-			} else { // addr
+			} else if (cmd_obj.temp[1][0] == 'a'){ // addr
 				
 				for (var i = 0; i < ops.length; i++)
 					if (ops[i].type == 'rel') { // all instr with 'rel' op has 1 + rel_size / 8 bytes;
@@ -957,7 +1093,7 @@ function asm(address, cmd_text)
 						if (byte_cost(ops[i].value - ops[i].size - 1) > ops[i].size)
 							return make_ans("Слишком далёкий переход в команде.");
 						
-						cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value - ops[i].size - 1 , ops[i].size));
+						cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value - ops[i].size / 8, ops[i].size));
 						
 						break;
 					} else if (ops[i].type == 'ptr') {
@@ -968,7 +1104,9 @@ function asm(address, cmd_text)
 						return make_ans("Это что за покемон?");
 					}
 				
-			}
+			} else
+				
+				cmd_obj.code += ' ' + to_hex(cmd_obj.temp[1]);
 		
 		}
 		
@@ -990,8 +1128,6 @@ function asm(address, cmd_text)
 	
 	return {err: 'Неизвестная команда', codes: []};
 }
-
-
 
 
 
@@ -1159,7 +1295,7 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 		case '00':
 			
 			if (r_m != '101')
-				return {value: '[' + reverse_reg3B[r_m] + ']', add_codes: 0, add_str: ''};
+				return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[r_m] + ']', add_codes: 0, add_str: ''};
 			else { // 32-bit Displacement mode
 				var disp_value = read_rev_data(adr, 2, 4, '') + 'h';
 				disp_value = (disp_value[0] == '1' ? ('-' + neg_sB(disp_value.substring(1))) : disp_value);
@@ -1193,6 +1329,7 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 	}
 }	
 
+
 /*
 	Возвращает объект, содержащий следующие параметры:
 	cmd - непосредственно имя инструкции (add, mov)
@@ -1224,6 +1361,8 @@ function disasm_cut_str(str, adr) // str == 'cmd true_op_count op_start reg_valu
 	var c_len = 1;
 	var op_count = 0;
 	var temp;
+	var true_op_count = 0;
+	var op_ptr = 0;
 	var reg_value = null;
 	var op1 = null;
 	var op2 = null;
@@ -1243,8 +1382,13 @@ function disasm_cut_str(str, adr) // str == 'cmd true_op_count op_start reg_valu
 	
 	str = str.substring(space + 1); // now it's 'true_op_count op_start reg_value? op1? op2? op3? temp'
 	
+	true_op_count = parse_int(str[0]);
+	op_count = true_op_count;
+	
 	space = str.indexOf(' ');
 	str = str.substring(space + 1); // now it's 'op_start reg_value? op1? op2? op3? temp'
+	
+	op_ptr = parse_int(str[0]);
 	
 	space = str.indexOf(' ');
 	str = str.substring(space + 1); // now it's 'reg_value? op1? op2? op3? temp'
@@ -1264,53 +1408,38 @@ function disasm_cut_str(str, adr) // str == 'cmd true_op_count op_start reg_valu
 	
 	// now it's 'op1? op2? op3? temp'
 	
-	if (str.indexOf('op1=') != -1) {
-		var p = str.indexOf('op1='); // 'op1='.length = 4
+	for (var i = 0; i < 3; i++) {
 		
-		var copy_str = str.substring(p + 4);
+		var p = str.match(/op\d=/);
 		
-		space = copy_str.indexOf(' ');
-		op1 = copy_str.substring(0, space);
+		if (p != null) {
+			
+			if (true_op_count > 0 && i == op_ptr) {
+				var copy_str = str.substring(p.index + 4);
+				
+				space = copy_str.indexOf(' ');
+				
+				if (op1 == null)
+					op1 = copy_str.substring(0, space);
+				else if (op2 == null)
+					op2 = copy_str.substring(0, space);
+				else if (op3 == null)
+					op3 = copy_str.substring(0, space);
+				
+				true_op_count--;
+				op_ptr++;
+			}
+			
+			space = str.indexOf(' ');
+			str = str.substring(space + 1);
+			
+		}
 		
-		op_count += 1;
-		
-		space = str.indexOf(' ');
-		str = str.substring(space + 1);
 	}
 	
-	// now it's 'op2? op3? temp'
-	
-	if (str.indexOf('op2=') != -1) {
-		var p = str.indexOf('op2='); // 'op2='.length = 4
-		
-		var copy_str = str.substring(p + 4);
-		
-		space = copy_str.indexOf(' ');
-		op2 = copy_str.substring(0, space);
-		
-		op_count += 1;
-		
-		space = str.indexOf(' ');
-		str = str.substring(space + 1);
-	}
-	
-	// now str is 'op3? temp'
-	
-	if (str.indexOf('op3=') != -1) {
-		var p = str.indexOf('op3='); // 'op3='.length = 4
-		
-		var copy_str = str.substring(p + 4);
-		
-		space = copy_str.indexOf(' ');
-		op3 = copy_str.substring(0, space);
-		
-		op_count += 1;
-		
-		space = str.indexOf(' ');
-		str = str.substring(space + 1);
-	}
 	
 	// now str is 'temp'
+	
 	
 	if (op1 != null)
 		op1 = cut_op(op1);
@@ -1364,7 +1493,7 @@ function disasm(address)
 	
 	var cmd_obj;
 	
-	if (str.length == 1) {
+	if (str.length == 1) { // initializing cmd_obj
 		cmd_obj = disasm_cut_str(str[0], adr);
 	} else {
 		var mrm = uint_to_sB(exe[adr + 1], 8);
@@ -1384,7 +1513,9 @@ function disasm(address)
 	
 		
 	if (cmd_obj.temp.length == 1) {
+		
 		var chk = cmd_obj.temp[0].substring(5);
+		
 		
 		if (chk == 'reg') { // there's no ----wreg
 			cmd_obj.cmd += ' ' + cmd_obj.op1.value + (cmd_obj.op2 != null && cmd_obj.op2.type == 'reg' ? (', ' + cmd_obj.op2.value) : '');
@@ -1392,24 +1523,18 @@ function disasm(address)
 			return make_ans(cmd_obj);
 		}
 		
+		
 		chk = cmd_obj.temp[0].substr(3, 2);
+		
 		
 		if (chk == 'sr') {
 			cmd_obj.cmd += ' ' + cmd_obj.op1.value;
 			
 			return make_ans(cmd_obj);
-		} else {
-			return make_ans(cmd_obj);
 		}
 		
-		if (cmd_obj.cmd == 'int') {
-			cmd_obj.cmd += ' 3';
-			
-			return make_ans(cmd_obj);
-		} else {
-			console.log("Необработанная команда:")
-			console.log(cmd_obj);
-		}
+		return make_ans(cmd_obj);
+		
 	}
 	
 	
@@ -1455,14 +1580,12 @@ function disasm(address)
 				
 				var r_m = mrm.substr(5, 3);
 				
-				
 				cmd_obj.c_len = 2;
 				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
 				
-				
 				if (r_m != '100') {
 					
-					cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1)
+					cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
 					
 					if (cmd_obj.cmd == 'call' || cmd_obj.cmd == 'pop')
 						cmd_obj.op1.value = cmd_obj.op1.value.substring(cmd_obj.op1.value.indexOf(' ') + 1);
@@ -1872,10 +1995,10 @@ var tests = [
 	{asm: 'mov eax, ecx', codes_str: '89 c8'},
 	{asm: 'mov [ecx], 10', codes_str: 'c6 01 0a'},
 	
-	{asm: 'call byte [eax + 1]', codes_str: "ff 50 01"},
-	{asm: 'call 1', codes_str: 'e8 01 00'},
-	{asm: 'call -1', codes_str: 'e8 ff ff ff ff'},
-	{asm: 'call 8FFAh', codes_str: 'e8 fa 8f 00 00'},
+	{asm: 'call byte [eax + 1]', codes_str: 'Не должно компилироваться'}, 
+	{asm: 'call 1', codes_str: 'e8 fd ff ff ff'},
+	{asm: 'call -1', codes_str: 'e8 fb ff ff ff'},
+	{asm: 'call 8FFAh', codes_str: 'e8 f6 8f 00 00'},
 	{asm: 'ret', codes_str: 'c3'},
 	{asm: 'ret 0', codes_str: 'c2 00 00'},
 	{asm: 'ret 1', codes_str: 'c2 01 00'},
@@ -1886,4 +2009,4 @@ for (var i in tests){
 	var a = asm(0, tests[i].asm);
 	console.log(tests[i].asm, 'expected:', tests[i].codes_str, 'got:', codes_TO_codes_str(a.codes), 'result:', tests[i].codes_str == codes_TO_codes_str(a.codes));
 }
-*/
+*/                    

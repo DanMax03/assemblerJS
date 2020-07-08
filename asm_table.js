@@ -59,7 +59,7 @@
 	r8
 	r16
 	r16/32
-	m
+	m // only lea
 	m8
 	m16
 	m16/32
@@ -76,7 +76,7 @@
 	imm16
 	imm16/32
 	flags // pushf, popf, iret
-	eflags // bound, int 3, int imm8, into
+	eflags // bound, int3, int imm8, into
 	sreg // only MOV instructions
 	ptr16:16/32 // only CALL and JMP instructions
 	moffs8 // only MOV instructions
@@ -425,6 +425,251 @@ var cmd_mas =[
 var disasm_map = {};
 var asm_map = {};
 
+
+// Dependences from asm.js
+var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32, 'edi': 32,
+			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
+			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
+
+function parse_int(s)
+{
+	var bases = {'b': 2, 'o': 8, 'q': 8, 'h': 16, 'd': 10};
+	
+	var base = bases[s[s.length - 1]]; 
+	
+	var negative = false;
+	
+	
+	if(base == undefined)
+		base = 10;
+	else
+		s = s.substring(0, s.length - 1);
+	
+	if (s[0] == '-') {
+		negative = true;
+		s = s.substring(1);
+	} else if (s[0] == '+')
+		s = s.substring(1);
+	
+	
+	var res = 0;
+	var c
+	
+	for(var i in s){
+		if('0' <= s[i] && s[i] <= '9')
+			c = s.charCodeAt(i) - 48;
+		else if('a' <= s[i] && s[i] <= 'f')
+			c = s.charCodeAt(i) - 97 + 10;
+		else if(s[i] == ' ')
+			return 'В записи числа обнаружен пробел.';
+		else
+			return 'В записи числа обнаружен недопустимый символ.';
+		res *= base;
+		if(c >= base)
+			return 'В записи числа обнаружена недопустимая цифра.';
+		res += c
+	}
+	
+	return (negative ? -res : res);	
+}
+
+function byte_cost(number) // для знаковых чисел!!!
+{
+	var res = 0;
+	var pow = 8;
+	var border = 0; // [-lim - 1; lim]
+	var ans = false;
+	
+	do {
+		res++;
+		border = (1 << (pow - 1)) - 1;
+		
+		if (number >= -border - 1 && number <= border)
+			ans = true;
+		
+		pow *= 2;
+		
+	} while (!ans && pow < 32)
+	
+	if (!ans) { // heavy artillery
+		border = ~(1 << 31);
+		
+		if (number >= -border - 1 && number <= border) {
+			ans = true;
+			res = 4;
+		}
+	}
+
+	if (ans)
+		return res;
+	else
+		console.log('wtf?');
+	
+	return 0;
+}
+
+function cut_temp_op(op_str) // 'op\d=operand'
+{
+	var type;
+	var size;
+	
+	op_str = op_str.substring(4);
+	
+	type = op_str.match(/[a-z]+/g);
+	
+	
+	if (type == null && op_str.match(/\d+/) == op_str)
+		
+		return {type: [op_str],
+				size: 8 * byte_cost(parse_int(op_str))};
+	
+	else if (type == null)
+		
+		return {err: "С шаблоном что-то не так"};
+	
+	else if (type[0] != 'ptr') {
+		
+		var gpr = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi',
+				   'ax', 'cx', 'dx', 'bx', 'sp', 'bp', 'si', 'di',
+				   'al', 'cl', 'dl', 'bl', 'ah', 'ch', 'dh', 'bh'];
+		var sgr = ['es', 'cs', 'ss', 'ds', 'fs', 'gs'];
+		
+		
+		if (gpr.indexOf(type[0]) != -1) {
+			
+			type = [type[0]];
+			size = [bitsize[type[0]]];
+			
+		} else if (sgr.indexOf(type[0]) != -1) {
+			
+			type = [type[0]];
+			size = [16];
+			
+		} else {
+			
+			if (type[0] != 'sreg') {
+				
+				size = op_str.match(/\d+/g);
+				size = size == null ? ['depends on other'] : size.map(item => parse_int(item));
+				
+			} else 
+				
+				size = [16];
+			
+		}
+		
+	} else {
+		
+		var bsize, dsize;
+		
+		bsize = op_str.match(/\d+\:/)[0];
+		bsize = parse_int(bsize.substring(0, bsize.length - 1));
+		
+		dsize = op_str.match(/\:\d+(\/\d+)*/)[0].substring(1).split('/');
+		dsize = dsize.map(item => parse_int(item));
+		
+		return {type: type,
+				bsize: bsize,
+				dsize: dsize};
+		
+	}
+	
+	return {type: type,
+			size: size};
+}
+
+function cmpTemp(a, b)
+{
+	var types = ['imm', 'rel', 'ptr', 'sreg', 'r', 'r m', 'm', 'moffs']; // 8 - defined imm 9 - defined reg    <
+	var regs = ['eax', 'ecx', 'edx', 'ebx', 'esp', 'ebp', 'esi', 'edi',
+			   'ax', 'cx', 'dx', 'bx', 'sp', 'bp', 'si', 'di',
+			   'al', 'cl', 'dl', 'bl', 'ah', 'ch', 'dh', 'bh',
+			   'es', 'cs', 'ss', 'ds', 'fs', 'gs'];
+	
+	var str_ops_a = a.match(/op\d=([a-z0-9]|\:|\/|\&)+/g);
+	var str_ops_b = b.match(/op\d=([a-z0-9]|\:|\/|\&)+/g);
+	var op_a_type, op_b_type;
+	
+	if (str_ops_a == null && str_ops_b == null)
+		return 0;
+	
+	if (str_ops_a == null && str_ops_b != null)
+		return -1;
+	
+	if (str_ops_a != null && str_ops_b == null)
+		return 1;
+	
+	if (str_ops_b.length > str_ops_a.length)
+		return -1;
+	
+	if (str_ops_a.length > str_ops_b.length)
+		return 1;
+	
+	// str_ops_a.length == str_ops_b.length
+	
+	str_ops_a = str_ops_a.map(item => cut_temp_op(item));
+	str_ops_b = str_ops_b.map(item => cut_temp_op(item));
+	
+	
+	for (var i = 0; i < str_ops_a.length; i++) {
+		
+		str_ops_a[i].type = str_ops_a[i].type.join(' ');
+		str_ops_b[i].type = str_ops_b[i].type.join(' ');
+		
+		
+		op_a_type = types.indexOf(str_ops_a[i].type);
+		op_b_type = types.indexOf(str_ops_b[i].type);
+		
+		
+		if (op_a_type == -1) {
+			
+			if (regs.indexOf(str_ops_a[i].type[0]) != -1)
+				op_a_type = 9;
+			else
+				op_a_type = 8;
+			
+		}
+		
+		if (op_b_type == -1) {
+			
+			if (regs.indexOf(str_ops_b[i].type[0]) != -1)
+				op_b_type = 9;
+			else
+				op_b_type = 8;
+			
+		}
+		
+		
+		if (op_a_type != op_b_type)
+			
+			return op_b_type - op_a_type;
+			
+		else {
+			
+			if (str_ops_a[i].size[0] == 'depends on other')
+				str_ops_a[i].size = 0;
+			else
+				str_ops_a[i].size = str_ops_a[i].size[str_ops_a[i].size.length - 1];
+			
+			/*console.log(a);
+			console.log(b);
+			console.log(op_a_type);
+			console.log(op_b_type); */
+			
+			if (str_ops_b[i].size[0] == 'depends on other')
+				str_ops_b[i].size = 0;
+			else
+				str_ops_b[i].size = str_ops_b[i].size[str_ops_b[i].size.length - 1];
+			
+			return str_ops_a[i].size - str_ops_b[i].size;
+			
+		}
+		
+	}
+	
+	return 0;
+}
+
 (function () 
 {
 	var code;
@@ -443,6 +688,10 @@ var asm_map = {};
 		} else {
 			asm_map[cmd].push(cmd_mas[i].substring(0, space1) + cmd_mas[i].substring(space2));
 		}
+	}
+	
+	for (var key in asm_map) {
+		asm_map[key].sort(cmpTemp);
 	}
 	
 	// Creating disasm_map

@@ -221,13 +221,12 @@ td{
     padding: 0.5rem;
 }
 
-td.address, td.codes{
-    width: 30%;
+td.codes{
+    white-space: nowrap;
 }
-
 td.asm{
     padding-left: 0;
-    width: max-content;
+    width: 100%;
 }
 
 table#main_table,td.asm input[type=text]{
@@ -256,20 +255,22 @@ textarea#asm_text, textarea#asm_text2{
     outline: none;
     overflow: auto;
     margin-left: -1px;
-    background: #e6e5e5;
+    background: #fcfbfb;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
 }
 
-textarea#asm_text:focus{
-    background: linear-gradient(0deg, #c1c0c0, #ffffff);
-    -webkit-transition: all 0.5s ease;
-    -moz-transition: all 0.5s ease;
-    -o-transition: all 0.5s ease;
-    transition: all 0.5s ease;
+textarea#asm_text{
+    align-items: center;
+    text-align: center;
+    color: grey;
+    font-size: 3rem;
+    padding-top:20%;
 }
+
+
 
 textarea#asm_text2{
     background: grey;

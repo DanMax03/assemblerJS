@@ -227,7 +227,7 @@ $('form.get_exe').on('submit', function(key){
 $('fieldset.test_exe input[type=submit]').on('click', function(key){
 	var fieldset = this.closest('fieldset');
 	var action = $(fieldset).attr('action');
-	var task_id = $('input#task_id').val();
+	var task_id = $('#task_id').val();
 	$.post(action, {task_id: task_id, cs: exe, ds: data}, function(result){
 		$('textarea#test_result').val(result);
 	});

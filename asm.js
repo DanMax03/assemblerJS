@@ -797,7 +797,7 @@ function get_operand(opd_text) // mem, reg, ptr, moffs, rel
 			
 			
 			return {type: ['imm', 'rel', imm.toString()], 
-					size: 8 * byte_cost(imm), 
+					size: size, 
 					value: imm};
 			
 		} else { // just reg
@@ -876,7 +876,7 @@ function get_template(instr, address, instr_ops)
 							
 							copy_ops[j].value -= address + 1;
 							copy_ops[j].size = 8 * byte_cost(copy_ops[j].value);
-							copy_ops[j].size = copy_ops[j].size == 8 ? [8, 32] : [copy_ops[j].size];
+							copy_ops[j].size = copy_ops[j].size <= 16 ? [copy_ops[j].size, 32] : [copy_ops[j].size];
 							
 						}
 						

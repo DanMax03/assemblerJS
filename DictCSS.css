@@ -1,0 +1,19 @@
+.instrguide, td {
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+
+tbody {
+	vertical-align: middle;
+}
+
+table td {
+	/*display: table-cell; */
+	text-align: center;
+	vertical-align: inherit;
+}
+
+th {
+	padding: 10px;
+	background: gray;
+}

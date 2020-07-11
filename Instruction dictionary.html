@@ -1,0 +1,836 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title> Справочник по инструкциям </title>
+		<link rel="stylesheet" type="text/css" href="DictCSS.css">
+	</head>
+	
+	<body>
+		<table class="instrguide">
+			<tbody>
+				<tr>
+					<th>
+						Инструкция
+					</th>
+					<th>
+						Общий вид
+					</th>
+					<th>
+						Описание
+					</th>
+				</tr>
+				
+				<tr>
+					<td> aaa </td>
+					<td> aaa </td>
+					<td> Выполняет ASCII-коррекцию после сложения (BCD arithmetic) </td>
+				</tr>
+				
+				<tr>
+					<td> aad </td>
+					<td> aad </td>
+					<td> Выполняет ASCII-коррекцию после вычитания (BCD arithmetic) </td>
+				</tr>
+				
+				<tr>
+					<td> aam </td>
+					<td> aam </td>
+					<td> Выполняет ASCII-коррекцию AX регистра после умножения (BCD arithmetic) </td>
+				</tr>
+				<tr>
+					<td> aas </td>
+					<td> aas </td>
+					<td> Выполняет ASCII-коррекцию AX регистра перед делением (BCD arithmetic) </td>
+				</tr>
+				<tr>
+					<td> adc </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> adc r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> adc reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> adc r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> adc r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Выполняет сложение с переносом к результату добавляется значение флага CF </td>
+				</tr>
+				<tr>
+					<td> add </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> add r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> add reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> add r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> add r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Выполняет сложение двух чисел </td>
+				</tr>
+				<tr>
+					<td> and </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> and r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> and reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> and r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> and r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Выполняет логическое "И" </td>
+				</tr>
+				<tr>
+					<td> bound </td>
+					<td> bound reg32, m </td>
+					<td> Выполняет проверку индекса на выход за границы массива </td>
+				</tr>
+				<tr>
+					<td> call </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> call ptr16:32 </td>
+							</tr>
+							<tr>
+								<td> call rel32 </td>
+							</tr>
+							<tr>
+								<td> call r/m32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Вызов процедуры </td>
+				</tr>
+				<tr>
+					<td> cdq </td>
+					<td> cdq </td>
+					<td> Преобразование двойного слова в счетверенное слово начало будет в edx, конец - eax </td>
+				</tr>
+				<tr>
+					<td> clc </td>
+					<td> clc </td>
+					<td> Сброс флажка переноса CF </td>
+				</tr>
+				<tr>
+					<td> cld </td>
+					<td> cld </td>
+					<td> Сброс флажка направления DF </td>
+				</tr>
+				<tr>
+					<td> cli </td>
+					<td> cli </td>
+					<td> Сброс флажка прерывания IF </td>
+				</tr>
+				<tr>
+					<td> cmc </td>
+					<td> cmc </td>
+					<td> Инвертирование флажка переноса </td>
+				</tr>
+				<tr>
+					<td> cmp </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> cmp r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> cmp reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> cmp r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> cmp r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Сравнение двух операндов == sub, устанавливает флаги, не изменяя операндов </td>
+				</tr>
+				<tr>
+					<td> cmps </td>
+					<td> cmps </td>
+					<td> Сравнение цепочечных операндов </td>
+				</tr>
+				<tr>
+					<td> cwde </td>
+					<td> cwde </td>
+					<td> Преобразование слова в двойное слово EAX, AX </td>
+				</tr>
+				<tr>
+					<td> daa </td>
+					<td> daa </td>
+					<td> Выполняет ASCII-коррекцию AL регистра после сложения BCD arithmetic </td>
+				</tr>
+				<tr>
+					<td> das </td>
+					<td> das </td>
+					<td> Выполняет ASCII-коррекцию AL регистра после вычитания BCD arithmetic </td>
+				</tr>
+				<tr>
+					<td> dec </td>
+					<td> dec r/m8/32 </td>
+					<td> Декремент на 1 </td>
+				</tr>
+				<tr>
+					<td> div </td>
+					<td> div r/m8/32 </td>
+					<td> Беззнаковое деление </td>
+				</tr>
+				<tr>
+					<td> enter </td>
+					<td> enter imm16, imm8 </td>
+					<td> Образование стекового кадра для параметров процедуры </td>
+				</tr>
+				<tr>
+					<td> hlt </td>
+					<td> hlt </td>
+					<td> Останов Привилегированная команда </td>
+				</tr>
+				<tr>
+					<td> idiv </td>
+					<td> idiv r/m8/32 </td>
+					<td> Знаковое деление </td>
+				</tr>
+				<tr>
+					<td> imul </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> imul r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> imul reg32, r/m32, imm8/32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Знаковое умножение </td>
+				</tr>
+				<tr>
+					<td> in </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> in al/eax, imm8 </td>
+							</tr>
+							<tr>
+								<td> in al/eax, dx </td>
+							</tr>
+						</table>
+					</td>
+					<td> Ввод из порта </td>
+				</tr>
+				<tr>
+					<td> inc </td>
+					<td> inc r/m8/32 </td>
+					<td> Инкремент на 1 </td>
+				</tr>
+				<tr>
+					<td> ins </td>
+					<td> ins </td>
+					<td> Ввод из порта в цепочку </td>
+				</tr>
+				<tr>
+					<td> int </td>
+					<td> int imm8 </td>
+					<td> Вызов процедуры прерывания </td>
+				</tr>
+				<tr>
+					<td> int3 </td>
+					<td> int3 </td>
+					<td> Вызов процедуры прерывания 3 </td>
+				</tr>
+				<tr>
+					<td> into </td>
+					<td> into </td>
+					<td> Вызов процедуры прерывания 4, если OF=1 </td>
+				</tr>
+				<tr>
+					<td> iret </td>
+					<td> iret </td>
+					<td> Возврат из прерывания </td>
+				</tr>
+				<tr>
+					<td> mov </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> mov r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> mov reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> mov al/eax, moffs8/32 </td>
+							</tr>
+							<tr>
+								<td> mov moffs8/32, al/eax </td>
+							</tr>
+						</table>
+					</td>
+					<td> Пересылка данных </td>
+				</tr>
+				<tr>
+					<td> movs </td>
+					<td> movs </td>
+					<td> Пересылка в специальные регистры и из них </td>
+				</tr>
+				<tr>
+					<td> mul </td>
+					<td> mul r/m8/32 </td>
+					<td> Беззнаковое умножение </td>
+				</tr>
+				<tr>
+					<td> neg </td>
+					<td> neg r/m8/32 </td>
+					<td> Получение дополнительного кода изменение знака числа </td>
+				</tr>
+				<tr>
+					<td> nop </td>
+					<td> nop </td>
+					<td> Пустая операция </td>
+				</tr>
+				<tr>
+					<td> not </td>
+					<td> not r/m8/32 </td>
+					<td> Инвертирование </td>
+				</tr>
+				<tr>
+					<td> or </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> or r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> or reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> or r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> or r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Логическое включающее "ИЛИ" </td>
+				</tr>
+				<tr>
+					<td> out </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> out imm8, al/eax </td>
+							</tr>
+							<tr>
+								<td> out dx, al/eax </td>
+							</tr>
+						</table>
+					</td>
+					<td> Вывод в порт </td>
+				</tr>
+				<tr>
+					<td> outs </td>
+					<td> outs </td>
+					<td> Вывод цепочки в порт </td>
+				</tr>
+				<tr>
+					<td> pop </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> pop reg32 </td>
+							</tr>
+							<tr>
+								<td> pop sreg </td>
+							</tr>
+							<tr>
+								<td> pop m32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Извлечение слова из стека </td>
+				</tr>
+				<tr>
+					<td> popa </td>
+					<td> popa </td>
+					<td> Извлечение из стека всех общих регистров </td>
+				</tr>
+				<tr>
+					<td> popf </td>
+					<td> popf </td>
+					<td> Извлечение из стека в регистр флажков </td>
+				</tr>
+				<tr>
+					<td> push </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> push reg32 </td>
+							</tr>
+							<tr>
+								<td> push sreg </td>
+							</tr>
+							<tr>
+								<td> push m32 </td>
+							</tr>
+							<tr>
+								<td> push imm8/32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Засылка операнда в стек </td>
+				</tr>
+				<tr>
+					<td> pusha </td>
+					<td> pusha </td>
+					<td> Засылка в стек всех общих регистров </td>
+				</tr>
+				<tr>
+					<td> pushf </td>
+					<td> pushf </td>
+					<td> Засылка в стек регистра флажков </td>
+				</tr>
+				<tr>
+					<td> rcl </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> rcl r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> rcl r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Циклический сдвиг влево с участием флажка CF </td>
+				</tr>
+				<tr>
+					<td> rcr </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> rcr r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> rcr r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Циклический сдвиг вправо с участием флажка CF </td>
+				</tr>
+				<tr>
+					<td> ret </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> ret </td>
+							</tr>
+							<tr>
+								<td> ret imm16 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Возврат из процедуры </td>
+				</tr>
+				<tr>
+					<td> rol </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> rol r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> rol r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Циклический сдвиг влево с участием флажка CF </td>
+				</tr>
+				<tr>
+					<td> ror </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> ror r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> ror r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Циклический сдвиг вправо </td>
+				</tr>
+				<tr>
+					<td> sahf </td>
+					<td> sahf </td>
+					<td> Пересылка регистра AH в регистр флажков </td>
+				</tr>
+				<tr>
+					<td> sal </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> sal r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> sal r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Арифметический сдвиг влево умножение на 2 </td>
+				</tr>
+				<tr>
+					<td> salc </td>
+					<td> salc </td>
+					<td> Установка регистра AL по флажку CF </td>
+				</tr>
+				<tr>
+					<td> sar </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> sar r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> sar r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Арифметический сдвиг вправо знаковое деление на 2 </td>
+				</tr>
+				<tr>
+					<td> sbb </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> sbb r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> sbb reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> sbb r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> sbb r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Вычитание с заемом </td>
+				</tr>
+				<tr>
+					<td> scas </td>
+					<td> scas </td>
+					<td> Сравнение сканирование цепочечных данных </td>
+				</tr>
+				<tr>
+					<td> shl </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> shl r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> shl r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Обычный сдвиг влево </td>
+				</tr>
+				<tr>
+					<td> shr </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> shr r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> shr r/m8/32, cl </td>
+							</tr>
+						</table>
+					</td>
+					<td> Обычный сдвиг вправо </td>
+				</tr>
+				<tr>
+					<td> stc </td>
+					<td> stc </td>
+					<td> Установка флажка переноса </td>
+				</tr>
+				<tr>
+					<td> std </td>
+					<td> std </td>
+					<td> Установка флажка направления </td>
+				</tr>
+				<tr>
+					<td> sti </td>
+					<td> sti </td>
+					<td> Установка флажка прерывания </td>
+				</tr>
+				<tr>
+					<td> stos </td>
+					<td> stos </td>
+					<td> Сохранение цепочечных данных </td>
+				</tr>
+				<tr>
+					<td> sub </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> sub r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> sub reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> sub r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> sub r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Вычитание </td>
+				</tr>
+				<tr>
+					<td> test </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> test reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> test r/m8, imm8 </td>
+							</tr>
+							<tr>
+								<td> test r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Логическое сравнение == and, устанавливает флаги, не изменяя операндов </td>
+				</tr>
+				<tr>
+					<td> wait </td>
+					<td> wait </td>
+					<td> Ожидание </td>
+				</tr>
+				<tr>
+					<td> xchg </td>
+					<td> xchg reg8/32, r/m8/32 </td>
+					<td> Обмен данными - регистр/регистр или регистр/память </td>
+				</tr>
+				<tr>
+					<td> xlat </td>
+					<td> xlat </td>
+					<td> Перекодирование байта AL по таблице адрес таблицы в EBX </td>
+				</tr>
+				<tr>
+					<td> xor </td>
+					<td style="padding:0;"> 
+						<table class="minitable">
+							<tr>
+								<td> xor r/m8/32, reg8/32 </td>
+							</tr>
+							<tr>
+								<td> xor reg8/32, r/m8/32 </td>
+							</tr>
+							<tr>
+								<td> xor r/m8/32, imm8 </td>
+							</tr>
+							<tr>
+								<td> xor r/m32, imm32 </td>
+							</tr>
+						</table>
+					</td>
+					<td> Логичечское исключающее "ИЛИ"</td>
+				</tr>
+				<tr>
+					<td> lahf </td>
+					<td> lahf </td>
+					<td> Пересылка из регистра флажков в регистр AH </td>
+				</tr>
+				<tr>
+					<td> lds </td>
+					<td> lds r32, m16:32 </td>
+					<td> Загрузка полного указателя для DS </td>
+				</tr>
+				<tr>
+					<td> lea </td>
+					<td> lea r32, m </td>
+					<td> Загрузка эффективного адреса </td>
+				</tr>
+				<tr>
+					<td> leave </td>
+					<td> leave </td>
+					<td> Отмена действия команды ENTER перед выходом из процедуры </td>
+				</tr>
+				<tr>
+					<td> les </td>
+					<td> les r32, m16:32 </td>
+					<td> Загрузка полного указателя для ES </td>
+				</tr>
+				<tr>
+					<td> lods </td>
+					<td> lods </td>
+					<td> Загрузка цепочечного операнда в аккумулятор </td>
+				</tr>
+				<tr>
+					<td colspan="3"> Команды условной передачи управления </td>
+				</tr>
+				<tr>
+					<td colspan="3"> Условный переход осуществляется, <br>
+					если выполняется определенное условие, заданное флагами процессора </td>
+				</tr>
+				<tr>
+					<th> Инструкция </th>
+					<th> Общий вид </th>
+					<th> Условие </th>
+				</tr>
+				<tr>
+					<td> jb </td>
+					<td> jb адрес </td>
+					<td> Если меньше </td>
+				</tr>
+				<tr>
+					<td> jbe </td>
+					<td> jbe адрес </td>
+					<td> Если меньше или равно </td>
+				</tr>
+				<tr>
+					<td> jecxz </td>
+					<td> jecxz адрес </td>
+					<td> Если счетчик ECX равен нулю </td>
+				</tr>
+				<tr>
+					<td> jl </td>
+					<td> jl адрес </td>
+					<td> Если меньше </td>
+				</tr>
+				<tr>
+					<td> jle </td>
+					<td> jle адрес </td>
+					<td> Если меньше или равно </td>
+				</tr>
+				<tr>
+					<td> jmp </td>
+					<td> jmp адрес </td>
+					<td> Безусловный переход т.е всегда </td>
+				</tr>
+				<tr>
+					<td> jnb </td>
+					<td> jnb адрес </td>
+					<td> Если не меньше </td>
+				</tr>
+				<tr>
+					<td> jnbe </td>
+					<td> jnbe адрес </td>
+					<td> Если не меньше или равно </td>
+				</tr>
+				<tr>
+					<td> jnl </td>
+					<td> jnl адрес </td>
+					<td> Если не меньше </td>
+				</tr>
+				<tr>
+					<td> jnle </td>
+					<td> jnle адрес </td>
+					<td> Если не меньше или равно </td>
+				</tr>
+				<tr>
+					<td> jno </td>
+					<td> jno адрес </td>
+					<td> Если нет флага переполнения </td>
+				</tr>
+				<tr>
+					<td> jnp </td>
+					<td> jnp адрес </td>
+					<td> Если нет флага четности </td>
+				</tr>
+				<tr>
+					<td> jns </td>
+					<td> jns адрес </td>
+					<td> Если нет флага знака </td>
+				</tr>
+				<tr>
+					<td> jnz </td>
+					<td> jnz адрес </td>
+					<td> Если нет флага нуля </td>
+				</tr>
+				<tr>
+					<td> jo </td>
+					<td> jo адрес </td>
+					<td> Если есть флаг переполнения </td>
+				</tr>
+				<tr>
+					<td> jp </td>
+					<td> jp адрес </td>
+					<td> Если есть флаг четности </td>
+				</tr>
+				<tr>
+					<td> js </td>
+					<td> js адрес </td>
+					<td> Если есть флаг знака </td>
+				</tr>
+				<tr>
+					<td> jz </td>
+					<td> jz адрес </td>
+					<td> Если есть флаг нуля </td>
+				</tr>
+				<tr>
+					<td colspan="3"> Команды перехода для повторения цикла </td>
+				</tr>
+				<tr>
+					<td colspan="3"> Эти команды используются для управления циклом со счетчиком в регистре ECX </td>
+				</tr>
+				<tr>
+					<th> Инструкция </th>
+					<th> Общий вид </th>
+					<th> Условие </th>
+				</tr>
+				<tr>
+					<td> loop </td>
+					<td> loop адрес </td>
+					<td> ECX != 0</td>
+				</tr>
+				<tr>
+					<td> loopnz </td>
+					<td> loopnz адрес </td>
+					<td> ECX != 0 и ZF = 0 </td>
+				</tr>
+				<tr>
+					<td> loopz </td>
+					<td> loopz адрес </td>
+					<td> ECX != 0 и ZF = 1 </td>
+				</tr>
+			</tbody>
+		</table>
+		
+		<p style="margin: 8px;"> Полезные ссылки: </p>
+		<a href="http://looch-disasm.narod.ru/refe01.htm"> Справочник по инструкциям </a>
+		<br>
+		<div style="height: 10px;"></div>
+		<a href="http://ref.x86asm.net/coder32.html"> Таблица инструкций </a>
+	</body>
+</html>

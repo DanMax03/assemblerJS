@@ -55,7 +55,7 @@
 	<div class="flex-window" >
 		<div class="window">
 		<div class="close_window"><p id="close_symbol" >&#215;</p></div>
-		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором (относится только к сегменту кода)</p>
+		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором</p>
 		<table id="table_for_commands">
 			<tr>
 				<td id="tsp1"><p id="hq">Клавиша</p></td>
@@ -101,7 +101,7 @@
 	
 	<img src="logo.svg" alt="" id="logo"> 
 
-	<button onclick="show_window_exemples()"id="exemples-button">Примеры работы с редактором</button>
+	<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
 
 	<div id="main_background">
 	<div class='segment'><fieldset>

@@ -793,7 +793,13 @@ function get_operand(opd_text) // mem, reg, ptr, moffs, rel
 			
 			
 			var size = 8 * byte_cost(imm);
-			size = size == 8 ? [8, 32] : [size];
+			
+			if (size == 8)
+				size = [8, 16, 32];
+			else if (size == 16)
+				size = [16, 32];
+			else
+				size = [32];
 			
 			
 			return {type: ['imm', 'rel', imm.toString()], 

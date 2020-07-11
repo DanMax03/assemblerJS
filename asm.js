@@ -1063,7 +1063,7 @@ function asm(address, cmd_text)
 				var direction_bit = get_code_bit(cmd_obj.temp[0], cmd_obj.code, 'd');
 				direction_bit = direction_bit == '-' ? '1' : direction_bit;
 				
-				if (direction_bit == '1' && ops.length >= 2 && (ops[0].type != 'm' && ops[0].type != 'moffs')) {
+				if (direction_bit == '1' && ops.length >= 2 && (ops[0].type != 'm' && ops[0].type != 'moffs') && ops[1].type != 'imm') {
 					
 					var buf = ops[0];
 					ops[0] = ops[1];

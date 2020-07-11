@@ -18,7 +18,7 @@ tbody {
 
 table td {
 	/*display: table-cell; */
-	text-align: center;
+	text-align: left;
 	vertical-align: inherit;
 }
 

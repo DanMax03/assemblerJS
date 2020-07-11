@@ -242,6 +242,7 @@ $('a#copy_asm2textarea').on('click', function(key){
 	for(var i in lines)
 		res.push(lines[i].cmd_text);
 	$('textarea#asm_text').text(res.join('\n'));
+	$('textarea#asm_text').val(res.join('\n'));
 	return false;
 });
 

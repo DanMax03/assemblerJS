@@ -320,3 +320,7 @@ textarea.noframe{border: none;}
 textarea.asm_text{
     border: gray solid 0.25rem;
 }
+
+textarea#ds_bytes, textarea#ds_text{
+    overflow: hidden;
+}

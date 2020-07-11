@@ -124,7 +124,8 @@ function asmLine(arg) // {line, real because of Enter}
 			if(res.err)
 				tr.addClass('error');
 			lines[i].edited = true;
-		}
+		}else
+			tr.removeClass('edited error');
 		lines[i].cmd_text = cmd_text;
 	}
 }
@@ -287,28 +288,7 @@ function ArrowDown(line)
 
 fill_table();
 
-$('td.asm input').on('keydown', function(key){
-	// определяем действие
-	var action = '';
-	if(!key.ctrlKey && !key.altKey && !key.shiftKey) 
-		switch(key.code){
-			case 'ArrowUp': action = "ArrowUp"; break;
-			case 'ArrowDown': action = 'ArrowDown'; break;
-			case 'PageUp': action = 'PageUp'; break;
-			case 'PageDown': action = 'PageDown'; break;
-			case 'Enter': action = 'Enter'; break;
-			case 'Escape': action = 'Escape'; break;
-		}
-	if(!key.ctrlKey && key.altKey && !key.shiftKey) 
-		switch(String(key.code)){
-			case 'Insert': action = 'Insert'; break;
-			case 'Delete': action = 'Delete'; break;
-		}
-//console.log(action)
-	if(!action) return;
-	
-	// выполняем действие
-	var line = 1*this.closest('tr').getAttribute('line');
+function cs_action_handler(action, line){
 	switch(action){
 		case 'ArrowUp': 
 			asmLine({line: line, real: false});
@@ -323,14 +303,15 @@ $('td.asm input').on('keydown', function(key){
 			ArrowDown(line)
 			err_show();
 			break;
-		case 'PageUp': 
-			asmLine({line: line, real: false});
+/*		case 'PageUp': 
+			//asmLine({line: line, real: false});
 			scrollPageDown();
 			break;
 		case 'PageDown': 
-			asmLine({line: line, real: false});
+			//asmLine({line: line, real: false});
 			scrollPageUp();
 			break;
+*/
 		case 'Escape': 
 			lines[line + offset] = disasm2line_format(disasm(lines[line + offset].address));
 			fill_tr(line);
@@ -345,9 +326,37 @@ $('td.asm input').on('keydown', function(key){
 			delete_tr(line);
 			err_show();
 			break;
-		default:
-			//console.log(key.code, key.ctrlKey, key);
+		case 'Leave': 
+			asmLine({line: line, real: false});
+			break;
 	}
+}
+
+$('td.asm input').on('keydown', function(key){
+	// определяем действие
+//console.log(key.ctrlKey, key.altKey, key.shiftKey, key.code);
+	var action = '';
+	if(!key.ctrlKey && !key.altKey && !key.shiftKey) 
+		switch(key.code){
+			case 'ArrowUp': action = "ArrowUp"; break;
+			case 'ArrowDown': action = 'ArrowDown'; break;
+//			case 'PageUp': action = 'PageUp'; break;
+//			case 'PageDown': action = 'PageDown'; break;
+			case 'Enter': action = 'Enter'; break;
+			case 'Escape': action = 'Escape'; break;
+		}
+	if(!key.ctrlKey && key.altKey && !key.shiftKey) 
+		switch(String(key.code)){
+			case 'Insert': action = 'Insert'; break;
+			case 'Delete': action = 'Delete'; break;
+		}
+	var line = 1*this.closest('tr').getAttribute('line');
+	cs_action_handler(action, line);
+});
+
+$('td.asm input').on('focusout', function(){
+	var line = 1*this.closest('tr').getAttribute('line');
+	cs_action_handler('Leave', line);
 });
 
 err_show();

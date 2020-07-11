@@ -1,3 +1,39 @@
+#exe-button{
+    display: block;
+    position: fixed;
+    z-index: 5;
+    height: 7rem;
+    width: 7rem;
+    right: 0;
+    border-radius: 50%;
+    background: black;
+    border: white;
+    margin-top: 15%;
+    margin-right: 1%;
+    outline: none;
+}
+
+#cs_str, #ds_str{ display: none;}
+
+#inside-exe-button{
+    display: block;
+    position: relative;
+    margin: auto;
+    margin-top: 10%;
+    width: 80%;
+    outline: none;
+    height: 80%;
+    border: white solid 0.4rem;
+    border-radius: 50%;
+    background: black;
+    color: white;
+    align-content: center;
+    text-align: center;
+    font-size: x-large;
+}
+#inside-exe-button h2{
+    text-align: center;
+}
 #menu-segment-1{
     z-index: 4;
     display: block;
@@ -95,6 +131,7 @@ a{
     overflow: auto;
   }
 
+
   .overlay.active {
     display: block;
   }
@@ -161,8 +198,36 @@ p{
 
 
 
+#exemples-button{
+    position: relative;
+    display: block;
+    margin: auto;
+    height: 2.5rem;
+    left: -30%;
+    padding: 1.5%;
+    font-family: 'Times New Roman', Times, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+    font-size: 0.8rem;
+    cursor: pointer;
+    color: white;
+    border: none;
+    background: grey;
+    border-bottom: none;
+    border-top-right-radius: 1rem;
+    border-top-left-radius: 1rem;
+    transition: 1s;
+    outline: none;
+}
 
+#exemples-button:hover{
+    background: #a0a0a0;
+    transition: 1s;
+}
 
+#exemples-button:active{
+    background: #d1d1d1;
+}
 #logo{
     width: 65%;
     display: block;
@@ -170,12 +235,14 @@ p{
     margin-right: auto;
     margin-left: auto;
     margin-top: -15%;
-    margin-bottom: -15%;
+    margin-bottom: -18%;
 }
 
 #main_background{
     display: block;
     position: absolute;
+    border: 0.25rem solid gray;
+    border-radius: 1rem;
     background-color: white;left: 50%;
     transform: translateX(-50%);
     width: 90%;
@@ -220,11 +287,14 @@ td{
     font-size: large;
     padding: 0.5rem;
 }
-
+td.address, td.codes{
+    border-left: none;
+}
 td.codes{
     white-space: nowrap;
 }
 td.asm{
+    border-right: none;
     padding-left: 0;
     width: 100%;
 }
@@ -255,7 +325,7 @@ textarea#asm_text, textarea#asm_text2{
     outline: none;
     overflow: auto;
     margin-left: -1px;
-    background: #fcfbfb;
+    background: none;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -263,17 +333,22 @@ textarea#asm_text, textarea#asm_text2{
 }
 
 textarea#asm_text{
-    align-items: center;
-    text-align: center;
-    color: grey;
-    font-size: 3rem;
-    padding-top:20%;
+    transition: 1s;
+    padding: 0.5%;
+    padding-left: 1%;
+    font-size: large;
+    font-family: monospace;
+    color: #575757;
+}
+textarea#asm_text:focus{
+    background-color: white;
+    transition: 1s;
 }
 
 
 
 textarea#asm_text2{
-    background: grey;
+    background: none;
     color: black;
     top:50%;
     border-top: 0.25rem solid #a0a0a0;
@@ -309,6 +384,7 @@ table#main_table {
 #for-error-table{
     width: auto;
     height: 100%;
+    background: linear-gradient(0deg, #c1c0c0, #ffffff);
 }
 table#main_table td{padding: 0px 10px;}
 table#main_table td.err{color: red;}

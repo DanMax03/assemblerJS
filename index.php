@@ -43,7 +43,14 @@
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
 <body>
-
+	<form method='post' action='get_exe.php' target='_blank' class='get_exe' id="exe-button">
+			<input type='text' name='cs_str' id='cs_str' value=''>
+			<input type='text' name='ds_str' id='ds_str' value=''>
+			<input type='submit' value='.exe' id="inside-exe-button">
+	</form>
+	<!---<button onclick="show_window_exemples_2()" id="exe-button">
+	<div id="inside-exe-button"> <h2>.exe</h2> 
+	</div></button>-->
 	<div class="overlay" id="commands-window">
 	<div class="flex-window" >
 		<div class="window">
@@ -86,14 +93,15 @@
 				<td id="tsp1"><p id="hq">Delete</p></td>
 				<td id="tsp1"><p>Удаление команды текущей строки</p></td>
 			</tr>
-		</table>
+		</table> 
 		</div>
 	</div>
 	</div>
-	</style>
-	<img src="logo.svg" alt="" id="logo">
 
+	
+	<img src="logo.svg" alt="" id="logo"> 
 
+	<button onclick="show_window_exemples()"id="exemples-button">Примеры работы с редактором</button>
 
 	<div id="main_background">
 	<div class='segment'><fieldset>

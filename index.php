@@ -152,13 +152,6 @@
 			<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
 		</fieldset></div>
 		
-	<div class='segment'>
-		<form method='post' action='get_exe.php' target='_blank' class='get_exe'>
-			<input type='text' name='cs_str' id='cs_str' value=''>
-			<input type='text' name='ds_str' id='ds_str' value=''>
-			<input type='submit' value='Получить *.exe файл'>
-		</form>
-	</div>
 		
 		<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
 			<legend>Тестирование</legend>

@@ -143,6 +143,7 @@ function delete_tr(line)
 		lines[j].address -= len;
 		// при этом может измениться код команды
 		var res = asm(lines[j].address, lines[j].codes_cmd);
+		exe_update(lines[j].address, res.codes);
 		lines[j].codes_str = codes_TO_codes_str(res.codes);
 		if(lines[j].codes_cmd != res.cmd_text)
 			console.log('Текст команды не должен был измениться.');
@@ -165,6 +166,7 @@ function insert_tr(line)
 		lines[j].address++;
 		// при этом может измениться код команды
 		var res = asm(lines[j].address, lines[j].codes_cmd);
+		exe_update(lines[j].address, res.codes);
 		lines[j].codes_str = codes_TO_codes_str(res.codes);
 		if(lines[j].codes_cmd != res.cmd_text)
 			console.log('Текст команды не должен был измениться.');
@@ -283,11 +285,6 @@ function ArrowDown(line)
 		scrollUp();
 }
 
-
-
-
-
-
 fill_table();
 
 $('td.asm input').on('keydown', function(key){
@@ -307,6 +304,7 @@ $('td.asm input').on('keydown', function(key){
 			case 'Insert': action = 'Insert'; break;
 			case 'Delete': action = 'Delete'; break;
 		}
+//console.log(action)
 	if(!action) return;
 	
 	// выполняем действие

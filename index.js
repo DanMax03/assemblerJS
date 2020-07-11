@@ -143,6 +143,7 @@ function delete_tr(line)
 		lines[j].address -= len;
 		// при этом может измениться код команды
 		var res = asm(lines[j].address, lines[j].codes_cmd);
+		exe_update(lines[j].address, res.codes);
 		lines[j].codes_str = codes_TO_codes_str(res.codes);
 		if(lines[j].codes_cmd != res.cmd_text)
 			console.log('Текст команды не должен был измениться.');
@@ -165,6 +166,7 @@ function insert_tr(line)
 		lines[j].address++;
 		// при этом может измениться код команды
 		var res = asm(lines[j].address, lines[j].codes_cmd);
+		exe_update(lines[j].address, res.codes);
 		lines[j].codes_str = codes_TO_codes_str(res.codes);
 		if(lines[j].codes_cmd != res.cmd_text)
 			console.log('Текст команды не должен был измениться.');
@@ -286,47 +288,66 @@ function ArrowDown(line)
 fill_table();
 
 $('td.asm input').on('keydown', function(key){
-	var line = 1*this.closest('tr').getAttribute('line');
-	if(['ArrowUp', 'ArrowDown', 'PageUp', 'PageDown', 'Insert'].indexOf(key.code) != -1)
-		asmLine({line: line, real: false});
+	// определяем действие
+	var action = '';
+	if(!key.ctrlKey && !key.altKey && !key.shiftKey) 
+		switch(key.code){
+			case 'ArrowUp': action = "ArrowUp"; break;
+			case 'ArrowDown': action = 'ArrowDown'; break;
+			case 'PageUp': action = 'PageUp'; break;
+			case 'PageDown': action = 'PageDown'; break;
+			case 'Enter': action = 'Enter'; break;
+			case 'Escape': action = 'Escape'; break;
+		}
+	if(!key.ctrlKey && key.altKey && !key.shiftKey) 
+		switch(String(key.code)){
+			case 'Insert': action = 'Insert'; break;
+			case 'Delete': action = 'Delete'; break;
+		}
+//console.log(action)
+	if(!action) return;
 	
-	if(key.code == 'ArrowUp'){
-		ArrowUp(line);
+	// выполняем действие
+	var line = 1*this.closest('tr').getAttribute('line');
+	switch(action){
+		case 'ArrowUp': 
+			asmLine({line: line, real: false});
+			ArrowUp(line);
+			break;
+		case 'ArrowDown': 
+			asmLine({line: line, real: false});
+			ArrowDown(line)
+			break;
+		case 'Enter': 
+			asmLine({line: line, real: true});
+			ArrowDown(line)
+			err_show();
+			break;
+		case 'PageUp': 
+			asmLine({line: line, real: false});
+			scrollPageDown();
+			break;
+		case 'PageDown': 
+			asmLine({line: line, real: false});
+			scrollPageUp();
+			break;
+		case 'Escape': 
+			lines[line + offset] = disasm2line_format(disasm(lines[line + offset].address));
+			fill_tr(line);
+			err_show();
+			break;
+		case 'Insert': 
+			asmLine({line: line, real: false});
+			insert_tr(line);
+			err_show();
+			break;
+		case 'Delete': 
+			delete_tr(line);
+			err_show();
+			break;
+		default:
+			//console.log(key.code, key.ctrlKey, key);
 	}
-	else
-	if(key.code == 'ArrowDown'){
-		ArrowDown(line)
-	}
-	else
-	if(key.code == 'Enter'){
-		asmLine({line: line, real: true});
-		ArrowDown(line)
-	}
-	else
-	if(key.code == 'PageUp'){
-		scrollPageDown();
-	}
-	else
-	if(key.code == 'PageDown'){
-		scrollPageUp();
-	}
-	else
-	if(key.code == 'Escape'){
-		lines[line + offset] = disasm2line_format(disasm(lines[line + offset].address));
-		fill_tr(line);
-	}
-	else
-	if(key.code == 'Insert'){
-		insert_tr(line);
-	}
-	else
-	if(key.code == 'Delete'){
-		delete_tr(line);
-	}
-//	else
-//		console.log(key.code);
-	if(['Enter', 'Escape', 'Insert', 'Delete'].indexOf(key.code) != -1)
-		err_show();
 });
 
 err_show();

@@ -1,0 +1,28 @@
+.instrguide, td {
+	border: 2px solid black;
+	border-collapse: collapse;
+}
+
+.minitable {
+	width: 100%;
+	border-collapse: collapse;
+}
+
+table.minitable td {
+	border: 0px white !important;
+}
+
+tbody {
+	vertical-align: middle;
+}
+
+table td {
+	/*display: table-cell; */
+	text-align: left;
+	vertical-align: inherit;
+}
+
+th {
+	padding: 10px;
+	background: gray;
+}

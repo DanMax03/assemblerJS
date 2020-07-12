@@ -16,10 +16,10 @@ function codes_TO_codes_str(codes)
 	return codes_str.join(' ');
 }
 
-// {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text, edited, err}
+// {address, err, codes, cmd_text} -> {address, codes_str, codes_len, cmd_text, edited, err, codes_cmd}
 function asm2line_format(a)
 {
-	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false, err: ''};
+	return {address: a.address, codes_str: codes_TO_codes_str(a.codes), codes_len: a.codes.length, cmd_text: a.cmd_text, edited: false, err: '', codes_cmd: a.cmd_text};
 }
 
 // {address, codes_str, codes_len, cmd_text} -> {address, codes_str, codes_len, cmd_text, edited, err, cmd_text}

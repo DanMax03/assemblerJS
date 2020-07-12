@@ -35,5 +35,16 @@
 	)));
 
 	if($result === false) exit('Файл протестировать не удалось.');
+	$result = (array)json_decode($result);
+//print_r($result); die;
 	
-	echo $result;
+	$report = array();
+	foreach($result as $num => $test){
+		$test = (array)$test;
+		if($test['show'])
+			$report[$num] = $test;
+		else
+			$report[$num] = array('status' => $test['status'], 'show' => $test['show']);
+	}
+//print_r($report); die;
+	echo json_encode($report);

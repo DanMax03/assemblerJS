@@ -78,10 +78,11 @@ function fill_table()
 
 function err_show()
 {
-	$('div.err.segment table > tbody').empty();
+	var tbody = $('div.err.segment table > tbody');
+	tbody.empty();
 	for(var i in lines){
 		if(lines[i].err)
-			$('div.err.segment table > tbody').append('<tr><td>' + hex(lines[i].address, 4) + '</td><td>' + lines[i].cmd_text + '</td><td>' + lines[i].err + '</td></tr>');
+			tbody.append('<tr><td>' + hex(lines[i].address, 4) + '</td><td>' + lines[i].cmd_text + '</td><td>' + lines[i].err + '</td></tr>');
 	}
 }
 
@@ -228,15 +229,6 @@ $('form.get_exe').on('submit', function(key){
 	alert('Сохранение exe файла после скачивания может быть заблокировано антивирусной программой или системой безопасности Windows. \n \n Если у вас Windows 10 и срабатыват система безопасности Windows блокирует сохранение, то делаем следующее. \n Ту папку, куда будут сохраняться exe-файлы, нужно исключить из зоны ответственности системы безопасности Windows. \n Для этого нужно добавить исключение в систему Безопасность Windows: \n Добавление исключения в систему Безопасность Windows: \n Перейдите в раздел Пуск > Параметры > Обновление и безопасность > Безопасность Windows > Защита от вирусов и угроз. \n В разделе Параметры защиты от вирусов и угроз выберите Управление настройками, а затем в разделе Исключения выберите Добавление или удаление исключений. ');
 	$('input#cs_str').val(exe.join(' '));
 	$('input#ds_str').val(data.join(' '));
-});
-
-$('fieldset.test_exe input[type=submit]').on('click', function(key){
-	var fieldset = this.closest('fieldset');
-	var action = $(fieldset).attr('action');
-	var task_id = $('#task_id').val();
-	$.post(action, {task_id: task_id, cs: exe, ds: data}, function(result){
-		$('textarea#test_result').val(result);
-	});
 });
 
 $('a#copy_asm2textarea').on('click', function(key){

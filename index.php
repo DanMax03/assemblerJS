@@ -106,7 +106,7 @@
 		<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
 	</div>
 	<div id="main_background">
-	<div class='segment'><fieldset>
+	<div class='segment code'><fieldset>
 			<legend>Сегмент кода</legend>
 			<div id="menu-segment-1">
 				<div id="flex-box">
@@ -131,7 +131,7 @@
 			</div>
 		</fieldset></div>
 
-		<div class='err segment'><fieldset>
+		<div class='segment err'><fieldset>
 			<legend>Ошибки ассемблирования</legend>
 			<table>
 				<thead>
@@ -142,7 +142,7 @@
 			</table>
 		</fieldset></div>
 		
-		<div class='data segment'><fieldset>
+		<div class='segment data'><fieldset>
 			<legend>Сегмент данных</legend>
 			<textarea cols=7 rows=1 readonly class='noframe'></textarea>
 			<textarea cols=47 rows=1 readonly class='noframe'>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
@@ -155,12 +155,18 @@
 		</fieldset></div>
 		
 		
-		<div class='segment'><fieldset method='post' action='test_exe.php' class='test_exe'>
+		<div class='segment test'><fieldset method='post' action='test_exe.php' class='test_exe'>
 			<legend>Тестирование</legend>
 <?php include 'select.inc.html'; ?>
 			<input type='submit' value='Протестировать'>
 			<p>Результат:</p>
-			<textarea id='test_result' cols=80 rows=20></textarea>
+			<table>
+				<thead>
+					<tr><th>N</th><th>input</th><th>expected</th><th>got</th><th>status</th></tr>
+				</thead>
+				<tbody>
+				</tbody>
+			</table>
 		</fieldset></div>
 	</div>
 	<script>
@@ -176,5 +182,6 @@
 	<script src="asm.js" type="text/javascript"></script>
 	<script src="index.js" type="text/javascript"></script>
 	<script src="ds.js" type="text/javascript"></script>
+	<script src="test_exe.js" type="text/javascript"></script>
 </body>
 </html>

@@ -101,9 +101,10 @@
 
 	
 	<img src="logo.svg" alt="" id="logo"> 
-
-	<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
-
+	<div id="buttons-block">
+		<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
+		<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+	</div>
 	<div id="main_background">
 	<div class='segment'><fieldset>
 			<legend>Сегмент кода</legend>

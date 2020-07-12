@@ -378,4 +378,8 @@ function show_window_exemples(){
 	window.open("basic-asm-etudes.html", "Exemples", "width=600,height=300");
 };
 
+function show_window_insructions(){
+	window.open("instrDict.html", "Instractions", "width=600,height=300");
+};
+
 

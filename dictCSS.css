@@ -3,6 +3,11 @@
 	border-collapse: collapse;
 }
 
+.describe {
+	background: gainsboro;
+	text-align: center !important;
+}
+
 .minitable {
 	width: 100%;
 	border-collapse: collapse;

@@ -205,7 +205,7 @@ p{
     height: 2.5rem;
     left: -35%;
     padding: 1.5%;
-    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
     font-weight: bold;
     letter-spacing: 0.1rem;
     font-size: 0.8rem;
@@ -273,7 +273,10 @@ fieldset{
 }
 
 legend{
-    font-family: Arial, Helvetica,serif;
+    /*font-family: Arial, Helvetica,serif;*/
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
     font-size: 1.5rem;
     color: gray;
 }

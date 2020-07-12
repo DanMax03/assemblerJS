@@ -1,0 +1,36 @@
+body{
+    background: black;
+    color: white;
+}
+section{
+    background: white;
+    color:  black;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    /*font-family: Arial, Helvetica, sans-serif;
+    font-weight: bold;
+    letter-spacing: 0.05rem;*/
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
+    font-weight: bold;
+    letter-spacing: 0.05rem;
+    font-size: 0.8rem;
+}
+pre{
+    background: /*linear-gradient(0deg, #c1c0c0, #e1e0e0)*/ #e1e0e0;
+    font-size: larger;
+    font-family: monospace;
+    color: #575757;
+    padding-top: 0.3rem;
+    border-radius: 0.5rem;
+    margin: 0.25rem;
+}
+fieldset{
+    border: white solid 0.25rem;
+    border-radius: 1rem;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
+    font-weight: bold;
+    letter-spacing: 0.2rem;
+    font-size: 1rem;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+}

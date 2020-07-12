@@ -372,8 +372,10 @@ $(".close_window").click( function(){
 	$(".overlay").hide(500);
 });
 
+
+
 function show_window_exemples(){
-	window.open("basic-asm-etudes.html", "display_volvo", "menubar=yes,width=1024,height=768");
+	window.open("basic-asm-etudes.html", "Exemples", "width=600,height=300");
 };
 
 

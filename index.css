@@ -172,9 +172,9 @@ a{
   }
 
 p{
-    font-family: 'Times New Roman', Times, sans-serif;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;;
     font-weight: bold;
-    letter-spacing: 0.05rem;
+    letter-spacing: 0.1rem;
     font-size: 0.8rem;
     cursor: pointer;
   }
@@ -205,9 +205,9 @@ p{
     height: 2.5rem;
     left: -35%;
     padding: 1.5%;
-    font-family: 'Times New Roman', Times, sans-serif;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;;
     font-weight: bold;
-    letter-spacing: 0.05rem;
+    letter-spacing: 0.1rem;
     font-size: 0.8rem;
     cursor: pointer;
     color: white;

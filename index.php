@@ -100,7 +100,7 @@
 	</div>
 
 	
-	<img src="logo.svg" alt="" id="logo"> 
+	<img src="new-logo.svg" alt="" id="logo"> 
 	<div id="buttons-block">
 		<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
 		<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>

@@ -2,15 +2,16 @@
     display: block;
     position: fixed;
     z-index: 5;
-    height: 7rem;
-    width: 7rem;
+    height: 6.2rem;
+    width: 6.2rem;
     right: 0;
     border-radius: 50%;
     background: black;
-    border: white;
-    margin-top: 15%;
+    border: white solid 0.2rem;
+    margin-top: 5%;
     margin-right: 1%;
     outline: none;
+    transition: 2s;
 }
 
 #cs_str, #ds_str{ display: none;}
@@ -30,10 +31,28 @@
     align-content: center;
     text-align: center;
     font-size: x-large;
+    transition: 2s;
 }
 #inside-exe-button h2{
     text-align: center;
 }
+
+#exe-button:hover{
+    border-color: black;
+    background-color: white;
+    height: 7.5rem;
+    width: 7.5rem;
+    transition: 2s;
+}
+
+#exe-button:hover #inside-exe-button{
+    background-color: white;
+    border-color: black;
+    color: black;
+    font-size: xx-large;
+    transition: 2s;
+}
+
 #menu-segment-1{
     z-index: 4;
     display: block;
@@ -224,12 +243,13 @@ p{
     border-top-left-radius: 1rem;
     transition: 1s;
     outline: none;
-    box-shadow: 11px -3px 8px 0px rgba(34, 60, 80, 0.2);
-    margin-right: -1%;
+    box-shadow: 5px -5px 8px 0px rgba(0, 0, 0, 0.15);
+    margin-right: -2%;
     z-index: 2;
 }
 
 #insructions-button{
+    z-index: 1;
     width: 15rem;
     position: relative;
     display: inline-block;
@@ -248,28 +268,31 @@ p{
     border-top-left-radius: 1rem;
     transition: 1s;
     outline: none;
+    animation-duration: 10s;
 }
+
+
 
 #exemples-button:hover, #insructions-button:hover{
     background: #a0a0a0;
     transition: 1s;
 }
 
-#insructions-button:hover ~ #exemples-button{
+
+#exemples-button:active, #insructions-button:active{
+    background: #d1d1d1;
     box-shadow: none;
 }
-#exemples-button:active, #insructions-button:hover{
-    background: #d1d1d1;
-}
+
 
 #logo{
-    width: 65%;
+    width: 80%;
     display: block;
     position: relative;
     margin-right: auto;
     margin-left: auto;
-    margin-top: -15%;
-    margin-bottom: -18%;
+    margin-top: -5%;
+    margin-bottom: -5%;
 }
 
 #main_background{

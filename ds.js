@@ -49,6 +49,8 @@ function set_ds_text(s)
 			}
 		}
 	}
+	while(res.length < PAGE)
+		res.push(0);
 	data = res;
 }
 

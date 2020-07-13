@@ -36,7 +36,7 @@ function set_ds_text(s)
 	var res = []
 	for(var i in s){
 		for(var j = 0; j < s[i].length; j += 16){
-			var q = s[i].substring(j * 16, j * 16 + 16);
+			var q = s[i].substring(j, j + 16);
 			for(var k = 0; k < 16; ++k){
 				if(res.length >= PAGE) break;
 				if(k < q.length){

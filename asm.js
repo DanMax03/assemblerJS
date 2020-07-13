@@ -305,7 +305,9 @@ function codes_TO_codes_str(codes)
 
 function canonic(s)
 {
-	if (s.match(/([a-zA-Z0-9]|\+|\-|\*|\:|\.|\[|\]|\s|\,)+/)[0] != s)
+	var test = s.match(/([a-zA-Z0-9]|\+|\-|\*|\:|\.|\[|\]|\s|\,)+/);
+	
+	if (test == null || test[0] != s)
 		return {err: 'Недопустимый символ в команде'};
 	
 	s = s.replace(/\[/g, ' [').replace(/\[\s+/g, ' [').replace(/\s+\]/g, ']').replace(/\]\s+/g, ']').replace(/\s+\+/g, '+').replace(/\+\s+/g, '+').replace(/,/g, ', ').replace(/\s+/g, ' ').trim().toLowerCase();

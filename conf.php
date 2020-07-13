@@ -6,5 +6,5 @@
 	define('EXE_CS_ADDRESS', 0x401000); // начало сегмента кода в файле
 	define('EXE_DS_ADDRESS', 0x402000); // начало сегмента данных в файле
 	define('TASK_EXE_FULL_PATH', './task.exe');
-	//define('JOBE_EXE_URL', 'http://46.188.11.165/');
+	//define('JOBE_EXE_URL', 'http://jobe_exe/');
 	define('JOBE_EXE_URL', 'http://130.193.36.223/');

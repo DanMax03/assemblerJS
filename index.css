@@ -40,8 +40,8 @@
 #exe-button:hover{
     border-color: black;
     background-color: white;
-    height: 7.5rem;
-    width: 7.5rem;
+    height: 7rem;
+    width: 7rem;
     transition: 2s;
 }
 

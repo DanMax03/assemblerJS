@@ -148,6 +148,7 @@ a{
     border: white solid 0.25rem;
     border-radius: 0.25rem;
     overflow: auto;
+    -webkit-overflow-scrolling : touch;
   }
 
 

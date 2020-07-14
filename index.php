@@ -49,57 +49,6 @@
 			<input type='text' name='ds_str' id='ds_str' value=''>
 			<input type='submit' value='.exe' id="inside-exe-button">
 	</form>
-	<!---<button onclick="show_window_exemples_2()" id="exe-button">
-	<div id="inside-exe-button"> <h2>.exe</h2> 
-	</div></button>-->
-	<div class="overlay" id="commands-window">
-	<div class="flex-window" >
-		<div class="window">
-		<div class="close_window"><p id="close_symbol" >&#215;</p></div>
-		<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором</p>
-		<table id="table_for_commands">
-			<tr>
-				<td id="tsp1"><p id="hq">Клавиша</p></td>
-				<td id="tsp1"><p>Действие</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Enter</p></td>
-				<td id="tsp1"><p>Трансляция команды в машинный код</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Down</p></td>
-				<td id="tsp1"><p>Переход на строку вниз без трансляции команды</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Up</p></td>
-				<td id="tsp1"><p>Переход на строку вверх без трансляции команды</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">PageDown</p></td>
-				<td id="tsp1"><p>Прокрутка страницы на несколько строк вниз</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">PageUp</p></td>
-				<td id="tsp1"><p>Прокрутка страницы на несколько строк вверх</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Escape</p></td>
-				<td id="tsp1"><p>Повторное дизассемблирование команды текущей строки (отмена изменений)</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Insert</p></td>
-				<td id="tsp1"><p>Добавление команды nop перед текущей строкой</p></td>
-			</tr>
-			<tr>
-				<td id="tsp1"><p id="hq">Delete</p></td>
-				<td id="tsp1"><p>Удаление команды текущей строки</p></td>
-			</tr>
-		</table> 
-		</div>
-	</div>
-	</div>
-
-	
 	<img src="new-logo.svg" alt="" id="logo"> 
 	<div id="buttons-block">
 		<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
@@ -110,7 +59,7 @@
 			<legend>Сегмент кода</legend>
 			<div id="menu-segment-1">
 				<div id="flex-box">
-					<button onclick="show_window()" id="commands-buttom" class="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
+					<button id="commands-buttom" class="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
 					<a href='#' id='copy_asm2textarea' class="commands-buttom" title='Скопировать программу в поле memo'><div id="inside-border"> <p>Скопировать программу в поле</p></div></a>
 					<a href='#' id='copy_textarea2asm' class="commands-buttom" title='Скопировать программу из поля memo'><div id="inside-border"> <p>Скопировать программу из поля</p></div></a>
 				</div>

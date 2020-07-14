@@ -362,8 +362,8 @@ $('tr[line=0] input').focus();
 
   
 $("#commands-buttom").click( function(){
-	var a = String(window.innerWidth/2);
-	var b = String(window.innerHeight/2);
+	var a = String(window.innerWidth/4*3);
+	var b = String(window.innerHeight/4*3);
 	window.open("help_editor.html", "Commmands", "top="+b+",left="+a+",width=600,height=300");
 });
 

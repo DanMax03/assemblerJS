@@ -59,9 +59,9 @@
 			<legend>Сегмент кода</legend>
 			<div id="menu-segment-1">
 				<div id="flex-box">
-					<button id="commands-buttom" class="commands-buttom"><div id="inside-border"><p>Справка по кнопочкам</p></div></button>
-					<a href='#' id='copy_asm2textarea' class="commands-buttom" title='Скопировать программу в поле memo'><div id="inside-border"> <p>Скопировать программу в поле</p></div></a>
-					<a href='#' id='copy_textarea2asm' class="commands-buttom" title='Скопировать программу из поля memo'><div id="inside-border"> <p>Скопировать программу из поля</p></div></a>
+					<a id="commands-buttom" class="commands-buttom" ><p>Справка по кнопочкам</p></a>
+					<a href='#' id='copy_asm2textarea' class="commands-buttom" title='Скопировать программу в поле memo'> <p>Скопировать программу в поле</p> </a>
+					<a href='#' id='copy_textarea2asm' class="commands-buttom" title='Скопировать программу из поля memo'> <p>Скопировать программу из поля</p></a>
 				</div>
 			</div>
 			<div id="editor-segment-1">

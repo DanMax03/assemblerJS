@@ -374,7 +374,8 @@ function show_window_exemples(){
 };
 
 function show_window_insructions(){
-	window.open("instrDict.html", "Instractions", "width=600,height=300");
+	var b = String(window.innerHeight/4*3);
+	window.open("instrDict.html", "Instractions", "top="+b+",width=600,height=300");
 };
 
 

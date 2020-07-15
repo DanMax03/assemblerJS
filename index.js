@@ -360,12 +360,11 @@ $('td.asm input').on('focusout', function(){
 
 $('tr[line=0] input').focus();
 
-function show_window() {
-	$('.overlay').toggle(500);
-}
   
-$(".close_window").click( function(){
-	$(".overlay").hide(500);
+$("#commands-buttom").click( function(){
+	var a = String(window.innerWidth/4*3);
+	var b = String(window.innerHeight/4*3);
+	window.open("help_editor.html", "Commmands", "top="+b+",left="+a+",width=600,height=300");
 });
 
 
@@ -375,7 +374,8 @@ function show_window_exemples(){
 };
 
 function show_window_insructions(){
-	window.open("instrDict.html", "Instractions", "width=600,height=300");
+	var b = String(window.innerHeight/4*3);
+	window.open("instrDict.html", "Instractions", "top="+b+",width=600,height=300");
 };
 
 

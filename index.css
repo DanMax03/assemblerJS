@@ -79,13 +79,13 @@
     position: relative;
     display: block;
     width: 72%;
+    height: 100%;
     display:flex;
     padding: 0;
+    outline: none;
 }
 
 .commands-buttom{
-    margin: 0.25rem 0.25rem  0.25rem 0.25rem ;
-    border-radius: 2rem;
     text-decoration: none;
     align-items: center;
     justify-content: center;
@@ -100,7 +100,6 @@
     font-size: 1rem;
     font-weight: bolder;
     outline: none;
-    border: black solid 0.1rem;
     -webkit-transition: all 0.5s ease;
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
@@ -129,66 +128,31 @@ a{
     -moz-transition: all 0.5s ease;
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
+    border-left: 5% solid black;
 }
 
-.overlay {
-    background: black;
-    position: fixed;
-    z-index: 5;
-    height: 60%;
-    width: 40%;
-    right: 0;
-    bottom: 0;
-    padding: 0.75rem;
-    margin-right: 1rem;
-    margin-bottom: 1rem;
-    display: none;
-    align-items: center;
-    justify-content: center;
-    border: white solid 0.25rem;
-    border-radius: 0.25rem;
-    overflow: auto;
-    -webkit-overflow-scrolling : touch;
-  }
-
-
-  .overlay.active {
-    display: block;
-  }
-
   .flex-window {
+    outline: white dashed 1px;
     background: black;
     position: relative;
     height: 100%;
     width: 100%;
-    border: white dashed 0.25rem;
-    padding: 0.5rem;
-    display: block;
+    border: none;
+    padding: 3%  !important;
+    /*display: block;
     -webkit-box-sizing:border-box;
-    -moz-box-sizing:border-box;
+    -moz-box-sizing:border-box;*/
     box-sizing:border-box;
     overflow: auto;
+    border-collapse: collapse;
+    /*overflow-y: scroll;
+    -webkit-overflow-scrolling : touch;*/
   }
 
     .window{
     position: relative;
     color: white;
     position: relative;
-  }
-  
-  #close_symbol{
-      width: 100%;
-      font-size: xx-large;
-      text-align: left;
-      margin-top: -1%;
-      margin-bottom: -2%;
-  }
-
-  .close-window{
-      position: relative;
-      width: 100%;
-      margin: 0;
-      top: 0;
   }
 
 p{
@@ -204,6 +168,7 @@ p{
   }
 
   table#table_for_commands{
+    border-collapse: collapse;
       width: 100%;
       text-align: left;
       overflow: scroll;
@@ -396,7 +361,6 @@ textarea#asm_text, textarea#asm_text2{
 
 textarea#asm_text{
     transition: 1s;
-    padding: 0.5%;
     padding-left: 1%;
     font-size: large;
     font-family: monospace;
@@ -413,7 +377,9 @@ textarea#asm_text2{
     background: none;
     color: black;
     top:50%;
-    border-top: 0.25rem solid #a0a0a0;
+    border-top:0.25rem solid #a0a0a0;
+    border-collapse: collapse;
+    padding-top: 0.25rem;
 }
 
 table#main_table {

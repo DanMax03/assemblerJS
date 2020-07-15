@@ -3,26 +3,54 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="index.css"></link>
+	<script src="jquery.min.js" type="text/javascript"></script>
 	<title>Справка по работе с редактором</title>
 </head>
-<body>
-	<h1>Справка по работе с редактором</h1>
-	<table>
-	<thead>
-		<tr><th>Клавиша</th><th>Действие</th></tr>
-	</thead>
-	<tbody>
-		<tr><td>Enter</td><td>Трансляция команды в машинный код</td></tr>
-		<tr><td>Down</td><td>Переход на строку вниз без трансляции команды</td></tr>
-		<tr><td>Up</td><td>Переход на строку вверх без трансляции команды</td></tr>
-		<!--tr><td>PageDown</td><td>Прокрутка страницы на несколько строк вверх</td></tr>
-		<tr><td>PageUp</td><td>Прокрутка страницы на несколько строк вниз</td></tr-->
-		<tr><td>Escape</td><td>Повторное дизассемблирование команды текущей строки (отмена изменений)</td></tr>
-		<tr><td>(Left)Alt/Insert</td><td>Добавление команды nop перед текущей строкой</td></tr>
-		<tr><td>(Left)Alt/Delete</td><td>Удаление команды текущей строки</td></tr>
-		<tr><td></td><td></td></tr>
-		<tr><td></td><td></td></tr>
-	</tbody>
-	</table>
+<body style="background: black;">
+		<div class="flex-window" >
+			<div class="window">
+			<p stile="width: 100%; font-size: 1.1rem;">Справка по работе с редактором</p>
+			<table id="table_for_commands">
+				<tr>
+					<td id="tsp1"><p id="hq">Клавиша</p></td>
+					<td id="tsp1"><p>Действие</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Enter</p></td>
+					<td id="tsp1"><p>Трансляция команды в машинный код</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Down</p></td>
+					<td id="tsp1"><p>Переход на строку вниз без трансляции команды</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Up</p></td>
+					<td id="tsp1"><p>Переход на строку вверх без трансляции команды</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">PageDown</p></td>
+					<td id="tsp1"><p>Прокрутка страницы на несколько строк вниз</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">PageUp</p></td>
+					<td id="tsp1"><p>Прокрутка страницы на несколько строк вверх</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Escape</p></td>
+					<td id="tsp1"><p>Повторное дизассемблирование команды текущей строки (отмена изменений)</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Insert</p></td>
+					<td id="tsp1"><p>Добавление команды nop перед текущей строкой</p></td>
+				</tr>
+				<tr>
+					<td id="tsp1"><p id="hq">Delete</p></td>
+					<td id="tsp1"><p>Удаление команды текущей строки</p></td>
+				</tr>
+			</table> 
+			</div>
+		</div>
 </body>
 </html>

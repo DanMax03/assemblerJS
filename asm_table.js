@@ -64,7 +64,7 @@
 	m16
 	m16/32
 	m16:16/32 // only les, lds
-	m16/32&16/32 // only bound
+	m16/32&16/32 // only bound -> switched to just 'm'
 	r/m8
 	r/m16
 	r/m16/32
@@ -183,16 +183,16 @@ var cmd_mas =[
 	'5f pop 1 0 op1=edi -----reg',
 	'60 pusha 0 0 op1=ax op2=cx op3=dx --------',
 	'61 popa 0 0 op1=di op2=si op3=bp --------',
-	'62 bound 2 0 reg_value=r op1=r16/32 op2=m16/32&16/32 op3=eflags -------- mrm',
+	'62 bound 2 0 reg_value=r op1=r16/32 op2=m op3=eflags -------- mrm',
 	'63 arpl 2 0 reg_value=r op1=r/m16 op2=r16 -------- mrm',
 	'68 push 1 0 op1=imm16/32 ------s- data(4)',
 	'69 imul 3 0 reg_value=r op1=r16/32 op2=r/m16/32 op3=imm16/32 ------s- mrm data(4)',
 	'6a push 1 0 op1=imm8 ------s- data(1)',
 	'6b imul 3 0 reg_value=r op1=r16/32 op2=r/m16/32 op3=imm8 ------s- mrm data(1)',
-	'6c ins 2 0 op1=m8 op2=dx -------w',
-	'6d ins 2 0 op1=m16/32 op2=dx -------w',
-	'6e outs 2 0 op1=dx op2=m8 -------w',
-	'6f outs 2 0 op1=dx op2=m16/32 -------w',
+	'6c insb 0 0 op1=m8 op2=dx -------w',
+	'6d insd 0 0 op1=m16/32 op2=dx -------w',
+	'6e outsb 0 0 op1=dx op2=m8 -------w',
+	'6f outsd 0 0 op1=dx op2=m16/32 -------w',
 	'70 jo 1 0 op1=rel8 ----cond addr(1)',
 	'71 jno 1 0 op1=rel8 ----cond addr(1)',
 	'72 jb 1 0 op1=rel8 ----cond addr(1)',
@@ -254,7 +254,6 @@ var cmd_mas =[
 	'8e mov 2 0 reg_value=r op1=sreg op2=r/m16 ------d- mrm',
 	'8f pop 1 0 reg_value=0 op1=r/m16/32 -------- nnn',
 	'90 nop 0 0 --------',
-//  '90 xchg op1=eax op2=eax -----reg',
 	'91 xchg 1 0 op1=ecx op2=eax -----reg',
 	'92 xchg 1 0 op1=edx op2=eax -----reg',
 	'93 xchg 1 0 op1=ebx op2=eax -----reg',
@@ -262,10 +261,8 @@ var cmd_mas =[
 	'95 xchg 1 0 op1=ebp op2=eax -----reg',
 	'96 xchg 1 0 op1=esi op2=eax -----reg',
 	'97 xchg 1 0 op1=edi op2=eax -----reg',
-//  '98 cbw op1=ax op2=al --------',
 	'98 cwde 0 0 op1=eax op2=ax --------', 
 	'99 cdq 0 0 op1=edx op2=eax --------',
-//	'99 cwd op1=dx op2=ax --------',
 	'9a call 1 0 op1=ptr16:16/32 -------- addr(6)',
 	'9b wait 0 0 --------',
 	'9c pushf 0 0 op1=flags --------',
@@ -276,23 +273,18 @@ var cmd_mas =[
 	'a1 mov 2 0 op1=eax op2=moffs16/32 ------dw addr(4)',
 	'a2 mov 2 0 op1=moffs8 op2=al ------dw addr(4)',
 	'a3 mov 2 0 op1=moffs16/32 op2=eax ------dw addr(4)',
-	'a4 movs 2 0 op1=m8 op2=m8 -------w',
-//	'a5 movs 2 0 op1=m16 op2=m16 -------w',
-	'a5 movs 2 0 op1=m16/32 op2=m16/32 -------w',
-	'a6 cmps 2 0 op1=m8 op2=m8 -------w',
-//	'a7 cmps 2 0 op1=m16 op2=m16 -------w',
-	'a7 cmps 2 0 op1=m16/32 op2=m16/32 -------w',
+	'a4 movsb 0 0 op1=m8 op2=m8 -------w',
+	'a5 movsd 0 0 op1=m16/32 op2=m16/32 -------w',
+	'a6 cmpsb 0 0 op1=m8 op2=m8 -------w',
+	'a7 cmpsd 0 0 op1=m16/32 op2=m16/32 -------w',
 	'a8 test 2 0 op1=al op2=imm8 -------w data(1)',
 	'a9 test 2 0 op1=eax op2=imm16/32 -------w data(4)',
-	'aa stos 2 0 op1=m8 op2=al -------w',
-//	'ab stos 2 0 op1=m16 op2=ax -------w',
-	'ab stos 2 0 op1=m16/32 op2=eax -------w',
-	'ac lods 2 0 op1=al op2=m8 -------w',
-//	'ad lods 2 0 op1=ax op2=m16 -------w',
-	'ad lods 2 0 op1=eax op2=m16/32 -------w',
-	'ae scas 2 0 op1=m8 op2=al -------w',
-//	'af scas 2 0 op1=m16 op2=ax -------w',
-	'af scas 2 0 op1=m16/32 op2=eax -------w',
+	'aa stosb 0 0 op1=m8 op2=al -------w',
+	'ab stosd 0 0 op1=m16/32 op2=eax -------w',
+	'ac lodsb 0 0 op1=al op2=m8 -------w',
+	'ad lodsd 0 0 op1=eax op2=m16/32 -------w',
+	'ae scasb 0 0 op1=m8 op2=al -------w',
+	'af scasd 0 0 op1=m16/32 op2=eax -------w',
 	'b0 mov 2 0 op1=al op2=imm8 ----wreg data(1)',
 	'b1 mov 2 0 op1=cl op2=imm8 ----wreg data(1)',
 	'b2 mov 2 0 op1=dl op2=imm8 ----wreg data(1)',
@@ -327,8 +319,8 @@ var cmd_mas =[
 	'c1 shr 2 0 reg_value=5 op1=r/m16/32 op2=imm8 -------w nnn data(1)',
 	'c2 ret 1 0 op1=imm16 -------- data(2)',
 	'c3 ret 0 0 --------',
-	'c4 les 2 1 reg_value=r op1=es op2=r16/32 op3=m16:16/32 -------- mrm',
-	'c5 lds 2 1 reg_value=r op1=ds op2=r16/32 op3=m16:16/32 -------- mrm',
+	'c4 les 2 1 reg_value=r op1=es op2=r16/32 op3=m -------- mrm',
+	'c5 lds 2 1 reg_value=r op1=ds op2=r16/32 op3=m -------- mrm',
 	'c6 mov 2 0 reg_value=0 op1=r/m8 op2=imm8 -------w nnn data(1)',
 	'c7 mov 2 0 reg_value=0 op1=r/m16/32 op2=imm16/32 -------w nnn data(4)',
 	'c8 enter 2 1 op1=ebp op2=imm16 op3=imm8 -------- data(2) data(1)',
@@ -599,13 +591,14 @@ function cmpTemp(a, b)
 	if (str_ops_a != null && str_ops_b == null)
 		return 1;
 	
-	if (str_ops_b.length > str_ops_a.length)
+	if (str_ops_a.length < str_ops_b.length)
 		return -1;
 	
 	if (str_ops_a.length > str_ops_b.length)
 		return 1;
 	
 	// str_ops_a.length == str_ops_b.length
+	
 	
 	str_ops_a = str_ops_a.map(item => cut_temp_op(item));
 	str_ops_b = str_ops_b.map(item => cut_temp_op(item));
@@ -623,7 +616,7 @@ function cmpTemp(a, b)
 		
 		if (op_a_type == -1) {
 			
-			if (regs.indexOf(str_ops_a[i].type[0]) != -1)
+			if (regs.indexOf(str_ops_a[i].type) != -1)
 				op_a_type = 9;
 			else
 				op_a_type = 8;
@@ -632,7 +625,7 @@ function cmpTemp(a, b)
 		
 		if (op_b_type == -1) {
 			
-			if (regs.indexOf(str_ops_b[i].type[0]) != -1)
+			if (regs.indexOf(str_ops_b[i].type) != -1)
 				op_b_type = 9;
 			else
 				op_b_type = 8;
@@ -661,7 +654,9 @@ function cmpTemp(a, b)
 			else
 				str_ops_b[i].size = str_ops_b[i].size[str_ops_b[i].size.length - 1];
 			
-			return str_ops_a[i].size - str_ops_b[i].size;
+			
+			if (str_ops_a[i].size != str_ops_b[i].size)
+				return str_ops_a[i].size - str_ops_b[i].size;
 			
 		}
 		
@@ -690,9 +685,10 @@ function cmpTemp(a, b)
 		}
 	}
 	
-	for (var key in asm_map) {
+	for (var key in asm_map) 
 		asm_map[key].sort(cmpTemp);
-	}
+	
+	
 	
 	// Creating disasm_map
 	

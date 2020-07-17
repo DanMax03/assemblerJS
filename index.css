@@ -2,8 +2,8 @@
     display: block;
     position: fixed;
     z-index: 5;
-    height: 6.2rem;
-    width: 6.2rem;
+    height: 6rem;
+    width: 6rem;
     right: 0;
     border-radius: 50%;
     background: black;
@@ -15,6 +15,30 @@
 }
 
 #cs_str, #ds_str{ display: none;}
+
+#logo-block{
+    width: 90%;
+    position: relative;
+    margin-right: auto;
+    margin-left: auto;
+    display: block;
+}
+
+@keyframes anim1{
+    0%{
+        height: 6rem;
+        width: 6rem;
+        background: black;
+    }
+    50%{
+        height: 6.5rem;
+        width: 6.5rem;
+        background: black;
+    }
+    100%{
+        background: white;
+    }
+}
 
 #inside-exe-button{
     display: block;
@@ -38,20 +62,23 @@
 }
 
 #exe-button:hover{
-    border-color: black;
+    animation: anim1;
+    animation-iteration-count: 1;
+    animation-duration: 2s;
+    /*border-color: black;
     background-color: white;
-    height: 7rem;
-    width: 7rem;
-    transition: 2s;
+    height: 6.5rem;
+    width: 6.5rem;
+    transition: 2s;*/
 }
 
-#exe-button:hover #inside-exe-button{
+/*#exe-button:hover #inside-exe-button{
     background-color: white;
     border-color: black;
     color: black;
     font-size: xx-large;
     transition: 2s;
-}
+}*/
 
 #menu-segment-1{
     z-index: 4;
@@ -97,7 +124,6 @@
     background: black;
     color: white;
     padding: 0.2rem;
-    font-size: 1rem;
     font-weight: bolder;
     outline: none;
     -webkit-transition: all 0.5s ease;
@@ -107,20 +133,13 @@
 }
 
 a{
+    font-size: (calc(14px + 2 * ((100vw - 420px) / 860)));
     text-decoration: none;
-}
-#inside-border p{
-    background: none;
-    position: relative;
-    width: fit-content;
-    display: block;
-    margin: auto;
-    padding: 2% 5% 2% 5%;
 }
 
 
 .commands-buttom:hover{
-    background: white;
+    background: rgb(208, 208, 208);
     color: black;
     outline: white;
     /*text-decoration: underline black;*/
@@ -129,6 +148,7 @@ a{
     -o-transition: all 0.5s ease;
     transition: all 0.5s ease;
     border-left: 5% solid black;
+    margin-left: -1%;
 }
 
   .flex-window {
@@ -185,8 +205,7 @@ p{
 #buttons-block{
     position: relative;
     display: block;
-    margin: auto;
-    left: -15%;
+    margin-left: 1rem;
     width: max-content;
     height: max-content;
 }
@@ -205,13 +224,8 @@ p{
     border: none;
     background: grey;
     border-bottom: none;
-    border-top-right-radius: 1rem;
-    border-top-left-radius: 1rem;
     transition: 1s;
     outline: none;
-    box-shadow: 5px -5px 8px 0px rgba(0, 0, 0, 0.15);
-    margin-right: -2%;
-    z-index: 2;
 }
 
 #insructions-button{
@@ -230,8 +244,6 @@ p{
     border: none;
     background: grey;
     border-bottom: none;
-    border-top-right-radius: 1rem;
-    border-top-left-radius: 1rem;
     transition: 1s;
     outline: none;
     animation-duration: 10s;
@@ -242,6 +254,7 @@ p{
 #exemples-button:hover, #insructions-button:hover{
     background: #a0a0a0;
     transition: 1s;
+    z-index: 2;
 }
 
 
@@ -252,21 +265,19 @@ p{
 
 
 #logo{
-    width: 80%;
+    width: 100%;
     display: block;
     position: relative;
     margin-right: auto;
     margin-left: auto;
     margin-top: -5%;
-    margin-bottom: -5%;
+    margin-bottom: -3rem;
 }
 
 #main_background{
     z-index: 3;
     display: block;
     position: absolute;
-    border: 0.25rem solid gray;
-    border-radius: 1rem;
     background-color: white;left: 50%;
     transform: translateX(-50%);
     width: 90%;

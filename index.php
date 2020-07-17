@@ -43,16 +43,18 @@
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
-<body>
+<body style="font-size:100%; line-height: 1.6875;">
 	<form method='post' action='get_exe.php' target='_blank' class='get_exe' id="exe-button">
 			<input type='text' name='cs_str' id='cs_str' value=''>
 			<input type='text' name='ds_str' id='ds_str' value=''>
 			<input type='submit' value='.exe' id="inside-exe-button">
 	</form>
-	<img src="new-logo.svg" alt="" id="logo"> 
-	<div id="buttons-block">
-		<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
-		<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+	<div id="logo-block">
+		<img src="new-logo.svg" alt="" id="logo"> 
+		<div id="buttons-block">
+			<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
+			<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+		</div>
 	</div>
 	<div id="main_background">
 	<div class='segment code'><fieldset>

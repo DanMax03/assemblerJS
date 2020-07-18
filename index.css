@@ -456,6 +456,7 @@ textarea.noframe, .noframe1{
 textarea#nof-zero{
     background-color: #c1c0c0;
     border-right: 0.2rem solid grey;
+    color: black;
     margin-top: -2px;
     box-shadow: -15px 0px 15px -10px rgba(0, 0, 0, 0.24);
     transition: 1s;
@@ -520,7 +521,7 @@ textarea#ds_text{
     transition: 1s;
 }
 
-textarea#ds_text:focus, textarea#nof-zero:focus{
+textarea#ds_text:focus{
     background-color: #d1d1d1;
     transition: 1s;
     outline: none;

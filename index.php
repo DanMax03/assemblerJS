@@ -99,7 +99,7 @@
 			<textarea cols=47 rows=1 readonly class='noframe1' disabled>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
 			<textarea cols=15 rows=1 readonly class='noframe' id="nof-two" disabled>0123456789abcdef</textarea>
 			<br>
-			<textarea cols=7 rows=<?=$ds_lines + 1?> readonly class='noframe' id="nof-zero"><?=$ds_addresses?></textarea>
+			<textarea cols=7 rows=<?=$ds_lines + 1?> readonly class='noframe' id="nof-zero" disabled><?=$ds_addresses?></textarea>
 			<textarea cols=47 rows=<?=$ds_lines + 1?> id='ds_bytes' maxlength=<?=$maxlen_datacode?>></textarea>
 			<textarea cols=15 rows=<?=$ds_lines + 1?> id='ds_text' maxlength=<?=$maxlen_datatext?>></textarea>
 			<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>

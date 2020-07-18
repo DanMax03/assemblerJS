@@ -29,9 +29,6 @@ var registersB = {'eax': '000', 'ecx': '001', 'edx': '010', 'ebx': '011', 'ebp':
 var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32, 'edi': 32,
 			   'ax': 16, 'cx': 16, 'dx': 16, 'bx': 16, 'bp': 16, 'si': 16, 'di': 16,
 			   'al': 8, 'cl': 8, 'dl': 8, 'bl': 8, 'ah': 8, 'ch': 8, 'dh': 8, 'bh': 8};
-			   
-
-var manual_build_instructions = ['bound', 'les', 'lds'];
 
 
 function div(val, by) // в js нету деления нацело. Шок
@@ -325,8 +322,8 @@ function cmd_explode(cmd_text)
 	
 	var ops = cmd_text.substring(space + 1).split(', ')
 	
-	if(ops.length > 2)
-		return {err: 'Параметров должно быть не больше двух.'};
+	if(ops.length > 3)
+		return {err: 'Параметров должно быть не больше трех.'};
 	
 	return cmd.concat(ops);
 }
@@ -997,7 +994,7 @@ function make_mrm(op, reg_value)
 	return to_hex(op.mod + reg_value + op.r_m) + (op.sib != undefined ? ' ' + op.sib : '') + (op.d_c_str != undefined ? ' ' + op.d_c_str : '');
 }
 
-//console.log(asm_map);
+
 // {err, codes_str, codes, cmd_text}
 function asm(address, cmd_text)
 {
@@ -1043,99 +1040,98 @@ function asm(address, cmd_text)
 	}
 	
 	
-	if (manual_build_instructions.indexOf(cmd_shapes[0]) == -1) {
-		
-		var cmd_template = get_template(cmd_shapes[0], address, ops); // finds template and fully determines operands
-		
-		if (cmd_template.err != undefined)
-			return make_ans(cmd_template.err);
-		
-		ops = cmd_template.ops;
-		cmd_template = cmd_template.temp;
-		
-		var cmd_obj = asm_cut_str(cmd_template);
-		
-		var used_ops = [];
-		
-		
-		if (cmd_obj.temp.length >= 2) {
-		
-			if (cmd_obj.temp[1] == 'mrm' || cmd_obj.temp[1] == 'nnn') {
+	
+	var cmd_template = get_template(cmd_shapes[0], address, ops); // finds template and fully determines operands
+	
+	if (cmd_template.err != undefined)
+		return make_ans(cmd_template.err);
+	
+	ops = cmd_template.ops;
+	cmd_template = cmd_template.temp;
+	
+	var cmd_obj = asm_cut_str(cmd_template);
+	
+	var used_ops = [];
+	
+	
+	if (cmd_obj.temp.length >= 2) {
+	
+		if (cmd_obj.temp[1] == 'mrm' || cmd_obj.temp[1] == 'nnn') {
+			
+			var direction_bit = get_code_bit(cmd_obj.temp[0], cmd_obj.code, 'd');
+			direction_bit = direction_bit == '-' ? '1' : direction_bit;
+			
+			if (direction_bit == '1' && ops.length >= 2 && (ops[0].type != 'm' && ops[0].type != 'moffs') && ops[1].type != 'imm') {
 				
-				var direction_bit = get_code_bit(cmd_obj.temp[0], cmd_obj.code, 'd');
-				direction_bit = direction_bit == '-' ? '1' : direction_bit;
+				var buf = ops[0];
+				ops[0] = ops[1];
+				ops[1] = buf;
 				
-				if (direction_bit == '1' && ops.length >= 2 && (ops[0].type != 'm' && ops[0].type != 'moffs') && ops[1].type != 'imm') {
-					
-					var buf = ops[0];
-					ops[0] = ops[1];
-					ops[1] = buf;
-					
-				} // now first op is R/M operand
-				
-				
-				if (cmd_obj.reg_value == 'r')
-					cmd_obj.reg_value = ops[1].r_m;
-				
-				
-				cmd_obj.code += ' ' + make_mrm(ops[0], cmd_obj.reg_value);
-				
-			} else if (cmd_obj.temp[1][0] == 'd') { // means data
-				
-				for (var i = 0; i < ops.length; i++)
-					if (ops[i].type == 'imm') {
-						
-						cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value, ops[i].size));
-						
-						used_ops.push(i);
-						
-						break;
-						
-					}
-					
-				
-			} else if (cmd_obj.temp[1][0] == 'a'){ // addr
-				
-				for (var i = 0; i < ops.length; i++)
-					if (ops[i].type == 'rel') { // all instr with 'rel' op has 1 + rel_size / 8 bytes;
-						
-						if (byte_cost(ops[i].value - ops[i].size - 1) > ops[i].size)
-							return make_ans("Слишком далёкий переход в команде.");
-						
-						cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value - ops[i].size / 8, ops[i].size));
-						
-						break;
-					} else if (ops[i].type == 'ptr') {
-						
-						cmd_obj.code += ' ' + ops[i].data;
-						
-					} else {
-						return make_ans("Это что за покемон?");
-					}
-				
-			} else
-				
-				cmd_obj.code += ' ' + to_hex(cmd_obj.temp[1]);
-		
-		}
-		
-		if (cmd_obj.temp.length == 3) {
-		
-			// always data
+			} // now first op is R/M operand
+			
+			
+			if (cmd_obj.reg_value == 'r')
+				cmd_obj.reg_value = ops[1].r_m;
+			
+			
+			cmd_obj.code += ' ' + make_mrm(ops[0], cmd_obj.reg_value);
+			
+		} else if (cmd_obj.temp[1][0] == 'd') { // means data
+			
 			for (var i = 0; i < ops.length; i++)
-				if (ops[i].type == 'imm' && used_ops.indexOf(i) == -1) {
+				if (ops[i].type == 'imm') {
+					
 					cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value, ops[i].size));
 					
+					used_ops.push(i);
+					
 					break;
+					
 				}
-		
-		}
-		
-		
-		return make_ans(codes_str_TO_codes(cmd_obj.code));
+				
+			
+		} else if (cmd_obj.temp[1][0] == 'a'){ // addr
+			
+			for (var i = 0; i < ops.length; i++)
+				if (ops[i].type == 'rel') { // all instr with 'rel' op has 1 + rel_size / 8 bytes;
+					
+					if (byte_cost(ops[i].value - ops[i].size - 1) > ops[i].size)
+						return make_ans("Слишком далёкий переход в команде.");
+					
+					cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value - ops[i].size / 8, ops[i].size));
+					
+					break;
+				} else if (ops[i].type == 'ptr') {
+					
+					cmd_obj.code += ' ' + ops[i].data;
+					
+				} else {
+					return make_ans("Это что за покемон?");
+				}
+			
+		} else
+			
+			cmd_obj.code += ' ' + to_hex(cmd_obj.temp[1]);
+	
 	}
 	
-	return {err: 'Неизвестная команда', codes: []};
+	if (cmd_obj.temp.length == 3) {
+	
+		// always data
+		for (var i = 0; i < ops.length; i++)
+			if (ops[i].type == 'imm' && used_ops.indexOf(i) == -1) {
+				cmd_obj.code += ' ' + to_reverse_hex(int_to_sB(ops[i].value, ops[i].size));
+				
+				break;
+			}
+	
+	}
+	
+	
+	return make_ans(codes_str_TO_codes(cmd_obj.code));
+		
+	
+	return make_ans('Неизвестная команда');
 }
 
 
@@ -1207,7 +1203,7 @@ function cut_op(op_str)
 	var size;
 	
 	
-	if (type == op_str) {
+	if (type != 'm' && type == op_str) {
 		size = bitsize[op_str];
 	
 		return {type: 'reg', value: op_str, size: size};
@@ -1221,27 +1217,35 @@ function cut_op(op_str)
 			if (op_str[1] == '/') { // op_str = 'r/m8/16/32' or anything like this
 				size = op_str.substring(3).split('/').map(item => parse_int(item));
 				
-				if (size.length > 1)  // deleting 16 bit
-					size = size[1];
-				else
-					size = size[0];
+				size = size[size.length - 1];
 				
 				return {type: 'r/m', size: size};
 			}
 			
 			size = op_str.substring(1).split('/').map(item => parse_int(item));
 			
-			if (size.length > 1)  // deleting 16 bit
-				size = size[1];
-			else
-				size = size[0];
+			size = size[size.length - 1];
 			
 			return {type: 'r', size: size};
 			
 		break;
 		
 		case 'm':
-			return {type: 'm', size: 32};
+			
+			if (op_str == 'm')
+				
+				size = 'depends on other';
+				
+			else {
+			
+				size = op_str.substring(1).split('/').map(item => parse_int(item));
+				
+				size = size[size.length - 1];
+				
+			}
+			
+			return {type: 'm', size: size};
+			
 		break;
 		
 		case 'rel':
@@ -1249,10 +1253,7 @@ function cut_op(op_str)
 		
 			size = op_str.substring(3).split('/').map(item => parse_int(item));
 			
-			if (size.length > 1)  // deleting 16 bit
-				size = size[1];
-			else
-				size = size[0];
+			size = size[size.length - 1];
 			
 			return {type: type, size: size};
 			
@@ -1262,10 +1263,7 @@ function cut_op(op_str)
 			
 			size = op_str.substring(5).split('/').map(item => parse_int(item));
 			
-			if (size.length > 1)  // deleting 16 bit
-				size = size[1];
-			else
-				size = size[0];
+			size = size[size.length - 1];
 			
 			return {type: 'moffs', size: size}; // moffs
 			
@@ -1292,14 +1290,20 @@ function cut_op(op_str)
 
 
 // value - строка операнда
-// add_codes - кол-во байт помимо MRM, которые описывают данный операнд
+// codes_len - кол-во байт помимо MRM, которые описывают данный операнд
 // add_str - байтовая строка, каждый байт через пробел
-function get_mrm_op(adr, op) // return {value, add_codes, add_str}
+function get_mrm_op(adr, op) // return {value, codes_len, add_str}
 {
-	var mrm = uint_to_sB(exe[adr + 1], 8);
-				
+	var mrm = uint_to_sB(exe[adr + 1], 8);		
 	var mod = mrm.substr(0, 2);
 	var r_m = mrm.substr(5, 3); 
+	
+	var size_prefix;
+	if (typeof op.size == 'string')
+		size_prefix = '';
+	else
+		size_prefix = (op.size == 8 ? 'byte ' : 'dword ');
+	
 	
 	if (r_m != '100' || mod == '11')
 		
@@ -1309,8 +1313,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 				
 				if (r_m != '101')
 					
-					return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[r_m] + ']', 
-							add_codes: 0, 
+					return {value: size_prefix + '[' + reverse_reg3B[r_m] + ']', 
+							codes_len: 0, 
 							add_str: ''};
 							
 				else { // 32-bit Displacement mode
@@ -1318,8 +1322,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 					var disp_value = read_rev_data(adr, 2, 4, '') + 'h';
 					disp_value = (hex_to_sB(disp_value[0]) == '1' ? ('-' + neg_sB(disp_value)) : disp_value);
 					
-					return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + disp_value + ']', 
-							add_codes: 4, 
+					return {value: size_prefix + '[' + disp_value + ']', 
+							codes_len: 4, 
 							add_str: read_data(adr, 2, 4, ' ')};
 					
 				}
@@ -1333,8 +1337,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 				var disp_value = read_rev_data(adr, 2, disp_size, '') + 'h';
 				disp_value = (hex_to_sB(disp_value[0]) == '1' ? ('-' + neg_sB(disp_value)) : '+' + disp_value);
 			
-				return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[r_m] + disp_value + ']', 
-						add_codes: disp_size, 
+				return {value: size_prefix + '[' + reverse_reg3B[r_m] + disp_value + ']', 
+						codes_len: disp_size, 
 						add_str: read_data(adr, 2, disp_size, ' ')};
 				
 			break;
@@ -1344,19 +1348,19 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 				if (op.type == 'sreg')
 					
 					return {value: reverse_sregB[r_m], 
-							add_codes: 0, 
+							codes_len: 0, 
 							add_str: ''};
 					
 				else if (op.size == 8)
 					
 					return {value: reverse_reg2B[r_m], 
-							add_codes: 0, 
+							codes_len: 0, 
 							add_str: ''};
 					
 				else
 					
 					return {value: reverse_reg3B[r_m], 
-							add_codes: 0, 
+							codes_len: 0, 
 							add_str: ''};
 				
 			break;
@@ -1382,8 +1386,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 			
 				if (base != '101') // reg32 + index*n
 				
-					return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + reverse_reg3B[base] + ' + ' + index + '*' + scale + ']',
-							add_codes: 1,
+					return {value: size_prefix + '[' + reverse_reg3B[base] + ' + ' + index + '*' + scale + ']',
+							codes_len: 1,
 							add_str: to_hex(sib)};
 							
 				else { // disp32 + index*n
@@ -1391,8 +1395,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 					var disp_value = read_rev_data(adr, 3, 4, '') + 'h';
 					disp_value = hex_to_sB(disp_value)[0] == '1' ? '-' + neg_sB(disp_value) : disp_value;
 				
-					return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + disp_value + ' + ' + index + '*' + scale + ']',
-							add_codes: 5,
+					return {value: size_prefix + '[' + disp_value + ' + ' + index + '*' + scale + ']',
+							codes_len: 5,
 							add_str: to_hex(sib) + ' ' + read_rev_data(adr, 3, 4, ' ')};
 							
 				}
@@ -1406,8 +1410,8 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 				var disp_value = read_rev_data(adr, 3, disp_size, '') + 'h';
 				disp_value = hex_to_sB(disp_value)[0] == '1' ? '-' + neg_sB(disp_value) : disp_value;
 			
-				return {value: (op.size == 8 ? 'byte' : 'dword') + ' [' + disp_value + ' + ' + reverse_reg3B[base] + ' + ' + index + '*' + scale + ']',
-						add_codes: 1 + disp_size,
+				return {value: size_prefix + '[' + disp_value + ' + ' + reverse_reg3B[base] + ' + ' + index + '*' + scale + ']',
+						codes_len: 1 + disp_size,
 						add_str: to_hex(sib) + ' ' + read_rev_data(adr, 3, disp_size, ' ')};
 				
 			break;
@@ -1416,6 +1420,19 @@ function get_mrm_op(adr, op) // return {value, add_codes, add_str}
 	}
 }	
 
+function get_temp_const(adr, disp, temp_shape) // adr + disp - адрес после последнего использованного байта
+{
+	var size = parse_int(temp_shape.substr(temp_shape.length - 2, 1)); // temp_shape is ending on the ')' symbol
+	
+	
+	if (typeof size == 'string')
+		return {err: size};
+	
+	
+	var cnst = read_rev_data(adr, disp, size, '') + 'h';
+	
+	return {value: cnst, codes_len: size, add_str: read_data(adr, disp, size, ' ')};
+}
 
 /*
 	Возвращает объект, содержащий следующие параметры:
@@ -1567,11 +1584,13 @@ function disasm(address)
 	
 	var adr = address - address0; // address0 - первый адрес в блоке кода
 	
+	
 	if (adr >= PAGE) 
 		return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
 	
 	
 	var str = disasm_map[hex(exe[adr])];
+	
 	
 	if (!str)
 		return make_byte_ans();
@@ -1594,10 +1613,11 @@ function disasm(address)
 		}
 	}
 	
+	
 	if (cmd_obj == undefined)
 		return make_byte_ans();
 	
-		
+	
 	if (cmd_obj.temp.length == 1) {
 		
 		var chk = cmd_obj.temp[0].substring(5);
@@ -1630,37 +1650,28 @@ function disasm(address)
 		
 			if (cmd_obj.reg_value == null) { // only instructions with temp.length == 2, where 2nd is data or addr
 					
-				l_br = cmd_obj.temp[1].indexOf('(');
-				
-				var temp1_size = parse_int(cmd_obj.temp[1].substr(l_br + 1, 1));
-				
-				var temp1_value;
+				var temp1 = get_temp_const(adr, 1, cmd_obj.temp[1]);
 				
 				
-				if (cmd_obj.temp[1][l_br - 1] == 'a') { // data
-					
-					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
-					temp1_value = hex_to_sB(temp1_value)[0] == '1' ? ('-' + neg_sB(temp1_value)) : temp1_value;
-					
-				} else // addr
-					temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
+				if (cmd_obj.temp[1][0] == 'd') // data
+					temp1.value = hex_to_sB(temp1.value)[0] == '1' ? ('-' + neg_sB(temp1.value)) : temp1.value;	
 				
 				
-				cmd_obj.c_len += temp1_size;
+				cmd_obj.c_len += temp1.codes_len;
 				
 				
 				if (cmd_obj.op1.type == 'rel') { // coms with address offset, like call, jmp and other
 				
-					temp1_value = hex_to_sB(temp1_value)[0] == '1' ? ('-' + neg_sB(temp1_value)) : temp1_value;
-					temp1_value = (parse_int(temp1_value) + cmd_obj.c_len + address).toString(16) + 'h';
+					temp1.value = hex_to_sB(temp1.value)[0] == '1' ? ('-' + neg_sB(temp1.value)) : temp1.value;
+					temp1.value = (parse_int(temp1.value) + cmd_obj.c_len + address).toString(16) + 'h';
 					
-					cmd_obj.cmd += ' ' + temp1_value; 
+					cmd_obj.cmd += ' ' + temp1.value; 
 					
 				} else 
-					cmd_obj.cmd += ' ' + (cmd_obj.op1.type != 'ptr' ? temp1_value : temp1_value.substr(0, 4) + 'h:' + temp1_value.substring(4));
+					cmd_obj.cmd += ' ' + (cmd_obj.op1.type != 'ptr' ? temp1.value : temp1.value.substr(0, 4) + 'h:' + temp1.value.substring(4));
 				
 				
-				cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ');
+				cmd_obj.c_str += ' ' + temp1.add_str;
 				
 				return make_ans(cmd_obj);
 				
@@ -1668,17 +1679,17 @@ function disasm(address)
 				
 				var mrm = uint_to_sB(exe[adr + 1], 8);
 				
-				var r_m = mrm.substr(5, 3);
-				
 				cmd_obj.c_len = 2;
 				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
 				
 				cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
 				
+				
 				if (cmd_obj.cmd == 'call' || cmd_obj.cmd == 'pop') // возможен только 1 размер для памяти
 					cmd_obj.op1.value = cmd_obj.op1.value.substring(cmd_obj.op1.value.indexOf(' ') + 1);
 				
-				cmd_obj.c_len += cmd_obj.op1.add_codes;
+				
+				cmd_obj.c_len += cmd_obj.op1.codes_len;
 				cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
 				cmd_obj.cmd += ' ' + cmd_obj.op1.value;
 				
@@ -1708,52 +1719,46 @@ function disasm(address)
 				}
 				
 				
-				var l_br = cmd_obj.temp[1].indexOf('(');
-				var temp1_size = parse_int(cmd_obj.temp[1].substr(l_br + 1, 1));
-				var temp1_value = read_rev_data(adr, 1, temp1_size, '') + 'h';
+				var temp1 = get_temp_const(adr, 1, cmd_obj.temp[1]);
 				
 				
-				cmd_obj.c_len += temp1_size;
-				cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ');
+				cmd_obj.c_len += temp1.codes_len;
+				cmd_obj.c_str += ' ' + temp1.add_str;
 				
 				
 				if (cmd_obj.cmd.indexOf('loop') != -1 || 
 				    cmd_obj.cmd == 'jecxz') { // catching loops, jecxz
 				
-					temp1_value = hex_to_sB(temp1_value)[0] == '1' ? ('-' + neg_sB(temp1_value)) : temp1_value;
-					cmd_obj.cmd += ' ' + (parse_int(temp1_value) + address + cmd_obj.c_len).toString(16) + 'h';
+					temp1.value = hex_to_sB(temp1.value)[0] == '1' ? ('-' + neg_sB(temp1.value)) : temp1.value;
+					cmd_obj.cmd += ' ' + (parse_int(temp1.value) + address + cmd_obj.c_len).toString(16) + 'h';
 					
 					return make_ans(cmd_obj);
 					
 				}
 				
 				
-				if (cmd_obj.temp[1][l_br - 1] == 'a') {
-					
-					temp1_value = hex_to_sB(temp1_value)[0] == '1' ? ('-' + neg_sB(temp1_value)) : temp1_value;
-					
-				}
+				if (cmd_obj.temp[1][0] == 'd') 
+					temp1.value = hex_to_sB(temp1.value)[0] == '1' ? ('-' + neg_sB(temp1.value)) : temp1.value;
 				
 				
 				// other instructions has 2 visible operands
 				if (cmd_obj.op1.type == 'reg') {
 					
-					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + (cmd_obj.op2.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value);
+					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + (cmd_obj.op2.type == 'moffs' ? ('[' + temp1.value + ']') : temp1.value);
 					
 				} else {
 					
 					if (cmd_obj.cmd != 'int')
-						cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1_value + ']') : temp1_value) + ', ' + cmd_obj.op2.value;
+						cmd_obj.cmd += ' ' + (cmd_obj.op1.type == 'moffs' ? ('[' + temp1.value + ']') : temp1.value) + ', ' + cmd_obj.op2.value;
 					else
-						cmd_obj.cmd += ' ' + temp1_value;
+						cmd_obj.cmd += ' ' + temp1.value;
 				}
 				
 				return make_ans(cmd_obj);
 				
 			} else {
 				
-				var mrm = uint_to_sB(exe[adr + 1], 8);
-				var r_m = mrm.substr(5, 3);				
+				var mrm = uint_to_sB(exe[adr + 1], 8);		
 				
 				cmd_obj.c_len = 2;
 				cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
@@ -1763,8 +1768,8 @@ function disasm(address)
 					
 					var reg = mrm.substr(2, 3);
 					
-					var direction_bit = cmd_obj.temp[0].indexOf('d');
-					direction_bit = (direction_bit == -1 ? '1' : uint_to_sB(exe[adr], 8).substr(direction_bit, 1));
+					var direction_bit = get_code_bit(cmd_obj.temp[0], uint_to_sB(exe[adr], 8), 'd');
+					direction_bit = direction_bit == '-' ? '1' : direction_bit;
 					
 					
 					if (direction_bit == '1') { // op1 == REG, op2 == R/M
@@ -1785,41 +1790,33 @@ function disasm(address)
 					
 					cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
 					
-					cmd_obj.c_len += cmd_obj.op1.add_codes;
+					cmd_obj.c_len += cmd_obj.op1.codes_len;
 					cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
 					cmd_obj.cmd += ' ' + (direction_bit == '1' ? cmd_obj.op2.value : cmd_obj.op1.value) + ', ' + (direction_bit == '1' ? cmd_obj.op1.value : cmd_obj.op2.value);
 					
 					return make_ans(cmd_obj);
 					
 				} else {
+					
+					cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
+						
+					cmd_obj.c_len += cmd_obj.op1.codes_len;
+					cmd_obj.c_str += cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '';
+				
 				
 					if (cmd_obj.temp.length == 2) { // 2nd op is already defined
 						
-						cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
-						
-						cmd_obj.c_len += cmd_obj.op1.add_codes;
-						cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
 						cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + cmd_obj.op2.value;
 						
 						return make_ans(cmd_obj);
 						
 					} else { // length == 3
 						
-						cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op1);
+						var temp2 = get_temp_const(adr, cmd_obj.c_len, cmd_obj.temp[2]);
 						
-						cmd_obj.c_len += cmd_obj.op1.add_codes;
-						cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
-						
-						
-						var l_br = cmd_obj.temp[2].indexOf('(');
-						var temp2_size = parse_int(cmd_obj.temp[2].substr(l_br + 1, 1));
-						
-						
-						cmd_obj.op2.value = read_rev_data(adr, cmd_obj.c_len, temp2_size, '') + 'h';
-						
-						cmd_obj.c_str += ' ' + read_data(adr, cmd_obj.c_len, temp2_size, ' ');
-						cmd_obj.c_len += temp2_size;
-						cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + cmd_obj.op2.value;
+						cmd_obj.c_str += ' ' + temp2.add_str;
+						cmd_obj.c_len += temp2.codes_len;
+						cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + temp2.value;
 						
 						return make_ans(cmd_obj);
 						
@@ -1831,100 +1828,27 @@ function disasm(address)
 			
 		break;
 		
-		case 3:
+		case 3: // only imul
 			
-			switch (cmd_obj.cmd)
-			{
-				case 'div':
-				case 'idiv':
-					
-					var mrm = uint_to_sB(exe[adr + 1], 8);
-					var r_m = mrm.substr(5, 3);				
-					
-					cmd_obj.c_len = 2;
-					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
-					
-					
-					if (cmd_obj.op3.type == 'reg') // f6
-						
-						cmd_obj.op1 = get_mrm_op(adr, {type: 'r/m', size: 8});
-						
-					else
-						
-						cmd_obj.op1 = get_mrm_op(adr, cmd_obj.op3);
-					
-					cmd_obj.c_len += cmd_obj.op1.add_codes;
-					cmd_obj.c_str += (cmd_obj.op1.add_str != '' ? (' ' + cmd_obj.op1.add_str) : '');
-					cmd_obj.cmd += ' ' + cmd_obj.op1.value;
-					
-					return make_ans(cmd_obj);
-				
-				break;
-				
-				case 'mul':
-				case 'imul':
-				
-					var mrm = uint_to_sB(exe[adr + 1], 8);
-					var r_m = mrm.substr(5, 3);				
-					
-					cmd_obj.c_len = 2;
-					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
-					
-					cmd_obj.op3 = get_mrm_op(adr, cmd_obj.op3);
-					
-					cmd_obj.c_len += cmd_obj.op3.add_codes;
-					cmd_obj.c_str += (cmd_obj.op3.add_str != '' ? (' ' + cmd_obj.op3.add_str) : '');
-					cmd_obj.cmd += ' ' + cmd_obj.op3.value;
-					
-					return make_ans(cmd_obj);
-						
-				break;
-				
-				case 'bound':
-				
-					var mrm = uint_to_sB(exe[adr + 1], 8);
-					var r_m = mrm.substr(5, 3);
-					var reg = mrm.substr(2, 3);
-					
-					cmd_obj.c_len = 2;
-					cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
-	
-					cmd_obj.op1.value = reverse_reg3B[reg];
-						
-					cmd_obj.op2 = get_mrm_op(adr, cmd_obj.op2);
-					
-					cmd_obj.c_len += cmd_obj.op2.add_codes;
-					cmd_obj.c_str += (cmd_obj.op2.add_str != '' ? (' ' + cmd_obj.op2.add_str) : '');
-					cmd_obj.cmd += ' ' + cmd_obj.op1.value + ' ' + cmd_obj.op2.value;
-					
-					return make_ans(cmd_obj);
-				
-				break;
-				
-				case 'enter':
-				
-					var temp1_size = 2;
-					var temp2_size = 1;
-					
-					var temp1_value = read_rev_data(adr, 1, temp1_size, '');
-					var temp2_value = read_rev_data(adr, 1 + temp1_size, temp2_size, '');
-					
-					cmd_obj.c_len += temp1_size + temp2_size;
-					cmd_obj.c_str += ' ' + read_data(adr, 1, temp1_size, ' ') + ' ' + read_data(adr, 1 + temp1_size, temp2_size, ' ');
-					cmd_obj.cmd += ' ' + temp1_value + 'h, ' + temp2_value + 'h';
-					
-					return make_ans(cmd_obj);
-				
-				break;
-				
-				default:
-				
-					console.log("Coming soon, maybe");
-					console.log(cmd_obj);
-					return make_byte_ans();
-				
-				break;
-			}
+			var mrm = uint_to_sB(exe[adr + 1], 8);		
+			var reg = mrm.substr(2, 3);
+			
+			cmd_obj.c_len = 2;
+			cmd_obj.c_str += ' ' + hex(exe[adr + 1]);
+			
+			cmd_obj.op1.value = reverse_reg3B[reg];
+			
+			cmd_obj.op2 = get_mrm_op(adr, cmd_obj.op2);
+			cmd_obj.c_len += cmd_obj.op2.codes_len;
+			cmd_obj.c_str += cmd_obj.op2.add_str != '' ? (' ' + cmd_obj.op2.add_str) : '';
+			
+			cmd_obj.op3 = get_temp_const(adr, cmd_obj.c_len, cmd_obj.temp[2]);
+			
+			cmd_obj.c_len += cmd_obj.op3.codes_len;
+			cmd_obj.c_str += ' ' + cmd_obj.op3.add_str;
+			cmd_obj.cmd += ' ' + cmd_obj.op1.value + ', ' + cmd_obj.op2.value + ', ' + cmd_obj.op3.value;
+			
+			return make_ans(cmd_obj);
 			
 		break;
 	}

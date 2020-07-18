@@ -11,7 +11,7 @@
     margin-top: 5%;
     margin-right: 1%;
     outline: none;
-    transition: 2s;
+    transition: 1s all ease;
 }
 
 #cs_str, #ds_str{ display: none;}
@@ -23,6 +23,8 @@
     margin-left: auto;
     display: block;
 }
+
+
 
 #inside-exe-button{
     display: block;
@@ -39,27 +41,36 @@
     align-content: center;
     text-align: center;
     font-size: x-large;
-    transition: 2s;
+    transition: 0.5s;
+    transition-delay: 0.2s;
 }
 #inside-exe-button h2{
     text-align: center;
 }
 
 #exe-button:hover{
-    border-color: black;
+border-color: black;
     background-color: white;
-    height: 7rem;
-    width: 7rem;
-    transition: 2s;
+    height: 6.5rem;
+    width: 6.5rem;
+    transition: 1s;
+    transition-delay: 0.1s;
 }
 
 #exe-button:hover #inside-exe-button{
-    background-color: white;
+    /*background-color: white;*/
     border-color: black;
-    color: black;
-    font-size: xx-large;
-    transition: 2s;
+    /*color: black;*/
+    transition: 0.5s;
 }
+
+
+#exe-button:active{
+    background-color: grey;
+    transition: 1s ease;
+}
+
+
 
 #menu-segment-1{
     z-index: 4;
@@ -411,12 +422,106 @@ table#main_table td.err{color: red;}
 table#main_table td.codes{min-width: 100px;}
 table#main_table tr.edited td.asm input{color: brown;}
 form.get_exe input[type="text"]{display: none; }
-textarea.noframe{border: none;}
+
+#segmentdata{
+    display: block;
+    align-content: center;
+    position: relative;
+    height: auto;
+}
+textarea.noframe, .noframe1{
+    width: 22%;
+    font-size: x-large;
+    display: inline-block;
+    position: relative;
+    vertical-align: top;
+    margin: auto;
+    border: none;
+    resize: none;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    z-index: 2;
+    text-align: center;
+}
+
+.noframe1{
+    width: 50%;
+    border-left: 1px dashed #ababab;
+    border-right: 1px dashed #ababab;
+    border-bottom: 1px dashed #ababab;
+    color: #575757;
+    background: none;
+}
+
+textarea#nof-zero{
+    background-color: #c1c0c0;
+    border-right: 0.2rem solid grey;
+    margin-top: -2px;
+    box-shadow: -15px 0px 15px -10px rgba(0, 0, 0, 0.24);
+    transition: 1s;
+}
+
+#nof-one{
+    margin-top: 3px;
+    background-color: #c1c0c0;
+    border-right: 0.2rem solid grey;
+    background: gray;
+    
+}
+
+#nof-two{
+    background-color: #c1c0c0;
+    border-left: 0.2rem solid grey;
+    background: gray;
+    color: white;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+}
 
 textarea.asm_text{
     border: gray solid 0.25rem;
 }
 
 textarea#ds_bytes, textarea#ds_text{
-    overflow: hidden;
+    width: 50%;
+    font-size: x-large;
+    display: inline-block;
+    position: relative;
+    overflow: visible;
+    vertical-align: top;
+    border: none;
+    resize: none;
+}
+textarea#ds_bytes{
+    border: 1px dashed #ababab;
+    border-bottom: none;
+    text-align: center;
+    color: #575757;
+    transition: 1s;
+
+}
+
+textarea#ds_bytes:focus{
+    border: 1px solid #ababab;
+    background: #dcdbdb;
+    outline: none;
+    border-bottom: none;
+    transition: 1s;
+}
+
+textarea#ds_text{
+    padding-top: 0.8%;
+    width: 22%;
+    background-color: #c1c0c0;
+    border-left: 0.2rem solid grey;
+    top: -5px;
+    text-align: center;
+    box-shadow: 15px 0px 15px -10px rgba(0, 0, 0, 0.24);
+    transition: 1s;
+}
+
+textarea#ds_text:focus, textarea#nof-zero:focus{
+    background-color: #d1d1d1;
+    transition: 1s;
+    outline: none;
 }

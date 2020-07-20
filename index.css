@@ -449,7 +449,6 @@ textarea.noframe, .noframe1{
     width: 50%;
     border-left: 1px dashed #ababab;
     border-right: 1px dashed #ababab;
-    border-bottom: 1px dashed #ababab;
     color: #575757;
     background: none;
 }
@@ -464,7 +463,6 @@ textarea#nof-zero{
 }
 
 #nof-one{
-    margin-top: 3px;
     background-color: #c1c0c0;
     border-right: 0.2rem solid grey;
     background: #c1c0c0;
@@ -495,6 +493,7 @@ textarea#ds_bytes, textarea#ds_text{
     resize: none;
 }
 textarea#ds_bytes{
+    border-top: none;
     border: 1px dashed #ababab;
     border-bottom: none;
     text-align: center;
@@ -512,6 +511,7 @@ textarea#ds_bytes:focus{
 }
 
 textarea#ds_text{
+    border-top: none;
     padding-top: 0.8%;
     width: 22%;
     background-color: #c1c0c0;

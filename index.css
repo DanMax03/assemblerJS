@@ -442,6 +442,7 @@ textarea.noframe, .noframe1{
     padding-bottom: 0.25rem;
     z-index: 2;
     text-align: center;
+    outline: none;
 }
 
 .noframe1{
@@ -458,7 +459,7 @@ textarea#nof-zero{
     border-right: 0.2rem solid grey;
     color: black;
     margin-top: -2px;
-    box-shadow: -15px 0px 15px -10px rgba(0, 0, 0, 0.24);
+    box-shadow: -8px 8px 8px 0px rgba(0, 0, 0, 0.3);
     transition: 1s;
 }
 
@@ -466,7 +467,7 @@ textarea#nof-zero{
     margin-top: 3px;
     background-color: #c1c0c0;
     border-right: 0.2rem solid grey;
-    background: gray;
+    background: #c1c0c0;
     
 }
 
@@ -517,7 +518,7 @@ textarea#ds_text{
     border-left: 0.2rem solid grey;
     top: -5px;
     text-align: center;
-    box-shadow: 15px 0px 15px -10px rgba(0, 0, 0, 0.24);
+    box-shadow: 8px 8px 8px 0px rgba(0, 0, 0, 0.3);
     transition: 1s;
 }
 

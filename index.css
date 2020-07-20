@@ -527,3 +527,9 @@ textarea#ds_text:focus{
     transition: 1s;
     outline: none;
 }
+
+#warrning-1{
+    margin-top: 2rem;
+    font-weight: bold;
+    font-size: 1rem;
+}

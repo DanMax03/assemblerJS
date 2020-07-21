@@ -430,7 +430,7 @@ form.get_exe input[type="text"]{display: none; }
     height: auto;
 }
 textarea.noframe, .noframe1{
-    width: 22%;
+    width: 12%;
     font-size: x-large;
     display: inline-block;
     position: relative;
@@ -446,7 +446,7 @@ textarea.noframe, .noframe1{
 }
 
 .noframe1{
-    width: 50%;
+    width: 58%;
     border-left: 1px dashed #ababab;
     border-right: 1px dashed #ababab;
     color: #575757;
@@ -465,12 +465,14 @@ textarea#nof-zero{
 
 #nof-one{
     background-color: #c1c0c0;
+    width: 12%;
     border-right: 0.2rem solid grey;
     background: #c1c0c0;
     
 }
 
 #nof-two{
+    width: 24%;
     background-color: #c1c0c0;
     border-left: 0.2rem solid grey;
     background: gray;
@@ -484,7 +486,7 @@ textarea.asm_text{
 }
 
 textarea#ds_bytes, textarea#ds_text{
-    width: 50%;
+    width: 58%;
     font-size: x-large;
     display: inline-block;
     position: relative;
@@ -516,7 +518,7 @@ textarea#ds_bytes:focus{
 textarea#ds_text{
     border-top: none;
     padding-top: 0.8%;
-    width: 22%;
+    width: 24%;
     background-color: #c1c0c0;
     border-left: 0.2rem solid grey;
     top: -5px;

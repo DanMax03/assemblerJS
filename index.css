@@ -451,6 +451,7 @@ textarea.noframe, .noframe1{
     border-right: 1px dashed #ababab;
     color: #575757;
     background: none;
+    transition: 1s;
 }
 
 textarea#nof-zero{
@@ -495,6 +496,7 @@ textarea#ds_bytes, textarea#ds_text{
 textarea#ds_bytes{
     border-top: none;
     border: 1px dashed #ababab;
+    border-top: none;
     border-bottom: none;
     text-align: center;
     color: #575757;
@@ -504,6 +506,7 @@ textarea#ds_bytes{
 
 textarea#ds_bytes:focus{
     border: 1px solid #ababab;
+    border-top: none;
     background: #dcdbdb;
     outline: none;
     border-bottom: none;

@@ -366,7 +366,14 @@ $('td.asm input').on('focusout', function(){
 
 $('tr[line=0] input').focus();
 
-  
+$('#ds_bytes').blur(function(){
+	$('.noframe1').css({'border': '1px dashed #ababab', 'border-bottom': 'none', 'border-top': 'none','background': 'none', 'transition' : '1s'})
+});
+
+$('#ds_bytes').focus(function(){
+	$('.noframe1').css({'border': '1px solid #ababab', 'border-bottom': 'none', 'border-top': 'none', 'background': '#dcdbdb', 'transition' : '1s'})
+});
+
 $("#commands-buttom").click( function(){
 	var a = String(window.innerWidth/4*3);
 	var b = String(window.innerHeight/4*3);

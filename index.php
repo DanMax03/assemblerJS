@@ -40,6 +40,7 @@
 	<title>Ассемблер</title>
 	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>

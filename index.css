@@ -458,7 +458,7 @@ textarea#nof-zero{
     background-color: #c1c0c0;
     border-right: 0.2rem solid grey;
     color: black;
-    margin-top: -2px;
+    margin-top: -5px;
     box-shadow: -8px 8px 8px 0px rgba(0, 0, 0, 0.3);
     transition: 1s;
 }
@@ -531,6 +531,36 @@ textarea#ds_text:focus{
     background-color: #d1d1d1;
     transition: 1s;
     outline: none;
+}
+
+@media (min-width: 800px) and (max-width: 1200px) {
+    textarea#ds_text, textarea#ds_bytes, textarea.noframe, .noframe1{
+        font-size: 1.1rem;
+    }    
+}
+
+@media (min-width: 500px) and (max-width: 800px) {
+    textarea#ds_text, textarea#ds_bytes, textarea.noframe, .noframe1{
+        font-size: x-small;
+    }  
+    textarea#ds_text{
+        top: -5px;
+    }
+    textarea.noframe{
+        margin-top: 5px;
+    }
+}
+
+@media (min-width: 100px) and (max-width: 500px) {
+    textarea#ds_text, textarea#ds_bytes, textarea.noframe, .noframe1{
+        font-size: xx-small;
+    }  
+    textarea#ds_text{
+        top: -5px;
+    }
+    textarea.noframe{
+        margin-top: 5px;
+    }
 }
 
 #warrning-1{

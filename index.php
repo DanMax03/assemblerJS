@@ -40,19 +40,22 @@
 	<title>Ассемблер</title>
 	<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js" type="text/javascript"></script>
 </head>
-<body>
-	<form method='post' action='get_exe.php' target='_blank' class='get_exe' id="exe-button">
+<body style="font-size:100%; line-height: 1.6875;">
+	<form method='post' action='get_exe.php' target='_blank' class='get_exe' id="exe-button" >
 			<input type='text' name='cs_str' id='cs_str' value=''>
 			<input type='text' name='ds_str' id='ds_str' value=''>
 			<input type='submit' value='.exe' id="inside-exe-button">
 	</form>
-	<img src="new-logo.svg" alt="" id="logo"> 
-	<div id="buttons-block">
-		<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
-		<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+	<div id="logo-block">
+		<img src="new-logo.svg" alt="" id="logo"> 
+		<div id="buttons-block">
+			<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
+			<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+		</div>
 	</div>
 	<div id="main_background">
 	<div class='segment code'><fieldset>
@@ -91,16 +94,16 @@
 			</table>
 		</fieldset></div>
 		
-		<div class='segment data'><fieldset>
+		<div class='segmentdata'><fieldset>
 			<legend>Сегмент данных</legend>
-			<textarea cols=7 rows=1 readonly class='noframe'></textarea>
-			<textarea cols=47 rows=1 readonly class='noframe'>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
-			<textarea cols=15 rows=1 readonly class='noframe'>0123456789abcdef</textarea>
+			<textarea cols=7 rows=1 readonly class='noframe' id="nof-one" disabled></textarea>
+			<textarea cols=47 rows=1 readonly class='noframe1' disabled>00 01 02 03 04 05 06 07  08 09 0a 0b 0c 0d 0e 0f</textarea>
+			<textarea cols=15 rows=1 readonly class='noframe' id="nof-two" disabled>0123456789abcdef</textarea>
 			<br>
-			<textarea cols=7 rows=<?=$ds_lines + 1?> readonly class='noframe'><?=$ds_addresses?></textarea>
+			<textarea cols=7 rows=<?=$ds_lines + 1?> readonly class='noframe' id="nof-zero" disabled><?=$ds_addresses?></textarea>
 			<textarea cols=47 rows=<?=$ds_lines + 1?> id='ds_bytes' maxlength=<?=$maxlen_datacode?>></textarea>
 			<textarea cols=15 rows=<?=$ds_lines + 1?> id='ds_text' maxlength=<?=$maxlen_datatext?>></textarea>
-			<div contenteditable>Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
+			<div contenteditable id= "warrning-1">Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
 		</fieldset></div>
 		
 		

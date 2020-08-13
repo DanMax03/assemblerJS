@@ -1,3 +1,27 @@
 #task_id{
-    font: 1em monospace;
+    display: inline-block;
+    position: relative;
+    width: 70%;
+    height: 3rem;
+    background: black;
+    color: white;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
+    /*font-weight: bold;*/
+    letter-spacing: 0.2rem;
+    font-size: large;
+    padding-left: 0.5rem;
+}
+
+optgroup{
+    display: inline-block;
+    position: relative;
+    width: 100%;
+}
+
+option{
+    font-family: monospace;
+    display: block;
+    float: left;
+    position: relative;
+    width: fit-content;
 }

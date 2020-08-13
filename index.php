@@ -77,21 +77,11 @@
 				<div id="for-error-table">
 				<div id="if">
 					<textarea id='asm_text'>Поле</textarea>
-					<textarea id='asm_text2' readonly> Achtung! Error: 00040100: Неизвестная команда</textarea>
+					<div class='error'>
+						<table><thead></thead><tbody></tbody></table></div>
 					</div>
 				</div>
 			</div>
-		</fieldset></div>
-
-		<div class='segment err'><fieldset>
-			<legend>Ошибки ассемблирования</legend>
-			<table>
-				<thead>
-					<tr><th>Адрес</th><th>Команда</th><th>Ошибка</th></tr>
-				</thead>
-				<tbody>
-				</tbody>
-			</table>
 		</fieldset></div>
 		
 		<div class='segmentdata'><fieldset>
@@ -110,7 +100,7 @@
 		<div class='segment test'><fieldset method='post' action='test_exe.php' class='test_exe'>
 			<legend>Тестирование</legend>
 <?php include 'select.inc.html'; ?>
-			<input type='submit' value='Протестировать'>
+			<input type='submit' value='Протестировать' id="test-button">
 			<p>Результат:</p>
 			<table>
 				<thead>

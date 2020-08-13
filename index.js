@@ -78,13 +78,60 @@ function fill_table()
 
 function err_show()
 {
-	var tbody = $('div.err.segment table > tbody');
-	tbody.empty();
+	var tbody = $('div.error table > tbody');
+	tbody.empty(); 
+	var iferr = true;
 	for(var i in lines){
-		if(lines[i].err)
+		if(lines[i].err){
+			if (iferr){
+				iferr = false;
+				tbody.append('<tr><th>Адрес</th><th>Команда</th><th>Ошибка</th></tr>');
+				$('div.error').css({'background':'black'});
+				$('div.error table').css({'border-right':'0.1rem dashed white'});
+				$('div.error table').css({'border-left':'0.1rem dashed white'});
+			}
 			tbody.append('<tr><td>' + hex(lines[i].address, 4) + '</td><td>' + lines[i].cmd_text + '</td><td>' + lines[i].err + '</td></tr>');
+		}
+	}
+	if (iferr){
+		$('div.error').css({'background':'none'});
 	}
 }
+
+$('textarea#asm_text').focus(function(){
+	if($(this).val() == "Поле"){
+		$(this).val("");
+		$(this).css({
+			'font-size': 'large',
+			'text-align':'left',
+			'padding-top':'0',
+			'font-family': 'monospace',
+			'background':'white',
+		});
+	}
+});
+$('textarea#asm_text').blur(function() { 
+	if($(this).val() == ""){
+		$(this).val("Поле");
+		$(this).css({
+			'font-size': '500%',
+			'text-align':'center',
+			'padding-top':'15%',
+			'background':'none',
+			'font-family': " 'Playfair Display', serif",
+			'font-weight': 'bold',
+		});
+	}
+	else{
+		$(this).css({
+			'font-size': 'large',
+			'text-align':'left',
+			'padding-top':'0',
+			'font-family': 'monospace',
+		});
+	}
+});
+
 
 function exe_update(address, codes)
 {

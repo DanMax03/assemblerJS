@@ -1,7 +1,9 @@
 #task_id{
+    padding-top: 0;
     display: inline-block;
     position: relative;
     width: 70%;
+    outline: none;
     height: 3rem;
     background: black;
     color: white;
@@ -10,12 +12,16 @@
     letter-spacing: 0.2rem;
     font-size: large;
     padding-left: 0.5rem;
+    border: none;
 }
+
 
 optgroup{
     display: inline-block;
     position: relative;
     width: 100%;
+    outline: none;
+    border: none;
 }
 
 option{
@@ -24,4 +30,6 @@ option{
     float: left;
     position: relative;
     width: fit-content;
+    outline: none;
+    border: none;
 }

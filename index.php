@@ -43,6 +43,7 @@
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<link rel="stylesheet" href="index.css"></link>
 	<script src="jquery.min.js" type="text/javascript"></script>
+	<script src="typed.js" type="text/javascript"></script>
 </head>
 <body style="font-size:100%; line-height: 1.6875;">
 	<form method='post' action='get_exe.php' target='_blank' class='get_exe' id="exe-button" >
@@ -76,7 +77,7 @@
 				?>
 				<div id="for-error-table">
 				<div id="if">
-					<textarea id='asm_text'>Поле</textarea>
+					<textarea id='asm_text'>Asm Text...</textarea>
 					<div class='error'>
 						<table><thead></thead><tbody></tbody></table></div>
 					</div>

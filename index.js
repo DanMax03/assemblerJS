@@ -99,24 +99,23 @@ function err_show()
 }
 
 $('textarea#asm_text').focus(function(){
-	if($(this).val() == "Поле"){
+	if($(this).val() == "Asm Text..."){
 		$(this).val("");
 		$(this).css({
 			'font-size': 'large',
 			'text-align':'left',
-			'padding-top':'0',
+			'padding-top':'1%',
 			'font-family': 'monospace',
 			'background':'white',
 		});
 	}
 });
+
+
 $('textarea#asm_text').blur(function() { 
 	if($(this).val() == ""){
-		$(this).val("Поле");
+		$(this).val("Asm Text...");
 		$(this).css({
-			'font-size': '500%',
-			'text-align':'center',
-			'padding-top':'15%',
 			'background':'none',
 			'font-family': " 'Playfair Display', serif",
 			'font-weight': 'bold',
@@ -126,7 +125,7 @@ $('textarea#asm_text').blur(function() {
 		$(this).css({
 			'font-size': 'large',
 			'text-align':'left',
-			'padding-top':'0',
+			'padding-top':'1%',
 			'font-family': 'monospace',
 		});
 	}
@@ -288,6 +287,13 @@ $('a#copy_asm2textarea').on('click', function(key){
 	var res = [];
 	for(var i in lines)
 		res.push(lines[i].cmd_text);
+	$("textarea#asm_text").css({
+					'font-size': 'large',
+					'text-align':'left',
+					'padding-top':'1%',
+					'font-family': 'monospace',
+					'background':'white',
+				});
 	$('textarea#asm_text').text(res.join('\n'));
 	$('textarea#asm_text').val(res.join('\n'));
 	return false;

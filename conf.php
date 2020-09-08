@@ -7,4 +7,5 @@
 	define('EXE_DS_ADDRESS', 0x402000); // начало сегмента данных в файле
 	define('TASK_EXE_FULL_PATH', './task.exe');
 	//define('JOBE_EXE_URL', 'http://jobe_exe/');
-	define('JOBE_EXE_URL', 'http://130.193.36.223/');
+	//define('JOBE_EXE_URL', 'http://130.193.36.223/'); // yandex.ru
+	define('JOBE_EXE_URL', 'http://81.91.179.181:3000/');	// сервер Димы Карелина

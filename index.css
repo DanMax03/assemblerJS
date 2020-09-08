@@ -363,26 +363,56 @@ textarea#asm_text, textarea#asm_text2{
 }
 
 textarea#asm_text{
-    transition: 1s;
+    height: 49%;
     padding-left: 1%;
     font-size: large;
-    font-family: monospace;
-    color: #575757;
+    color: #acabab;
+    transition: none;
+    padding-top: 1%;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;;
+    font-weight: bold;
 }
+
 textarea#asm_text:focus{
-    background-color: white;
-    transition: 1s;
+    font-size: large;
+    background: white;
+    transition: none;
+    text-align: left;
+    padding-top: 0;
+    font-family: monospace;
 }
 
-
-
-textarea#asm_text2{
+div.error{
+    width: 100%;
     background: none;
     color: black;
-    top:50%;
+    display: block;
+    position: absolute;
+    top: 50%;
+    height: 50%;
+    overflow: auto;
     border-top:0.25rem solid #a0a0a0;
     border-collapse: collapse;
     padding-top: 0.25rem;
+}
+div.error table{
+    margin: 3%;
+    width: 94%;
+    border-collapse: collapse;
+    text-align: left;
+}
+div.error th{
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;;
+    font-weight: bold;
+    color: white;
+    padding: 0.5rem;
+    border-right:0.1rem dashed white;
+}
+div.error td{
+    border: none;
+    color: white;
+    border-top: 0.1rem dashed white;
+    border-right: 0.1rem dashed white;
 }
 
 table#main_table {
@@ -533,7 +563,13 @@ textarea#ds_text:focus{
     outline: none;
 }
 
-@media (min-width: 800px) and (max-width: 1200px) {
+@media (min-width: 1100px) and (max-width: 1200px) {
+    textarea#ds_text, textarea#ds_bytes, textarea.noframe, .noframe1{
+        font-size: 1.5rem;
+    }    
+}
+
+@media (min-width: 800px) and (max-width: 1100px) {
     textarea#ds_text, textarea#ds_bytes, textarea.noframe, .noframe1{
         font-size: 1.1rem;
     }    
@@ -567,4 +603,32 @@ textarea#ds_text:focus{
     margin-top: 2rem;
     font-weight: bold;
     font-size: 1rem;
+}
+
+#test-button{
+    display: inline-block;
+    position: relative;
+    width: 24%;
+    margin-left: 5%;
+    outline: none;
+    height: 3rem;
+    background: black;
+    color: white;
+    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
+    /*font-weight: bold;*/
+    letter-spacing: 0.2rem;
+    font-size: large;
+    padding-left: 0.5rem;
+    border: 0.2rem solid black;
+    transition: 1s;
+}
+
+#test-button:hover{
+    color: black;
+    background:white;
+    transition: 1s;
+}
+
+div.err.segment table > body{
+    color: pink !important;
 }

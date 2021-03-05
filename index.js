@@ -437,11 +437,26 @@ $("#commands-buttom").click( function(){
 
 function show_window_exemples(){
 	window.open("basic-asm-etudes.html", "Exemples", "width=600,height=300");
-};
+}
 
 function show_window_insructions(){
 	var b = String(window.innerHeight/4*3);
 	window.open("instrDict.html", "Instractions", "top="+b+",width=600,height=300");
-};
+}
 
-
+function update_task_link()
+{
+	var selected_option = $('select#task_id option:selected');
+	var mccme_task_id = selected_option.val();
+	//var mccme_task_name = selected_option.text();
+	
+	var a = $('a#mccme_task_link');
+	a.attr('href', 'https://informatics.msk.ru/mod/statements/view.php?id=2296&chapterid=' + mccme_task_id);
+	//a.text(mccme_task_name);
+}
+$(function(){
+	update_task_link();
+});
+$('select#task_id').change(function(){
+	update_task_link();
+});

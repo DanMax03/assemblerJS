@@ -101,6 +101,7 @@
 		<div class='segment test'><fieldset method='post' action='<?=TEST_EXE?>' class='test_exe'>
 			<legend>Тестирование</legend>
 <?php include 'select.inc.html'; ?>
+			<a id='mccme_task_link' target='_blank'>Условие задачи</a>
 			<input type='submit' value='Протестировать' id="test-button">
 			<p>Результат:</p>
 			<table>

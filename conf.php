@@ -8,4 +8,14 @@
 	define('TASK_EXE_FULL_PATH', './task.exe');
 	//define('JOBE_EXE_URL', 'http://jobe_exe/');
 	//define('JOBE_EXE_URL', 'http://130.193.36.223/'); // yandex.ru
-	define('JOBE_EXE_URL', 'http://81.91.179.181:3000/');	// сервер Димы Карелина
+	//define('JOBE_EXE_URL', 'http://81.91.179.181:443/');	// сервер Димы Карелина
+	//define('JOBE_EXE_URL', 'http://localhost:3000/');
+	if(0){
+		// тестируем с помощью Python
+		define('JOBE_EXE_URL', 'http://81.91.179.181:443/');
+		define('TEST_EXE', 'test_exe_python.php');
+	}else{
+		// тестируем с помощью Apache & php
+		define('JOBE_EXE_URL', 'http://81.91.179.181/');
+		define('TEST_EXE', 'test_exe_apache.php');
+	}

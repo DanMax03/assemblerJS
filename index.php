@@ -98,7 +98,7 @@
 		</fieldset></div>
 		
 		
-		<div class='segment test'><fieldset method='post' action='test_exe.php' class='test_exe'>
+		<div class='segment test'><fieldset method='post' action='<?=TEST_EXE?>' class='test_exe'>
 			<legend>Тестирование</legend>
 <?php include 'select.inc.html'; ?>
 			<input type='submit' value='Протестировать' id="test-button">

@@ -34,7 +34,7 @@ var bitsize = {'eax': 32, 'ecx': 32, 'edx': 32, 'ebx': 32, 'ebp': 32, 'esi': 32,
   * Данная функция замещает собой подобный оператор.
   *
   * @param {number} val - Делимое
-  * @param {number} by - Частное
+  * @param {number} by - Делитель
   * @returns {number} 
   */
 function div(val, by)
@@ -1169,7 +1169,7 @@ function make_mrm(op, reg_value)
 function asm(address, cmd_text)
 {
 	// дополнительная функция для укорочения кода.
-	var make_ans = function(param) // typeof param == string <=> param === err
+	var make_ans = function(param) // typeof param == string <=> param == err
 	{
 		if (typeof param == 'string')
 			return {address: address,
@@ -1993,7 +1993,7 @@ function disasm(address)
 					
 					var reg = mrm.substr(2, 3);
 					
-					var direction_bit = get_code_bit(cmd_obj.temp[0], uint_to_sB(exe[adr], 8), 'd');
+					var direction_bit = get_code_bit(cmd_obj.temp[0], hex(exe[adr]), 'd');
 					direction_bit = direction_bit == '-' ? '1' : direction_bit;
 					
 					

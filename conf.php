@@ -10,9 +10,9 @@
 	//define('JOBE_EXE_URL', 'http://130.193.36.223/'); // yandex.ru
 	//define('JOBE_EXE_URL', 'http://81.91.179.181:443/');	// сервер Димы Карелина
 	//define('JOBE_EXE_URL', 'http://localhost:3000/');
-	if(0){
+	if(1){
 		// тестируем с помощью Python
-		define('JOBE_EXE_URL', 'http://193.124.115.156:443/');
+		define('JOBE_EXE_URL', 'http://193.124.115.156:80/file');
 		define('TEST_EXE', 'test_exe_python.php');
 	}else{
 		// тестируем с помощью Apache & php

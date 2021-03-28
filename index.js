@@ -451,7 +451,7 @@ function update_task_link()
 	//var mccme_task_name = selected_option.text();
 	
 	var a = $('a#mccme_task_link');
-	a.attr('href', 'https://informatics.msk.ru/mod/statements/view.php?id=2296&chapterid=' + mccme_task_id);
+	a.attr('href', 'https://informatics.msk.ru/mod/statements/view.php?chapterid=' + mccme_task_id);
 	//a.text(mccme_task_name);
 }
 $(function(){

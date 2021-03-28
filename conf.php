@@ -12,7 +12,7 @@
 	//define('JOBE_EXE_URL', 'http://localhost:3000/');
 	if(1){
 		// тестируем с помощью Python
-		define('JOBE_EXE_URL', 'http://193.124.115.156:80/file');
+		define('JOBE_EXE_URL', 'http://193.124.115.156:443/file');
 		define('TEST_EXE', 'test_exe_python.php');
 	}else{
 		// тестируем с помощью Apache & php

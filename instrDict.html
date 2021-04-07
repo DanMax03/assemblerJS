@@ -275,7 +275,19 @@
 				<tr>
 					<td> div </td>
 					<td> div r/m8/32 </td>
-					<td> Беззнаковое деление </td>
+					<td> 
+						Беззнаковое деление 
+						<table>
+							<thead>
+								<tr><th>Размер</th><th>Делитель</th><th>Частное</th><th>Остаток</th><th>Делимое</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>byte</td><td>r/m8</td><td>AL</td><td>AH</td><td>AX</td></tr>
+								<tr style="display: none;"><td>word</td><td>r/m16</td><td>AX</td><td>DX</td><td>DX:AX</td></tr>
+								<tr><td>dword</td><td>r/m32</td><td>EAX</td><td>EDX</td><td>EDX:EAX</td></tr>
+							</tbody>
+						</table>
+					</td>
 				</tr>
 				<tr>
 					<td> idiv </td>

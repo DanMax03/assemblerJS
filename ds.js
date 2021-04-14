@@ -38,7 +38,7 @@ function set_ds_text(s)
 		for(var j = 0; j < s[i].length; j += 16){
 			var q = s[i].substring(j, j + 16);
 			for(var k = 0; k < 16; ++k){
-				if(res.length >= DATE_PAGE) break;
+				if(res.length >= DATA_PAGE) break;
 				if(k < q.length){
 					if(q[k] == '.')
 						res.push(data[res.length]);
@@ -74,7 +74,7 @@ function set_ds_bytes(s)
 			var q = s[i].substring(j * 16, j * 16 + 48).toLowerCase();
 			while(q.length < 48) q += '0';
 			for(var k = 0; k < 16; ++k){
-				if(res.length >= DATE_PAGE) break;
+				if(res.length >= DATA_PAGE) break;
 				var l = k < 8 ? 3 * k : 3 * k + 1;
 				res.push(val(q[l]) * 16 + val(q[l + 1]));
 			}

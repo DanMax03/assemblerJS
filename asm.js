@@ -1810,7 +1810,7 @@ function disasm(address)
 	var adr = address - address0; // address0 - первый адрес в блоке кода
 	
 	
-	if (adr >= PAGE) 
+	if (adr >= CODE_PAGE) 
 		return {address: address, cmd_text: '', codes_str: '', codes_len: 0};
 	
 	

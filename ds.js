@@ -1,7 +1,7 @@
 function get_ds_bytes()
 {
 	var ds_bytes = [];
-	var n_lines = Math.trunc((PAGE + 15) / 16); // количество строк
+	var n_lines = Math.trunc((DATA_PAGE + 15) / 16); // количество строк
 	for(var i = 0; i < n_lines; ++i){
 		var len = i == n_lines - 1 ? data.length - i * 16 : 16;	// длина текущей строки
 		var s = '';
@@ -16,7 +16,7 @@ function get_ds_bytes()
 function get_ds_text() // $ds_text
 {
 	var ds_text = [];
-	var n_lines = Math.trunc((PAGE + 15) / 16); // количество строк
+	var n_lines = Math.trunc((DATA_PAGE + 15) / 16); // количество строк
 	for(var i = 0; i < n_lines; ++i){
 		var len = i == n_lines - 1 ? data.length - i * 16 : 16;	// длина текущей строки
 		var s = '';
@@ -38,7 +38,7 @@ function set_ds_text(s)
 		for(var j = 0; j < s[i].length; j += 16){
 			var q = s[i].substring(j, j + 16);
 			for(var k = 0; k < 16; ++k){
-				if(res.length >= PAGE) break;
+				if(res.length >= DATE_PAGE) break;
 				if(k < q.length){
 					if(q[k] == '.')
 						res.push(data[res.length]);
@@ -49,7 +49,7 @@ function set_ds_text(s)
 			}
 		}
 	}
-	while(res.length < PAGE)
+	while(res.length < DATA_PAGE)
 		res.push(0);
 	data = res;
 }
@@ -74,7 +74,7 @@ function set_ds_bytes(s)
 			var q = s[i].substring(j * 16, j * 16 + 48).toLowerCase();
 			while(q.length < 48) q += '0';
 			for(var k = 0; k < 16; ++k){
-				if(res.length >= PAGE) break;
+				if(res.length >= DATE_PAGE) break;
 				var l = k < 8 ? 3 * k : 3 * k + 1;
 				res.push(val(q[l]) * 16 + val(q[l + 1]));
 			}

@@ -207,7 +207,7 @@ function insert_tr(line)
 	var address = lines[i].address;
 
 	exe.splice(address - address0, 0, NOP);
-	exe.splice(PAGE, 1); 
+	exe.splice(CODE_PAGE, 1); 
 	lines.splice(i, 0, disasm2line_format(disasm(address))); // это надо делать здесь, чтобы обойти защиту от изменения длины команды
 	// сдвигаем адреса у следующих команд
 	for(var j = i + 1; j < lines.length; ++j){
@@ -226,7 +226,7 @@ function insert_tr(line)
 
 function scrollPageUp()
 {
-	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + PAGE) return;
+	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + CODE_PAGE) return;
 	offset += scroll_page;
 	var line;
 	for(line = 0; line < n_lines; ++line)
@@ -315,7 +315,7 @@ $('a#copy_textarea2asm').on('click', function(key){
 
 function scrollUp()
 {
-	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + PAGE) return;
+	if(lines[n_lines + offset] == undefined && lines[lines.length - 1].address + lines[lines.length - 1].codes_len >= address0 + CODE_PAGE) return;
 	offset++;
 	for(var line = 0; line < n_lines; ++line)
 		fill_tr(line);

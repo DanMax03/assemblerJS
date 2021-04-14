@@ -1,14 +1,14 @@
 <?php
 	include 'inc.php';
-	$n_lines = min(20, PAGE);
+	$n_lines = min(20, CODE_PAGE);
 
-	$cs_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_CS_OFFSET, PAGE);
+	$cs_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_CS_OFFSET, CODE_PAGE);
 	$code_seg = array();
 	for($i = 0; $i < strlen($cs_str); ++$i)
 		$code_seg[] = ord($cs_str[$i]);
 
 	// пример
-	//$code_seg = array(); for($i = 0; $i < PAGE; ++$i) $code_seg[] = 0x90; 
+	//$code_seg = array(); for($i = 0; $i < CODE_PAGE; ++$i) $code_seg[] = 0x90; 
 	/*
 	$code_seg[0] = 0xfe; $code_seg[1] = 0xc7;	// inc bh
 	$code_seg[2] = 0x90;	// nop
@@ -21,16 +21,16 @@
 	//$code_seg[13] = 0xfe; $code_seg[14] = 0x48; $code_seg[15] = 0x34; // dec [eax+34h]
 	*/
 	
-	$date_seg_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_DS_OFFSET, PAGE);
+	$date_seg_str = substr(file_get_contents(TASK_EXE_FULL_PATH), EXE_DS_OFFSET, DATA_PAGE);
 	$date_seg = array();
 	for($i = 0; $i < strlen($date_seg_str); ++$i)
 		$date_seg[] = ord($date_seg_str[$i]);
 
-	$ds_lines = intdiv(PAGE + 15, 16);
-	$maxlen_datatext = PAGE + $ds_lines;
-	$maxlen_datacode = PAGE * 3 + $ds_lines;
+	$ds_lines = intdiv(DATA_PAGE + 15, 16);
+	$maxlen_datatext = DATA_PAGE + $ds_lines;
+	$maxlen_datacode = DATA_PAGE * 3 + $ds_lines;
 	$ds_addresses = array();
-	for($i = 0; $i < intdiv(PAGE - 1 + 16, 16); ++$i)
+	for($i = 0; $i < intdiv(DATA_PAGE - 1 + 16, 16); ++$i)
 		$ds_addresses[] = hex(EXE_DS_ADDRESS + $i * 16, 4);
 	$ds_addresses = implode("\n", $ds_addresses);
 ?>
@@ -96,8 +96,7 @@
 			<textarea cols=15 rows=<?=$ds_lines + 1?> id='ds_text' maxlength=<?=$maxlen_datatext?>></textarea>
 			<div contenteditable id= "warrning-1">Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
 		</fieldset></div>
-		
-		
+
 		<div class='segment test'><fieldset method='post' action='<?=TEST_EXE?>' class='test_exe'>
 			<legend>Тестирование</legend>
 <?php include 'select.inc.html'; ?>
@@ -118,7 +117,8 @@
 		var n_lines = <?=$n_lines?>;
 		var scroll_page = 5;
 		var address0 = <?=EXE_CS_ADDRESS?>;
-		var PAGE = <?=PAGE?>;
+		var CODE_PAGE = <?=CODE_PAGE?>;
+		var DATA_PAGE = <?=DATA_PAGE?>;
 		var exe = [<?=implode($code_seg, ', ')?>];
 		var data = [<?=implode($date_seg, ', ')?>];
 	</script>

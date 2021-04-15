@@ -455,6 +455,8 @@ function update_task_link()
 	//a.text(mccme_task_name);
 }
 $(function(){
+	var select = $('select#task_id');
+	select.val(task_id);
 	update_task_link();
 });
 $('select#task_id').change(function(){

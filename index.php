@@ -121,6 +121,7 @@
 		var DATA_PAGE = <?=DATA_PAGE?>;
 		var exe = [<?=implode($code_seg, ', ')?>];
 		var data = [<?=implode($date_seg, ', ')?>];
+		var task_id = <?=intval(@$_GET['task_id'])?>;
 	</script>
 	<script src="asm_table.js" type="text/javascript"></script>
 	<script src="asm.js" type="text/javascript"></script>

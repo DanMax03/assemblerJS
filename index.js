@@ -176,6 +176,56 @@ function asmLine(arg) // {line, real because of Enter}
 	}
 }
 
+function shift_tool__extract_address(cmd)
+{
+	var cmd = cmd.split(' ');
+	if (cmd.length != 2){console.log('Critical error: В этом месте должно быть два элемента.'); return 0;}
+	var addr = cmd[1];
+	addr = addr.substring(0, addr.length - 1); // убираем букву 'h'
+	return parseInt(addr, 16);
+}
+function shift_tool__nothing_to_do(cmd)
+{
+	var res = 
+		// это не команда перехода
+		cmd.indexOf('j') != 0 && cmd.indexOf('call') != 0 && cmd.indexOf('loop') != 0
+		||
+		// адрес задан абсолютно
+		cmd.indexOf('[') >= 0;
+	return res;
+}
+function shift_tool__inc_address_in_cmd_by_text(cmd)
+{
+	var cmd = cmd.split(' ');
+	if (cmd.length != 2){console.log('Critical error: В этом месте должно быть два элемента.'); return 0;}
+	var addr = cmd[1];
+	addr = addr.substring(0, addr.length - 1); // убираем букву 'h'
+	addr = parseInt(addr, 16) + 1;
+	cmd[1] = addr.toString(16) + 'h';
+	cmd = cmd.join(' ');
+	return cmd;
+}
+function shift_tool__dec_address_in_cmd_by_text(cmd)
+{
+	var cmd = cmd.split(' ');
+	if (cmd.length != 2){console.log('Critical error: В этом месте должно быть два элемента.'); return 0;}
+	var addr = cmd[1];
+	addr = addr.substring(0, addr.length - 1); // убираем букву 'h'
+	addr = parseInt(addr, 16) - 1;
+	cmd[1] = addr.toString(16) + 'h';
+	cmd = cmd.join(' ');
+	return cmd;
+}
+function shift_tool__new_cmd(j, new_cmd)
+{
+	// меняем текст команды
+	lines[j].cmd_text = lines[j].codes_cmd = new_cmd;
+	// меняем код команды
+	var res = asm(lines[j].address, lines[j].codes_cmd);
+	exe_update(lines[j].address, res.codes);
+	lines[j].codes_str = codes_TO_codes_str(res.codes);
+}
+
 function delete_tr(line)
 {
 	var tr = $('tr[line=' + line + ']');
@@ -186,15 +236,36 @@ function delete_tr(line)
 	for(var j = 0; j < len; ++j) exe.push(NOP);
 	lines.splice(i, 1);
 	// сдвигаем адреса у той команды, что встала на удалённое место и у следующих
-	for(var j = i; j < lines.length; ++j){
+	for(var j = i; j < lines.length; ++j)
 		lines[j].address -= len;
-		// при этом может измениться код команды
-		var res = asm(lines[j].address, lines[j].codes_cmd);
-		exe_update(lines[j].address, res.codes);
-		lines[j].codes_str = codes_TO_codes_str(res.codes);
-		if(lines[j].codes_cmd != res.cmd_text)
-			console.log('Текст команды не должен был измениться.');
+
+	// для команд переходов с относительным адресом корректируем адреса переходов и/или коды команд
+	for(var j = 0; j < i; ++j){
+		// если это не команда перехода с относительным адресом, то делать тут нечего
+		if (shift_tool__nothing_to_do(lines[j].codes_cmd)) continue;
+
+		var address_to = shift_tool__extract_address(lines[j].codes_cmd);
+
+		// если адрес в другой сегмент, то нечего тут делать
+		if (address_to > address0 + CODE_PAGE) continue;
+
+		// если ссылка вела на вставляемую строку или ниже
+		if (address_to > address)
+			shift_tool__new_cmd(j, shift_tool__dec_address_in_cmd_by_text(lines[j].codes_cmd));
 	}
+	for(var j = i + 1; j < lines.length; ++j){
+		// если это не команда перехода с относительным адресом, то делать тут нечего
+		if (shift_tool__nothing_to_do(lines[j].codes_cmd)) continue;
+
+		var address_to = shift_tool__extract_address(lines[j].codes_cmd);
+
+		// если ссылка ведёт на строку выше вставляемой или на следующий сегмент
+		if (address_to <= address || address_to > address0 + CODE_PAGE)
+			shift_tool__new_cmd(j, lines[j].codes_cmd);
+		else
+			shift_tool__new_cmd(j, shift_tool__dec_address_in_cmd_by_text(lines[j].codes_cmd));
+	}	
+
 	// отображаем
 	fill_table();
 	err_show();
@@ -209,16 +280,40 @@ function insert_tr(line)
 	exe.splice(address - address0, 0, NOP);
 	exe.splice(CODE_PAGE, 1); 
 	lines.splice(i, 0, disasm2line_format(disasm(address))); // это надо делать здесь, чтобы обойти защиту от изменения длины команды
-	// сдвигаем адреса у следующих команд
-	for(var j = i + 1; j < lines.length; ++j){
+
+	// сдвигаем адреса расположения следующих команд
+	for(var j = i + 1; j < lines.length; ++j)
 		lines[j].address++;
-		// при этом может измениться код команды
-		var res = asm(lines[j].address, lines[j].codes_cmd);
-		exe_update(lines[j].address, res.codes);
-		lines[j].codes_str = codes_TO_codes_str(res.codes);
-		if(lines[j].codes_cmd != res.cmd_text)
-			console.log('Текст команды не должен был измениться.');
+	
+	// lines - {address: 4198411, cmd_text: "call 403100h", codes_cmd: "call 403100h", codes_len: 5, codes_str: "e8 f0 20 00 00", edited: false, err: ""}
+	
+	// для команд переходов с относительным адресом корректируем адреса переходов и/или коды команд
+	for(var j = 0; j < i; ++j){
+		// если это не команда перехода с относительным адресом, то делать тут нечего
+		if (shift_tool__nothing_to_do(lines[j].codes_cmd)) continue;
+
+		var address_to = shift_tool__extract_address(lines[j].codes_cmd);
+
+		// если адрес в другой сегмент, то нечего тут делать
+		if (address_to > address0 + CODE_PAGE) continue;
+
+		// если ссылка вела на вставляемую строку или ниже
+		if (address_to >= address)
+			shift_tool__new_cmd(j, shift_tool__inc_address_in_cmd_by_text(lines[j].codes_cmd));
 	}
+	for(var j = i + 1; j < lines.length; ++j){
+		// если это не команда перехода с относительным адресом, то делать тут нечего
+		if (shift_tool__nothing_to_do(lines[j].codes_cmd)) continue;
+
+		var address_to = shift_tool__extract_address(lines[j].codes_cmd);
+
+		// если ссылка ведёт на строку выше вставляемой или на следующий сегмент
+		if (address_to < address || address_to > address0 + CODE_PAGE)
+			shift_tool__new_cmd(j, lines[j].codes_cmd);
+		else
+			shift_tool__new_cmd(j, shift_tool__inc_address_in_cmd_by_text(lines[j].codes_cmd));
+	}	
+
 	// отображаем
 	fill_table();
 	err_show();

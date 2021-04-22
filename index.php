@@ -94,7 +94,7 @@
 			<textarea cols=7 rows=<?=$ds_lines + 1?> readonly class='noframe' id="nof-zero" disabled><?=$ds_addresses?></textarea>
 			<textarea cols=47 rows=<?=$ds_lines + 1?> id='ds_bytes' maxlength=<?=$maxlen_datacode?>></textarea>
 			<textarea cols=15 rows=<?=$ds_lines + 1?> id='ds_text' maxlength=<?=$maxlen_datatext?>></textarea>
-			<div contenteditable id= "warrning-1">Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмине на клавиатуре клавишу Insert</div>
+			<div contenteditable id= "warrning-1">Для переключением между режимами вставки и замены поставьте курсор сюда<br>и нажмите на клавиатуре клавишу Insert</div>
 		</fieldset></div>
 
 		<div class='segment test'><fieldset method='post' action='<?=TEST_EXE?>' class='test_exe'>

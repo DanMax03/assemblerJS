@@ -4,7 +4,7 @@
 		<title> Справочник по инструкциям </title>
 		<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 		<link href="https://fonts.googleapis.com/css2?family=Playfair+Display&display=swap" rel="stylesheet">
-		<link rel="stylesheet" type="text/css" href="dict.css">
+		<link rel="stylesheet" type="text/css" href="instrDict.css">
 	</head>
 	
 	<body>
@@ -279,12 +279,12 @@
 						Беззнаковое деление 
 						<table>
 							<thead>
-								<tr><th>Размер</th><th>Делитель</th><th>Частное</th><th>Остаток</th><th>Делимое</th></tr>
+								<tr><th>Размер</th><th>Делитель</th><th>Частное</th><th>Остаток</th><th>Делимое</th><th>Пример</th></tr>
 							</thead>
 							<tbody>
-								<tr><td>byte</td><td>r/m8</td><td>AL</td><td>AH</td><td>AX</td></tr>
-								<tr style="display: none;"><td>word</td><td>r/m16</td><td>AX</td><td>DX</td><td>DX:AX</td></tr>
-								<tr><td>dword</td><td>r/m32</td><td>EAX</td><td>EDX</td><td>EDX:EAX</td></tr>
+								<tr><td>byte</td><td>r/m8</td><td>AL</td><td>AH</td><td>AX</td><td>div bl</td></tr>
+								<tr style="display: none;"><td>word</td><td>r/m16</td><td>AX</td><td>DX</td><td>DX:AX</td><td>div bx</td></tr>
+								<tr><td>dword</td><td>r/m32</td><td>EAX</td><td>EDX</td><td>EDX:EAX</td><td>div ebx</td></tr>
 							</tbody>
 						</table>
 					</td>
@@ -297,7 +297,19 @@
 				<tr>
 					<td> mul </td>
 					<td> mul r/m8/32 </td>
-					<td> Беззнаковое умножение </td>
+					<td>
+						Беззнаковое умножение
+						<table>
+							<thead>
+								<tr><th>Команда</th><th>Описание</th><th>Пример</th></tr>
+							</thead>
+							<tbody>
+								<tr><td>mul r/m8</td><td>ax = al * r/m8</td><td>mul bl</td></tr>
+								<tr style="display: none;"><td>mul r/m16</td><td>dx:ax = ax * r/m16</td><td>mul bx</td></tr>
+								<tr><td>mul r/m32</td><td>edx:eax = eax * r/m32</td><td>mul ebx</td></tr>
+							</tbody>
+						</table>
+					</td>
 				</tr>
 				<tr>
 					<td> imul </td>

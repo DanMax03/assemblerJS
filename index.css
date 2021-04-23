@@ -201,30 +201,11 @@ p{
     width: max-content;
     height: max-content;
 }
-#exemples-button{
-    position: relative;
-    display: inline-block;
-    height: 2.5rem;
-    width: 15rem;
-    padding: 0.5rem;
-    font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
-    font-weight: bold;
-    letter-spacing: 0.1rem;
-    font-size: 0.8rem;
-    cursor: pointer;
-    color: white;
-    border: none;
-    background: grey;
-    border-bottom: none;
-    transition: 1s;
-    outline: none;
-}
 
-#insructions-button{
-    z-index: 1;
-    width: 15rem;
+#insructions-button, #exemples-button, #tips-button{
     position: relative;
     display: inline-block;
+    width: 15rem;
     height: 2.5rem;
     padding: 0.5rem;
     font-family: /*'Times New Roman', Times, sans-serif*/ 'Playfair Display', serif;
@@ -238,7 +219,9 @@ p{
     border-bottom: none;
     transition: 1s;
     outline: none;
-    animation-duration: 10s;
+
+	animation-duration: 10s;
+    z-index: 1;
 }
 
 

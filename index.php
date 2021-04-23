@@ -56,6 +56,7 @@
 		<div id="buttons-block">
 			<button onclick="show_window_exemples()"id="exemples-button">Примеры программ</button>
 			<button onclick="show_window_insructions()"id="insructions-button">Справочник по инструкциям</button>
+			<button onclick="show_window_tips()"id="tips-button">FAQ</button>
 		</div>
 	</div>
 	<div id="main_background">

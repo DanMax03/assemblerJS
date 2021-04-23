@@ -373,7 +373,6 @@ function asmLines(asm_area)
 	$('#ds_text').css({'width':String(w)});
 })*/
 $('form.get_exe').on('submit', function(key){
-	alert('Сохранение exe файла после скачивания может быть заблокировано антивирусной программой или системой безопасности Windows. \n \n Если у вас Windows 10 и срабатыват система безопасности Windows блокирует сохранение, то делаем следующее. \n Ту папку, куда будут сохраняться exe-файлы, нужно исключить из зоны ответственности системы безопасности Windows. \n Для этого нужно добавить исключение в систему Безопасность Windows: \n Добавление исключения в систему Безопасность Windows: \n Перейдите в раздел Пуск > Параметры > Обновление и безопасность > Безопасность Windows > Защита от вирусов и угроз. \n В разделе Параметры защиты от вирусов и угроз выберите Управление настройками, а затем в разделе Исключения выберите Добавление или удаление исключений. ');
 	$('input#cs_str').val(exe.join(' '));
 	$('input#ds_str').val(data.join(' '));
 });
@@ -537,6 +536,11 @@ function show_window_exemples(){
 function show_window_insructions(){
 	var b = String(window.innerHeight/4*3);
 	window.open("instrDict.html", "Instractions", "top="+b+",width=600,height=300");
+}
+
+function show_window_tips(){
+	var b = String(window.innerHeight/4*3);
+	window.open("tips.html", "Tips", "top="+b+",width=600,height=300");
 }
 
 function update_task_link()

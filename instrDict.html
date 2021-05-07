@@ -283,7 +283,7 @@
 							</thead>
 							<tbody>
 								<tr><td>byte</td><td>r/m8</td><td>AL</td><td>AH</td><td>AX</td><td>div bl</td></tr>
-								<tr style="display: none;"><td>word</td><td>r/m16</td><td>AX</td><td>DX</td><td>DX:AX</td><td>div bx</td></tr>
+								<tr class='not_implemented'><td>word</td><td>r/m16</td><td>AX</td><td>DX</td><td>DX:AX</td><td>div bx</td></tr>
 								<tr><td>dword</td><td>r/m32</td><td>EAX</td><td>EDX</td><td>EDX:EAX</td><td>div ebx</td></tr>
 							</tbody>
 						</table>
@@ -305,7 +305,7 @@
 							</thead>
 							<tbody>
 								<tr><td>mul r/m8</td><td>ax = al * r/m8</td><td>mul bl</td></tr>
-								<tr style="display: none;"><td>mul r/m16</td><td>dx:ax = ax * r/m16</td><td>mul bx</td></tr>
+								<tr class='not_implemented'><td>mul r/m16</td><td>dx:ax = ax * r/m16</td><td>mul bx</td></tr>
 								<tr><td>mul r/m32</td><td>edx:eax = eax * r/m32</td><td>mul ebx</td></tr>
 							</tbody>
 						</table>
@@ -845,7 +845,15 @@
 				</tr>
 				
 				<tr>
-					<td class ="describe" colspan="3"> Команды условной передачи управления </td>
+					<td class ="describe" colspan="3"> Команда безусловного передачи управления (перехода) </td>
+				</tr>
+				<tr>
+					<td> jmp </td>
+					<td> jmp адрес </td>
+					<td> Безусловный переход т.е всегда </td>
+				</tr>
+				<tr>
+					<td class ="describe" colspan="3"> <a href='https://www.sites.google.com/site/sistprogr/lekcii1/lek9' target='_blank'>Команды условной передачи управления (перехода)</a> </td>
 				</tr>
 				<tr>
 					<td class ="describe" colspan="3"> Условный переход осуществляется, <br>
@@ -859,12 +867,12 @@
 				<tr>
 					<td> jb </td>
 					<td> jb адрес </td>
-					<td> Если меньше </td>
+					<td> {бз} Если меньше </td>
 				</tr>
 				<tr>
 					<td> jbe </td>
 					<td> jbe адрес </td>
-					<td> Если меньше или равно </td>
+					<td> {бз} Если меньше или равно </td>
 				</tr>
 				<tr>
 					<td> jecxz </td>
@@ -874,42 +882,37 @@
 				<tr>
 					<td> jl </td>
 					<td> jl адрес </td>
-					<td> Если меньше </td>
+					<td> {зн} Если меньше </td>
 				</tr>
 				<tr>
 					<td> jle </td>
 					<td> jle адрес </td>
-					<td> Если меньше или равно </td>
-				</tr>
-				<tr>
-					<td> jmp </td>
-					<td> jmp адрес </td>
-					<td> Безусловный переход т.е всегда </td>
+					<td> {зн} Если меньше или равно </td>
 				</tr>
 				<tr>
 					<td> jnb </td>
 					<td> jnb адрес </td>
-					<td> Если не меньше </td>
+					<td> {бз} Если не меньше </td>
 				</tr>
 				<tr>
 					<td> jnbe </td>
 					<td> jnbe адрес </td>
-					<td> Если не меньше или равно </td>
+					<td> {бз} Если не меньше или равно </td>
 				</tr>
 				<tr>
 					<td> jnl </td>
 					<td> jnl адрес </td>
-					<td> Если не меньше </td>
+					<td> {зн} Если не меньше </td>
 				</tr>
 				<tr>
 					<td> jnle </td>
 					<td> jnle адрес </td>
-					<td> Если не (меньше или равно)</td>
+					<td> {зн} Если не (меньше или равно)</td>
 				</tr>
 				<tr>
 					<td> jno </td>
 					<td> jno адрес </td>
-					<td> Если нет флага переполнения </td>
+					<td> Если нет флага переполнения (переноса) </td>
 				</tr>
 				<tr>
 					<td> jnp </td>
@@ -929,7 +932,7 @@
 				<tr>
 					<td> jo </td>
 					<td> jo адрес </td>
-					<td> Если есть флаг переполнения </td>
+					<td> Если есть флаг переполнения (переноса) </td>
 				</tr>
 				<tr>
 					<td> jp </td>
